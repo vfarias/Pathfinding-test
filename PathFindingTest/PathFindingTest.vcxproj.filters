@@ -27,6 +27,7 @@
     <ClCompile Include="ThetaStar.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="Pathfinding.cpp">
     <ClCompile Include="IDAStar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -48,6 +49,10 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IDAStar.h">
+    <ClInclude Include="HPAStar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Pathfinding.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
