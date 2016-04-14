@@ -18,8 +18,8 @@ int main()
 	Vec2D goalPos = {11, 11};
 	Vec2D startPos2 = {1, 10};
 	//AStar pathFinding(GRID_WIDTH, GRID_HEIGHT, startPos, goalPos, AStar::OCTILE, 1);
-	ThetaStar pathFinding(GRID_WIDTH, GRID_HEIGHT, startPos, goalPos, ThetaStar::EUCLIDEAN, 1);
-	AStar pathFinding2(GRID_WIDTH, GRID_HEIGHT, startPos2, goalPos, AStar::OCTILE, 1);
+	ThetaStar pathFinding(GRID_WIDTH, GRID_HEIGHT, startPos, goalPos, ThetaStar::EUCLIDEAN);
+	AStar pathFinding2(GRID_WIDTH, GRID_HEIGHT, startPos2, goalPos, AStar::OCTILE);
 	int pathLength = 0;
 	Vec2D* path = nullptr;
 
@@ -83,7 +83,7 @@ int main()
 	sf::Vertex* pathTiles = nullptr;
 	if (pathFinding.findPath(metrics))
 	{
-		pathLength = pathFinding.getPathLength();
+		pathLength = pathFinding.getNrOfPathNodes();
 		path = pathFinding.getPath();
 	}
 	openedTiles = new sf::RectangleShape[metrics.getNrOfOpenedNodes()];

@@ -155,13 +155,16 @@
     <ClCompile Include="AStar.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Metrics.cpp" />
+    <ClCompile Include="Pathfinding.cpp" />
     <ClCompile Include="ThetaStar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AIUtil.h" />
     <ClInclude Include="AStar.h" />
     <ClInclude Include="Heap.h" />
+    <ClInclude Include="HPAStar.h" />
     <ClInclude Include="Metrics.h" />
+    <ClInclude Include="Pathfinding.h" />
     <ClInclude Include="ThetaStar.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

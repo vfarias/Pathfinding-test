@@ -1,31 +1,14 @@
 #pragma once
-#include <cmath>
-#include <algorithm>
-#include <fstream>
-#include "Heap.h"
-#include "AIUtil.h"
-#include "Metrics.h"
+#include "Pathfinding.h"
 /*
 Basic A* algorithm operating on a map with varying tile cost.
 Should be relatively easy to expand for more specialized behavior
 --Victor
 */
-class ThetaStar
+class ThetaStar : public Pathfinding
 {
 public:
 
-
-	/*
-	Different heuristic used for estimating the distance to the goal
-	MANHATTAN: No diagonal movement
-	CHEBYSHEV: Diagonal movement has a cost of 1
-	OCTILE: Diagonal movement costs sqrt(2)
-	EUCLIDEAN: Calculates the distance in a straight line to the goal.
-	*/
-	enum Heuristic
-	{
-		MANHATTAN, CHEBYSHEV, OCTILE, EUCLIDEAN
-	};
 private:
 	struct Node
 	{
@@ -63,36 +46,20 @@ private:
 			return (_gCost + _hCost) > (comp._gCost + comp._hCost);
 		}
 	};
-	int _pathLength;
-	Vec2D* _path;											//An ordered array moving from goal to start
-	__int16 _height, _width;
 	Node** _grid;
 	//	std::vector<Node> _openQueue;							//A priority queue for open nodes
 	Heap<Node> _openQueue;
-	Vec2D _start, _goal;
-	Heuristic _heuristicType;
-	__int8 _hWeight;										//heuristic weight for moving a tile
-	bool isPositionValid(Vec2D pos);
 	void calculateHCost(Vec2D pos);
 	void calculateGCost(Vec2D parentPos, Vec2D currentPos);
 	bool lineOfSightBresenham(Vec2D parentPos, Vec2D currentPos);
 	bool lineOfSightRay(Vec2D parentPos, Vec2D currentPos);
 public:
 	ThetaStar();
-	ThetaStar(int width, int height, Vec2D start, Vec2D goal, Heuristic heuristic = MANHATTAN, int hWeight = 1);
-	ThetaStar(int width, int height, Heuristic heuristic = MANHATTAN, int hWeight = 1);
+	ThetaStar(int width, int height, Vec2D start, Vec2D goal, Heuristic heuristic = MANHATTAN);
+	ThetaStar(int width, int height, Heuristic heuristic = MANHATTAN);
 	virtual ~ThetaStar();
 	void setTileCost(Vec2D pos, int cost = 1);
-	void setStartPosition(Vec2D pos);
-	void setGoalPosition(Vec2D pos);
 	int getTileCost(Vec2D pos)const;
-	Vec2D* getPath() const;
-	int getPathLength() const;
-	float getHeuristicDistance(Vec2D start, Vec2D goal) const;
 	void cleanMap();
-	void init(Vec2D start, Vec2D goal);
-	bool findPath();
 	bool findPath(Metrics& metrics);
-
-	void printMap();
 };
