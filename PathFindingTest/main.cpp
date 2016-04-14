@@ -17,8 +17,8 @@ int main()
 	Vec2D startPos = {2, 8};
 	Vec2D goalPos = {11, 11};
 	Vec2D startPos2 = {1, 10};
-	//AStar pathFinding(GRID_WIDTH, GRID_HEIGHT, startPos, goalPos, AStar::OCTILE, 1);
-	ThetaStar pathFinding(GRID_WIDTH, GRID_HEIGHT, startPos, goalPos, ThetaStar::EUCLIDEAN, 1);
+	AStar pathFinding(GRID_WIDTH, GRID_HEIGHT, startPos, goalPos, AStar::OCTILE, 1);
+	//ThetaStar pathFinding(GRID_WIDTH, GRID_HEIGHT, startPos, goalPos, ThetaStar::EUCLIDEAN, 1);
 	AStar pathFinding2(GRID_WIDTH, GRID_HEIGHT, startPos2, goalPos, AStar::OCTILE, 1);
 	int pathLength = 0;
 	Vec2D* path = nullptr;
@@ -33,18 +33,18 @@ int main()
 	//sf::RectangleShape grid[GRID_WIDTH][GRID_HEIGHT];
 
 	sf::CircleShape ai(0.4f * TILE_HEIGHT);
-	ai.setPosition(sf::Vector2f(10 + startPos._x * TILE_WIDTH, 10 + startPos._y * TILE_HEIGHT));
+	ai.setPosition(sf::Vector2f(10.0f + startPos._x * (float)TILE_WIDTH, 10.0f + startPos._y * (float)TILE_HEIGHT));
 	ai.setFillColor(sf::Color::Red);
 
 	sf::CircleShape goal(0.4f * TILE_HEIGHT);
 	//goal.setOutlineThickness(2.0);
 	goal.setFillColor(sf::Color::Blue);
-	goal.setPosition(sf::Vector2f(10 + goalPos._x * TILE_WIDTH, 10 + goalPos._y * TILE_HEIGHT));
+	goal.setPosition(sf::Vector2f(10.0f + goalPos._x * (float)TILE_WIDTH, 10.0f + goalPos._y * (float)TILE_HEIGHT));
 
 
 	//2nd ai
 	sf::CircleShape ai2(0.4f * TILE_HEIGHT);
-	ai2.setPosition(sf::Vector2f(10 + startPos2._x * TILE_WIDTH, 10 + startPos2._y * TILE_HEIGHT));
+	ai2.setPosition(sf::Vector2f(10.0f + startPos2._x * (float)TILE_WIDTH, 10.0f + startPos2._y * (float)TILE_HEIGHT));
 	ai2.setFillColor(sf::Color::Green);
 
 
@@ -71,9 +71,9 @@ int main()
 
 	for (int i = 0; i < NR_OF_WALLS; i++)
 	{
-		walls[i] = sf::RectangleShape(sf::Vector2f(TILE_WIDTH, TILE_HEIGHT));
+		walls[i] = sf::RectangleShape(sf::Vector2f((float)TILE_WIDTH, (float)TILE_HEIGHT));
 		walls[i].setFillColor(sf::Color::White);
-		walls[i].setPosition(sf::Vector2f(10 + TILE_WIDTH * wallPos[i]._x, 10 + TILE_HEIGHT * wallPos[i]._y));
+		walls[i].setPosition(sf::Vector2f(10.0f + (float)TILE_WIDTH * wallPos[i]._x, 10.0f + (float)TILE_HEIGHT * wallPos[i]._y));
 		pathFinding.setTileCost(wallPos[i], -1);
 		pathFinding2.setTileCost(wallPos[i], -1);
 	}
@@ -89,27 +89,27 @@ int main()
 	openedTiles = new sf::RectangleShape[metrics.getNrOfOpenedNodes()];
 	for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
 	{
-		openedTiles[i] = sf::RectangleShape(sf::Vector2f(TILE_WIDTH, TILE_HEIGHT));
+		openedTiles[i] = sf::RectangleShape(sf::Vector2f((float)TILE_WIDTH, (float)TILE_HEIGHT));
 		openedTiles[i].setFillColor(sf::Color(0,0,200, 120));
-		openedTiles[i].setPosition(sf::Vector2f(10 + TILE_WIDTH * metrics.getOpenedNodes()[i]._x, 10 + TILE_HEIGHT * metrics.getOpenedNodes()[i]._y));
+		openedTiles[i].setPosition(sf::Vector2f(10.0f + (float)TILE_WIDTH * metrics.getOpenedNodes()[i]._x, 10.0f + (float)TILE_HEIGHT * metrics.getOpenedNodes()[i]._y));
 	}
 
 	
 	expandedTiles = new sf::RectangleShape[metrics.getNrOfExpandedNodes()];
 	for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
 	{
-		expandedTiles[i] = sf::RectangleShape(sf::Vector2f(TILE_WIDTH, TILE_HEIGHT));
+		expandedTiles[i] = sf::RectangleShape(sf::Vector2f((float)TILE_WIDTH, (float)TILE_HEIGHT));
 		expandedTiles[i].setFillColor(sf::Color(0, 200, 0, 120));
-		expandedTiles[i].setPosition(sf::Vector2f(10 + TILE_WIDTH * metrics.getExpandedNodes()[i]._x, 10 + TILE_HEIGHT * metrics.getExpandedNodes()[i]._y));
+		expandedTiles[i].setPosition(sf::Vector2f(10.0f + (float)TILE_WIDTH * metrics.getExpandedNodes()[i]._x, 10.0f + (float)TILE_HEIGHT * metrics.getExpandedNodes()[i]._y));
 	}
 
 	pathTiles = new sf::Vertex[pathLength + 1];
 	for (int i = 0; i < pathLength; i++)
 	{
-		pathTiles[i] = sf::Vertex(sf::Vector2f(10.0f + TILE_WIDTH * (path[i]._x + 0.5), 10.0f + TILE_HEIGHT * (path[i]._y + 0.5)));
+		pathTiles[i] = sf::Vertex(sf::Vector2f(10.0f + (float)TILE_WIDTH * (path[i]._x + 0.5f), 10.0f + (float)TILE_HEIGHT * (path[i]._y + 0.5f)));
 		pathTiles[i].color = sf::Color(200, 200, 0, 255);
 	}
-	pathTiles[pathLength] = sf::Vector2f(10.0f + TILE_WIDTH * (startPos._x + 0.5), 10.0f + TILE_HEIGHT * (startPos._y + 0.5));
+	pathTiles[pathLength] = sf::Vector2f(10.0f + (float)TILE_WIDTH * (startPos._x + 0.5f), 10.0f + (float)TILE_HEIGHT * (startPos._y + 0.5f));
 	//pathFinding2.findPath();
 	//int pathLength2 = pathFinding2.getPathLength();
 	//Vec2D* path2 = pathFinding2.getPath();

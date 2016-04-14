@@ -4,15 +4,17 @@ bool AStar::isPositionValid(Vec2D pos)
 {
 	return pos._x >= 0 && pos._x < _width && pos._y >= 0 && pos._y < _height;
 }
-
-//Calculates h based on the distance to the goal
+/*
+Calculates h based on the distance to the goal
+*/
 void AStar::calculateHCost(Vec2D pos)
 {
 
 	_grid[pos._x][pos._y]._hCost = getHeuristicDistance(pos, _goal) * _hWeight;
 }
-
-//calculates g by adding the preceding nodes g-cost to the current tilecost.
+/*
+Calculates g by adding the preceding nodes g-cost to the current tilecost.
+*/
 void AStar::calculateGCost(Vec2D parentPos, Vec2D currentPos)
 {
 	float g = 0.0f;

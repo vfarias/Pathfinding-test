@@ -67,7 +67,7 @@ private:
 	Vec2D* _path;											//An ordered array moving from goal to start
 	__int16 _height, _width;
 	Node** _grid;
-	//	std::vector<Node> _openQueue;							//A priority queue for open nodes
+	//std::vector<Node> _openQueue;							//A priority queue for open nodes
 	Heap<Node> _openQueue;
 	Vec2D _start, _goal;
 	Heuristic _heuristicType;

@@ -27,6 +27,9 @@
     <ClCompile Include="ThetaStar.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="IDAStar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AStar.h">
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ThetaStar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IDAStar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
