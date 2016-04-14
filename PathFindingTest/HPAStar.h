@@ -1,5 +1,4 @@
 #pragma once
-#include "Pathfinding.h"
 #include "AStar.h"
 
 class HPAStar : public Pathfinding
@@ -42,5 +41,6 @@ private:
 		int _nrOfInternalNodes;
 	};
 
-	AStar* aStar;					//Used for the abstracted pathfinding
+	AStar* _aStar;					//Used for the abstracted pathfinding
+	int _clusterSize;
 };

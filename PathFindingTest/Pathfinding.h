@@ -5,6 +5,7 @@
 #include "Heap.h"
 #include "AIUtil.h"
 #include "Metrics.h"
+#include "Nodes.h"
 /*
 Base class to the pathfinding algorithms
 */

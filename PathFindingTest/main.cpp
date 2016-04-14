@@ -58,7 +58,7 @@ int main()
 			//grid[i][j].setFillColor(sf::Color::White);
 			//grid[i][j].setOutlineThickness(2.0);
 			//grid[i][j].setOutlineColor(sf::Color::Black);
-			pathFinding.setTileCost({i, j}, 1);
+			pathFinding.setTraversable({i, j}, true);
 		//	pathFinding2.setTileCost({i, j}, 1);
 		}
 	}
@@ -74,8 +74,8 @@ int main()
 		walls[i] = sf::RectangleShape(sf::Vector2f(TILE_WIDTH, TILE_HEIGHT));
 		walls[i].setFillColor(sf::Color::White);
 		walls[i].setPosition(sf::Vector2f(10 + TILE_WIDTH * wallPos[i]._x, 10 + TILE_HEIGHT * wallPos[i]._y));
-		pathFinding.setTileCost(wallPos[i], -1);
-		pathFinding2.setTileCost(wallPos[i], -1);
+		pathFinding.setTraversable(wallPos[i], false);
+		pathFinding2.setTraversable(wallPos[i], false);
 	}
 
 	sf::RectangleShape* openedTiles = nullptr;

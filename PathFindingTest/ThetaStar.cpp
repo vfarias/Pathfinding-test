@@ -1,18 +1,12 @@
 #include "ThetaStar.h"
 
-//Calculates h based on the distance to the goal
-void ThetaStar::calculateHCost(Vec2D pos)
-{
-	_grid[pos._x][pos._y]._hCost = getHeuristicDistance(pos, _goal);
-}
-
 //calculates g by adding the preceding nodes g-cost to the current tilecost.
 void ThetaStar::calculateGCost(Vec2D parentPos, Vec2D currentPos)
 {
 	float g = _grid[parentPos._x][parentPos._y]._gCost + (float)sqrt(pow(parentPos._x - currentPos._x, 2) + pow(parentPos._y - currentPos._y, 2));
 
 	// tileCost <= 0 means unwalkable. open == 0 means no previous gCost, meaning g is automatically better.
-	if (_grid[currentPos._x][currentPos._y]._tileCost > 0 && (_grid[currentPos._x][currentPos._y]._open == 0 || _grid[currentPos._x][currentPos._y]._gCost > g))
+	if (_grid[currentPos._x][currentPos._y]._traversable && (_grid[currentPos._x][currentPos._y]._open == 0 || _grid[currentPos._x][currentPos._y]._gCost > g))
 	{
 		_grid[currentPos._x][currentPos._y]._open = 1;
 		_grid[currentPos._x][currentPos._y]._gCost = g;
@@ -49,18 +43,18 @@ bool ThetaStar::lineOfSightBresenham(Vec2D parentPos, Vec2D currentPos)
 			f += dY;
 			if (f >= dX)
 			{
-				if (_grid[x0 + ((sX - 1) / 2)][y0 + ((sY - 1) / 2)]._tileCost <= 0)			//Found a wall
+				if (!_grid[x0 + ((sX - 1) / 2)][y0 + ((sY - 1) / 2)]._traversable)			//Found a wall
 				{
 					return false;
 				}
 				y0 += sY;
 				f -= dX;
 			}
-			if (f != 0 && _grid[x0 + ((sX - 1) / 2)][y0 + ((sY - 1) / 2)]._tileCost <= 0)
+			if (f != 0 && !_grid[x0 + ((sX - 1) / 2)][y0 + ((sY - 1) / 2)]._traversable)
 			{
 				return false;
 			}
-			if (dY == 0 && _grid[x0 + ((sX - 1) / 2)][y0]._tileCost <= 0 && _grid[x0 + ((sX - 1) / 2)][y0 - 1]._tileCost <= 0)
+			if (dY == 0 && !_grid[x0 + ((sX - 1) / 2)][y0]._traversable && !_grid[x0 + ((sX - 1) / 2)][y0 - 1]._traversable <= 0)
 			{
 				return false;
 			}
@@ -73,18 +67,18 @@ bool ThetaStar::lineOfSightBresenham(Vec2D parentPos, Vec2D currentPos)
 			f += dX;
 			if (f >= dY)
 			{
-				if (_grid[x0 + ((sX - 1) / 2)][y0 + ((sY - 1) / 2)]._tileCost <= 0)			//Found a wall
+				if (!_grid[x0 + ((sX - 1) / 2)][y0 + ((sY - 1) / 2)]._traversable)			//Found a wall
 				{
 					return false;
 				}
 				x0 += sX;
 				f -= dY;
 			}
-			if (f != 0 && _grid[x0 + ((sX - 1) / 2)][y0 + ((sY - 1) / 2)]._tileCost <= 0)
+			if (f != 0 && !_grid[x0 + ((sX - 1) / 2)][y0 + ((sY - 1) / 2)]._traversable)
 			{
 				return false;
 			}
-			if (dX == 0 && _grid[x0][y0]._tileCost <= 0 && _grid[x0 - 1][y0 - 1]._tileCost <= 0)
+			if (dX == 0 && !_grid[x0][y0]._traversable && !_grid[x0 - 1][y0 - 1]._traversable)
 			{
 				return false;
 			}
@@ -141,7 +135,7 @@ bool ThetaStar::lineOfSightRay(Vec2D parentPos, Vec2D currentPos)
 			{
 				negCross++;
 			}
-			if (_grid[i][j]._tileCost < 0 && negCross > 0 && negCross < 4)
+			if (!_grid[i][j]._traversable && negCross > 0 && negCross < 4)
 			{
 				return false;
 			}
@@ -159,7 +153,7 @@ ThetaStar::ThetaStar()
 	_start = {0,0};
 	_goal = {0,0};
 	_heuristicType = MANHATTAN;
-	_openQueue = Heap<Node>();
+	_openQueue = Heap<AStarNode>();
 	_grid = nullptr;
 }
 
@@ -175,14 +169,14 @@ ThetaStar::ThetaStar(int width, int height, Vec2D start, Vec2D goal, Heuristic h
 	_start = start;
 	_goal = goal;
 	_heuristicType = heuristic;
-	_openQueue = Heap<Node>();
-	_grid = new Node*[_width];
+	_openQueue = Heap<AStarNode>();
+	_grid = new AStarNode*[_width];
 	for (__int16 i = 0; i < _width; i++)
 	{
-		_grid[i] = new Node[_height];
+		_grid[i] = new AStarNode[_height];
 		for (__int16 j = 0; j < _height; j++)
 		{
-			_grid[i][j] = Node(i, j);
+			_grid[i][j] = AStarNode(i, j);
 			_grid[i][j]._open = 0;
 			//calculateHCost({i,j});
 		}
@@ -202,14 +196,14 @@ ThetaStar::ThetaStar(int width, int height, Heuristic heuristic)
 	_start = {0,0};
 	_goal = {0,0};
 	_heuristicType = heuristic;
-	_openQueue = Heap<Node>();
-	_grid = new Node*[_width];
+	_openQueue = Heap<AStarNode>();
+	_grid = new AStarNode*[_width];
 	for (__int16 i = 0; i < _width; i++)
 	{
-		_grid[i] = new Node[_height];
+		_grid[i] = new AStarNode[_height];
 		for (__int16 j = 0; j < _height; j++)
 		{
-			_grid[i][j] = Node(i, j);
+			_grid[i][j] = AStarNode(i, j);
 			_grid[i][j]._open = 0;
 			//calculateHCost({i,j});
 		}
@@ -217,43 +211,7 @@ ThetaStar::ThetaStar(int width, int height, Heuristic heuristic)
 }
 
 ThetaStar::~ThetaStar()
-{
-	for (__int16 i = 0; i < _width; i++)
-	{
-		delete[] _grid[i];
-	}
-	delete[] _grid;
-	delete[] _path;
-}
-
-void ThetaStar::setTileCost(Vec2D pos, int cost)
-{
-	_grid[pos._x][pos._y]._tileCost = cost;
-}
-
-int ThetaStar::getTileCost(Vec2D pos) const
-{
-	return _grid[pos._x][pos._y]._tileCost;
-}
-
-void ThetaStar::cleanMap()
-{
-	delete[] _path;
-	_path = nullptr;
-	_nrOfPathNodes = 0;
-	for (__int16 i = 0; i < _width; i++)
-	{
-		for (__int16 j = 0; j < _height; j++)
-		{
-			_grid[i][j]._open = 0;
-			_grid[i][j]._gCost = 0;
-			_grid[i][j]._hCost = 0;
-			_grid[i][j]._parent = nullptr;
-		}
-	}
-	_openQueue.empty();
-	_openQueue = Heap<Node>();
-}
+{}
 
 bool ThetaStar::findPath(Metrics& metrics)
 {
@@ -271,8 +229,8 @@ bool ThetaStar::findPath(Metrics& metrics)
 		for (int i = 0; i < 8 && (_heuristicType != MANHATTAN || i < 4); i++)		//Manhattan skips diagonals 
 		{
 			Vec2D checkedPos = currentPos + NEIGHBOUR_OFFSETS[i];
-			if (isPositionValid(checkedPos) && _grid[checkedPos._x][checkedPos._y]._open != 2 && _grid[checkedPos._x][checkedPos._y]._tileCost > 0 &&	 //checks for borders and already visited
-				_grid[checkedPos._x][currentPos._y]._tileCost > 0 && _grid[currentPos._x][checkedPos._y]._tileCost > 0)								//checks for corners
+			if (isPositionValid(checkedPos) && _grid[checkedPos._x][checkedPos._y]._open != 2 && _grid[checkedPos._x][checkedPos._y]._traversable &&	 //checks for borders and already visited
+				(_grid[checkedPos._x][currentPos._y]._traversable || _grid[currentPos._x][checkedPos._y]._traversable))								//checks for corners
 			{
 				bool openedBefore = true;
 				if (_grid[checkedPos._x][checkedPos._y]._open == 0)			//check that node is not already in open list
