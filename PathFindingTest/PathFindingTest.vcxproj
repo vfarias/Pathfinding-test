@@ -171,6 +171,7 @@
     <ClInclude Include="IDAStar.h" />
     <ClInclude Include="HPAStar.h" />
     <ClInclude Include="Metrics.h" />
+    <ClInclude Include="Nodes.h" />
     <ClInclude Include="Pathfinding.h" />
     <ClInclude Include="ThetaStar.h" />
   </ItemGroup>

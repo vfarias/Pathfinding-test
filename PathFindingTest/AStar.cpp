@@ -18,17 +18,17 @@ void AStar::calculateGCost(Vec2D parentPos, Vec2D currentPos)
 	{
 	case AStar::MANHATTAN:
 	case AStar::CHEBYSHEV:
-		g = _grid[parentPos._x][parentPos._y]._gCost + _grid[currentPos._x][currentPos._y]._tileCost;
+		g = _grid[parentPos._x][parentPos._y]._gCost + 1;
 		break;
 	case AStar::OCTILE:
 	case AStar::EUCLIDEAN:
 		if (parentPos._x == currentPos._x || parentPos._y == currentPos._y)
 		{
-			g = _grid[parentPos._x][parentPos._y]._gCost + _grid[currentPos._x][currentPos._y]._tileCost;
+			g = _grid[parentPos._x][parentPos._y]._gCost + 1;
 		}
 		else
 		{
-			g = _grid[parentPos._x][parentPos._y]._gCost + SQRT2 * _grid[currentPos._x][currentPos._y]._tileCost;
+			g = _grid[parentPos._x][parentPos._y]._gCost + SQRT2;
 		}
 		break;
 	default:
@@ -36,7 +36,7 @@ void AStar::calculateGCost(Vec2D parentPos, Vec2D currentPos)
 	}
 
 	// tileCost <= 0 means unwalkable. open == 0 means no previous gCost, meaning g is automatically better.
-	if (_grid[currentPos._x][currentPos._y]._tileCost > 0 && (_grid[currentPos._x][currentPos._y]._open == 0 || _grid[currentPos._x][currentPos._y]._gCost > g))
+	if (_grid[currentPos._x][currentPos._y]._traversable && (_grid[currentPos._x][currentPos._y]._open == 0 || _grid[currentPos._x][currentPos._y]._gCost > g))
 	{
 		_grid[currentPos._x][currentPos._y]._open = 1;
 		_grid[currentPos._x][currentPos._y]._gCost = g;
@@ -54,7 +54,7 @@ AStar::AStar()
 	_start = {0,0};
 	_goal = {0,0};
 	_heuristicType = MANHATTAN;
-	_openQueue = Heap<Node>();
+	_openQueue = Heap<AStarNode>();
 	_grid = nullptr;
 }
 
@@ -70,14 +70,14 @@ AStar::AStar(int width, int height, Vec2D start, Vec2D goal, Heuristic heuristic
 	_start = start;
 	_goal = goal;
 	_heuristicType = heuristic;
-	_openQueue = Heap<Node>();
-	_grid = new Node*[_width];
+	_openQueue = Heap<AStarNode>();
+	_grid = new AStarNode*[_width];
 	for (__int16 i = 0; i < _width; i++)
 	{
-		_grid[i] = new Node[_height];
+		_grid[i] = new AStarNode[_height];
 		for (__int16 j = 0; j < _height; j++)
 		{
-			_grid[i][j] = Node(i, j);
+			_grid[i][j] = AStarNode(i, j);
 			_grid[i][j]._open = 0;
 			//calculateHCost({i,j});
 		}
@@ -97,14 +97,14 @@ AStar::AStar(int width, int height, Heuristic heuristic)
 	_start = {0,0};
 	_goal = {0,0};
 	_heuristicType = heuristic;
-	_openQueue = Heap<Node>();
-	_grid = new Node*[_width];
+	_openQueue = Heap<AStarNode>();
+	_grid = new AStarNode*[_width];
 	for (__int16 i = 0; i < _width; i++)
 	{
-		_grid[i] = new Node[_height];
+		_grid[i] = new AStarNode[_height];
 		for (__int16 j = 0; j < _height; j++)
 		{
-			_grid[i][j] = Node(i, j);
+			_grid[i][j] = AStarNode(i, j);
 			_grid[i][j]._open = 0;
 			//calculateHCost({i,j});
 		}
@@ -121,14 +121,14 @@ AStar::~AStar()
 	delete[] _path;
 }
 
-void AStar::setTileCost(Vec2D pos, int cost)
+void AStar::setTraversable(Vec2D pos, bool isTraversable)
 {
-	_grid[pos._x][pos._y]._tileCost = cost;
+	_grid[pos._x][pos._y]._traversable = isTraversable;
 }
 
-int AStar::getTileCost(Vec2D pos) const
+bool AStar::isTraversable(Vec2D pos) const
 {
-	return _grid[pos._x][pos._y]._tileCost;
+	return _grid[pos._x][pos._y]._traversable;
 }
 
 void AStar::cleanMap()
@@ -147,7 +147,7 @@ void AStar::cleanMap()
 		}
 	}
 	_openQueue.empty();
-	_openQueue = Heap<Node>();
+	_openQueue = Heap<AStarNode>();
 }
 
 bool AStar::findPath(Metrics& metrics)
@@ -166,8 +166,8 @@ bool AStar::findPath(Metrics& metrics)
 		for (int i = 0; i < 8 && (_heuristicType != MANHATTAN || i < 4); i++)		//Manhattan skips diagonals 
 		{
 			Vec2D checkedPos = currentPos + NEIGHBOUR_OFFSETS[i];
-			if (isPositionValid(checkedPos) && _grid[checkedPos._x][checkedPos._y]._open != 2 && _grid[checkedPos._x][checkedPos._y]._tileCost > 0 &&	 //checks for borders and already visited
-				_grid[checkedPos._x][currentPos._y]._tileCost > 0 && _grid[currentPos._x][checkedPos._y]._tileCost > 0)								//checks for corners
+			if (isPositionValid(checkedPos) && _grid[checkedPos._x][checkedPos._y]._open != 2 && _grid[checkedPos._x][checkedPos._y]._traversable &&	 //checks for borders and already visited
+				_grid[checkedPos._x][currentPos._y]._traversable && _grid[currentPos._x][checkedPos._y]._traversable)								//checks for corners
 			{
 				bool openedBefore = true;
 				if (_grid[checkedPos._x][checkedPos._y]._open == 0)			//check that node is not already in open list
