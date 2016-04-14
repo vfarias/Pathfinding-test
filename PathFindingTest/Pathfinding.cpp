@@ -48,16 +48,17 @@ Pathfinding::Pathfinding(int width, int height, Heuristic heuristic)
 Pathfinding::~Pathfinding()
 {
 	delete[] _path;
+	_path = nullptr;
 }
 
-void Pathfinding::setStartPosition(Vec2D pos)
+void Pathfinding::setStartPosition(Vec2D start)
 {
-	_start = pos;
+	_start = start;
 }
 
-void Pathfinding::setGoalPosition(Vec2D pos)
+void Pathfinding::setGoalPosition(Vec2D goal)
 {
-	_goal = pos;
+	_goal = goal;
 }
 
 Vec2D * Pathfinding::getPath() const

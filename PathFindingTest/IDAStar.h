@@ -2,28 +2,25 @@
 
 #pragma once
 
-#include "AIUtil.h"
+#include "Pathfinding.h"
 
 using namespace std;
 
-class IDAStar
+class IDAStar : public Pathfinding
 {
 private:
-
+	
 	float _g;
 	float _f;
 
-	int _width;
-	int _height;
-	Vec2D _startPos;
-	Vec2D _goalPos;
-
 	bool isAtGoal(/*Node start*/);
-	bool isPositionValid(Vec2D pos);
+	void calculateHCost(Vec2D pos);
+	void calculateGCost(Vec2D parentPos, Vec2D currentPos);
 public:
 	IDAStar();
-	IDAStar(int width, int height, Vec2D startPos, Vec2D goalPos /*Heuristic, hWeight*/);
+	IDAStar(int width, int height, Heuristic heuristic = MANHATTAN);
+	IDAStar(int width, int height, Vec2D startPos, Vec2D goalPos, Heuristic heuristic = MANHATTAN);
 	~IDAStar();
 
-	Vec2D search(/*Node, g, threshold*/);
+	Vec2D evaluateNode(/*Node, g, threshold*/);
 };
