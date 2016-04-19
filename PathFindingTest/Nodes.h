@@ -38,3 +38,37 @@ struct AStarNode : public BaseNode
 		return (_gCost + _hCost) > (comp._gCost + comp._hCost);
 	}
 };
+
+//TODO: AStarNode might be general enough to serve as the base node.
+//Reevaluate once the needs for HPA* is more locked down
+struct HPANode : public BaseNode
+{
+	__int8 _open;
+	float _gCost, _hCost;					//distance from start and heuristic to goal, respectively
+	HPANode* _parent;							//the path back to the start node 
+	HPANode* _edge;							//The correspending node across the cluster border
+	HPANode()
+	{
+		_position = {0, 0};
+		_parent = nullptr;
+		_edge = nullptr;
+		_open = 0;
+	}
+	HPANode(__int16 x, __int16 y, float h = -1.0f)
+	{
+		_position = {x, y};
+		_parent = nullptr;
+		_edge = nullptr;
+		_open = 0;
+	}
+	~HPANode()
+	{}
+	bool operator<(const HPANode& comp)
+	{
+		return (_gCost + _hCost) < (comp._gCost + comp._hCost);
+	}
+	bool operator>(const HPANode& comp)
+	{
+		return (_gCost + _hCost) > (comp._gCost + comp._hCost);
+	}
+};

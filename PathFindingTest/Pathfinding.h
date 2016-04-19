@@ -29,6 +29,7 @@ protected:
 	__int16 _width, _height;								//Size of the grid
 	Vec2D _start, _goal;
 	Heuristic _heuristicType;
+	Metrics _metrics;										//TODO: Use instead of parameters for already implemented algorithms.
 
 	bool isPositionValid(Vec2D pos);						//Checks if position is within the grid
 	virtual void calculateHCost(Vec2D pos) = 0;							//Sets the approximate distance to the goal node according to the chosen heuristic
@@ -40,6 +41,7 @@ public:
 	virtual ~Pathfinding();
 	void setStartPosition(Vec2D start);
 	void setGoalPosition(Vec2D goal);
+	virtual void setTraversable(Vec2D pos, bool isTraversable = true) = 0;
 	Vec2D* getPath() const;
 	int getNrOfPathNodes() const;
 	float getHeuristicDistance(Vec2D start, Vec2D goal) const;

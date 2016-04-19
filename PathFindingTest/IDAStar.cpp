@@ -68,5 +68,5 @@ Vec2D IDAStar::evaluateNode()
 }
 bool findPath(Metrics& metrics)
 {
-
+	return false;
 }

@@ -158,6 +158,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AStar.cpp" />
+    <ClCompile Include="HPAStar.cpp" />
     <ClCompile Include="IDAStar.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Metrics.cpp" />
