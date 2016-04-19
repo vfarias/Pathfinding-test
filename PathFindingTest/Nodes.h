@@ -10,7 +10,7 @@ struct AStarNode : public BaseNode
 {
 	__int8 _open;										//0 = not checked, 1 = open, 2 = closed
 	float _gCost, _hCost;								//distance from start and heuristic to goal, respectively
-	AStarNode* _parent;										//the path back to the start node 
+	AStarNode* _parent;									//the path back to the start node 
 	AStarNode()
 	{
 		_position = {0, 0};
