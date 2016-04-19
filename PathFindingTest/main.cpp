@@ -27,7 +27,7 @@ int main()
 	MapReader mr;
 	//mr.ReadMap("Maps/random512-40-3.txt");
 	mr.GenerateRandomMap(35, 60, 0.70f);
-	mr.ReadMap("Maps/Randomized30x60-70-0.txt");
+	mr.ReadMap("Maps/Randomized35x60-70-0.txt");
 
 
 	/**************************/

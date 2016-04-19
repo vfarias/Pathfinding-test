@@ -132,19 +132,6 @@ void MapReader::ReadMap(string fileName)
 			counter++;
 		}
 	}
-
-
-	/**********************************/
-	for (int i = 0; i < _width; i++)
-	{
-		for (int j = 0; j < _height; j++)
-		{
-			cout << _map[i*_height + j];
-		}
-		cout << endl;
-	}
-	/**********************************/
-
 }
 void MapReader::GenerateRandomMap(int width, int height, float densityOfObstacles)
 {
@@ -157,11 +144,11 @@ void MapReader::GenerateRandomMap(int width, int height, float densityOfObstacle
 	_map = new string[_width * _height];
 
 	//Initiate the array with walkable tiles
-	for (int i = 0; i < _width; i++)
+	for (int i = 0; i < _height; i++)
 	{
-		for (int j = 0; j < _height; j++)
+		for (int j = 0; j < _width; j++)
 		{
-			_map[i * _height + j] = ".";  //All the tiles are initialized as walkable tiles
+			_map[i * _width + j] = ".";  //All the tiles are initialized as walkable tiles
 		}
 	}
 
@@ -204,11 +191,11 @@ void MapReader::SaveMapToFile(string fileName)
 	saveFile << "width " << _width << "\n";
 	saveFile << "height " << _height << "\n";
 
-	for (int i = 0; i < _width; i++)
+	for (int i = 0; i < _height; i++)
 	{
-		for (int j = 0; j < _height; j++)
+		for (int j = 0; j < _width; j++)
 		{
-			saveFile << _map[i * _height + j];
+			saveFile << _map[i * _width + j];
 		}
 
 		saveFile << "\n";
