@@ -2,6 +2,7 @@
 #include "AStar.h"
 #include "ThetaStar.h"
 #include "Metrics.h"
+#include "MapReader.h"
 
 int main()
 {
@@ -17,11 +18,19 @@ int main()
 	Vec2D startPos = {2, 8};
 	Vec2D goalPos = {11, 11};
 	Vec2D startPos2 = {1, 10};
-	//AStar pathFinding(GRID_WIDTH, GRID_HEIGHT, startPos, goalPos, AStar::OCTILE, 1);
 	ThetaStar pathFinding(GRID_WIDTH, GRID_HEIGHT, startPos, goalPos, ThetaStar::EUCLIDEAN);
 	AStar pathFinding2(GRID_WIDTH, GRID_HEIGHT, startPos2, goalPos, AStar::OCTILE);
 	int pathLength = 0;
 	Vec2D* path = nullptr;
+
+	/**************************/
+	MapReader mr;
+	//mr.ReadMap("Maps/random512-40-3.txt");
+	mr.GenerateRandomMap(35, 60, 0.70f);
+	mr.ReadMap("Maps/Randomized30x60-70-0.txt");
+
+
+	/**************************/
 
 	Metrics metrics = Metrics();
 	

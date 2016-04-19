@@ -9,7 +9,7 @@ using namespace std;
 class IDAStar : public Pathfinding
 {
 private:
-	
+	BaseNode node;
 	float _g;
 	float _f;
 
