@@ -87,7 +87,7 @@ int MapReader::GetHeight() const
 	return _height;
 }
 
-void MapReader::ReadMap(string fileName)
+string* MapReader::ReadMap(string fileName)
 {
 	stringstream ssWidth;
 	stringstream ssHeight;
@@ -131,7 +131,11 @@ void MapReader::ReadMap(string fileName)
 			}
 			counter++;
 		}
+
+		return _map;
 	}
+
+	return nullptr;
 }
 void MapReader::GenerateRandomMap(int width, int height, float densityOfObstacles)
 {

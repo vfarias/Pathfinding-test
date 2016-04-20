@@ -24,10 +24,45 @@ int main()
 	Vec2D* path = nullptr;
 
 	/**************************/
-	MapReader mr;
-	//mr.ReadMap("Maps/random512-40-3.txt");
-	mr.GenerateRandomMap(35, 60, 0.70f);
-	mr.ReadMap("Maps/Randomized35x60-70-0.txt");
+	MapReader mr = MapReader();
+	const int WIDTH = 20;
+	const int HEIGHT = 10;
+	const float OBSTACLE_DENSITY = 0.10f;
+	mr.GenerateRandomMap(WIDTH, HEIGHT, OBSTACLE_DENSITY);
+
+	int nrOfWalls = (int)(WIDTH*HEIGHT*OBSTACLE_DENSITY);
+	string* map = new string[nrOfWalls];
+	map = mr.ReadMap("Maps/Randomized20x10-10-0.txt");
+	Vec2D* WallPos = new Vec2D[nrOfWalls];
+	int counter = 0;
+
+	for (int i = 0; i < HEIGHT; i++)
+	{
+		for (int j = 0; j < WIDTH; j++)
+		{
+			cout << map[i*WIDTH + j];
+		}
+		cout << endl;
+	}
+
+	for (int i = 0; i < WIDTH*HEIGHT; i++)
+	{
+		if (map[i] == "@")
+		{
+			WallPos[counter++] = { (i % WIDTH), (i / WIDTH)};
+		}
+	}
+
+	//counter = 0;
+	//
+	//for (int i = 0; i < nrOfWalls; i++)
+	//{
+	//	cout << "Wall " << counter + 1 << ": (x: " << WallPos[counter]._x << ", y: " << WallPos[counter]._y << ")\n";
+	//	counter++;
+	//}
+
+
+
 
 
 	/**************************/
@@ -228,5 +263,7 @@ int main()
 	delete[] expandedTiles;
 	delete[] openedTiles;
 	delete[] pathTiles;
+	delete[] map;
+	delete[] WallPos;
 	return 0;
 }

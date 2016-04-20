@@ -39,7 +39,7 @@ public:
 	int GetWidth() const;
 	int GetHeight() const;
 
-	void ReadMap(string fileName);
+	string* ReadMap(string fileName);
 	void GenerateRandomMap(int width, int height, float densityOfObstacles);
 	void SaveMapToFile(string fileName);
 };
