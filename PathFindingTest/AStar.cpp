@@ -118,7 +118,6 @@ AStar::~AStar()
 		delete[] _grid[i];
 	}
 	delete[] _grid;
-	delete[] _path;
 }
 
 void AStar::setTraversable(Vec2D pos, bool isTraversable)

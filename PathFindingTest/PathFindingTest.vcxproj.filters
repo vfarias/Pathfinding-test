@@ -9,6 +9,9 @@
     <ClCompile Include="ThetaStar.cpp" />
     <ClCompile Include="HPAStar.cpp" />
     <ClCompile Include="MapReader.cpp" />
+    <ClCompile Include="..\imgui\imgui.cpp" />
+    <ClCompile Include="..\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\imgui\imgui_draw.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AIUtil.h" />
@@ -21,5 +24,7 @@
     <ClInclude Include="Pathfinding.h" />
     <ClInclude Include="ThetaStar.h" />
     <ClInclude Include="MapReader.h" />
+    <ClInclude Include="imguiSFML\imgui-rendering-SFML.h" />
+    <ClInclude Include="imguiSFML\imgui-events-SFML.h" />
   </ItemGroup>
 </Project>

@@ -11,7 +11,7 @@ private:
 	Vec2D* _expandedNodes;					// The nodes which have added all their children to the pathfinding graph
 	//TODO: Add path / path length
 
-	void _expandNodeCap( Vec2D* arr, int& currentCap);
+	Vec2D* _expandNodeCap( Vec2D* arr, int& currentCap);
 public:
 	Metrics();
 	~Metrics();

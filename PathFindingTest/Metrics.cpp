@@ -1,16 +1,18 @@
 #include "Metrics.h"
-void Metrics::_expandNodeCap(Vec2D * arr, int & currentCap)
+Vec2D* Metrics::_expandNodeCap(Vec2D* arr, int & currentCap)
 {
 	int tempCap = currentCap * 2;
 	Vec2D* temp = new Vec2D[tempCap];
-	int i = 0;
-	for (i; i < currentCap; i++)
+
+	for (int i = 0; i < currentCap; i++)
 	{
 		temp[i] = Vec2D(arr[i]._x, arr[i]._y);
 	}
+	int f = 0;
 	delete[] arr;
 	arr = temp;
 	currentCap = tempCap;
+	return arr;
 }
 
 Metrics::Metrics()
@@ -55,7 +57,7 @@ void Metrics::addOpenedNode(const Vec2D node)
 {
 	if (_nrOfOpenedNodes >= _openedNodesCapacity)
 	{
-		_expandNodeCap(_openedNodes, _openedNodesCapacity);
+		_openedNodes = _expandNodeCap(_openedNodes, _openedNodesCapacity);
 	}
 	_openedNodes[_nrOfOpenedNodes++] = node;
 }
@@ -64,7 +66,7 @@ void Metrics::addExpandedNode(const Vec2D node)
 {
 	if (_nrOfExpandedNodes >= _expandedNodesCapacity)
 	{
-		_expandNodeCap(_expandedNodes, _expandedNodesCapacity);
+		_expandedNodes = _expandNodeCap(_expandedNodes, _expandedNodesCapacity);
 	}
 	_expandedNodes[_nrOfExpandedNodes++] = node;
 }
