@@ -45,14 +45,16 @@ private:
 	int _clusterSize;				//Nr of tiles across in a cluster
 	int _nrOfClusters;				//Total amount of clusters on the grid
 	Cluster** _clusters;
-
+	Heap<HPANode*> _openQueue;
 
 	void setClusters();
-	void findCluster(Vec2D position, Cluster* cluster);		
+	Cluster* findCluster(Vec2D position);		
 	void findEdges(Vec2D pos, const Vec2D dir, Cluster* cluster1, Cluster* cluster2);				//dir = along the edge from pos. symm(t) = t + {dir.y, dir.x}
 	void setEdgePair(HPANode* node1, HPANode* node2, Cluster* cluster1, Cluster* cluster2);
 	void findInternalPaths(Cluster* cluster);
-	void attachNodeToGraph(HPANode* node);				//Used to fix start and goal nodes to the high level graph
+	int* attachNodeToGraph(HPANode* node);				//Used to fix start and goal nodes to the high level graph
+	void calculateGCost(HPANode* parentNode, HPANode* childNode, int distance);
+	void calculateHCost(HPANode* node);
 public:
 	HPAStar();
 	HPAStar(int width, int height, int clusterSize, Heuristic heuristic = MANHATTAN);

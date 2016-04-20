@@ -47,12 +47,14 @@ struct HPANode : public BaseNode
 	float _gCost, _hCost;					//distance from start and heuristic to goal, respectively
 	HPANode* _parent;							//the path back to the start node 
 	HPANode* _edge;							//The correspending node across the cluster border
+	int _clusterIndex;						//which index the node has in Cluster::_internalNodes
 	HPANode()
 	{
 		_position = {0, 0};
 		_parent = nullptr;
 		_edge = nullptr;
 		_open = 0;
+		_clusterIndex = 0;
 	}
 	HPANode(__int16 x, __int16 y, float h = -1.0f)
 	{
@@ -60,6 +62,7 @@ struct HPANode : public BaseNode
 		_parent = nullptr;
 		_edge = nullptr;
 		_open = 0;
+		_clusterIndex = 0;
 	}
 	~HPANode()
 	{}
