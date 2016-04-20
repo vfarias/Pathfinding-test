@@ -2,30 +2,82 @@
 #include "AStar.h"
 #include "ThetaStar.h"
 #include "Metrics.h"
+#include "MapReader.h"
 
 int main()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	int timer = 0;
 	//Visual size of tiles
-	const int TILE_WIDTH = 18;
-	const int TILE_HEIGHT = 18;
-	//Nr of tiles
-	const int GRID_WIDTH = 12;			
-	const int GRID_HEIGHT = 12;
-	const int NR_OF_WALLS = 32;
-	Vec2D startPos = {2, 8};
-	Vec2D goalPos = {11, 11};
+	const int TILE_WIDTH = 10;
+	const int TILE_HEIGHT = 10;
+	Vec2D startPos = {29, 1};
+	Vec2D goalPos = {36, 66};
 	Vec2D startPos2 = {1, 10};
-	//AStar pathFinding(GRID_WIDTH, GRID_HEIGHT, startPos, goalPos, AStar::OCTILE, 1);
-	ThetaStar pathFinding(GRID_WIDTH, GRID_HEIGHT, startPos, goalPos, ThetaStar::EUCLIDEAN);
-	AStar pathFinding2(GRID_WIDTH, GRID_HEIGHT, startPos2, goalPos, AStar::OCTILE);
 	int pathLength = 0;
 	Vec2D* path = nullptr;
 
+	/**************************/
+	MapReader mr = MapReader();
+	const int WIDTH = 82;
+	const int HEIGHT = 77;
+	const float OBSTACLE_DENSITY = 1.00f;
+	//mr.GenerateRandomMap(WIDTH, HEIGHT, OBSTACLE_DENSITY);
+
+	const int nrOfWalls = (int)(WIDTH * HEIGHT * OBSTACLE_DENSITY);
+	string* map = nullptr;
+	//map = mr.ReadMap("Maps/Randomized20x20-30-0.txt");
+	map = mr.ReadMap("Maps/AR0015SR.txt");
+	Vec2D* WallPos = new Vec2D[nrOfWalls];
+	int counter = 0;
+	int test = sizeof(sf::RectangleShape);
+
+	ThetaStar pathFinding(WIDTH, HEIGHT, startPos, goalPos, ThetaStar::EUCLIDEAN);
+	AStar pathFinding2(WIDTH, HEIGHT, startPos2, goalPos, AStar::OCTILE);
+
+	/*for (int i = 0; i < HEIGHT; i++)
+	{
+		for (int j = 0; j < WIDTH; j++)
+		{
+			cout << map[i*WIDTH + j];
+		}
+		cout << endl;
+	}*/
+
+	sf::RectangleShape* walls = new sf::RectangleShape[nrOfWalls];
+
+	for (int i = 0; i < WIDTH*HEIGHT; i++)
+	{
+		pathFinding.setTraversable({ (i % WIDTH), (i / WIDTH) }, true);
+
+		if (map[i] == "@")
+		{
+			WallPos[counter++] = { (i % WIDTH), (i / WIDTH)};
+		}
+	}
+
+	//counter = 0;
+	//
+	//for (int i = 0; i < nrOfWalls; i++)
+	//{
+	//	cout << "Wall " << counter + 1 << ": (x: " << WallPos[counter]._x << ", y: " << WallPos[counter]._y << ")\n";
+	//	counter++;
+	//}
+
+	for (int i = 0; i < nrOfWalls; i++)
+	{
+		walls[i] = sf::RectangleShape(sf::Vector2f((float)TILE_WIDTH, (float)TILE_HEIGHT));
+		walls[i].setFillColor(sf::Color::White);
+		walls[i].setPosition(sf::Vector2f(10.0f + (float)TILE_WIDTH * WallPos[i]._x, 10.0f + (float)TILE_HEIGHT * WallPos[i]._y));
+		pathFinding.setTraversable(WallPos[i], false);
+		pathFinding2.setTraversable(WallPos[i], false);
+	}
+
+	/**************************/
+
 	Metrics metrics = Metrics();
 	
-	sf::RenderWindow window(sf::VideoMode(600, 500), "AI test");
+	sf::RenderWindow window(sf::VideoMode(1200, 1000), "AI test");
 	window.setFramerateLimit(2);
 	//sf::CircleShape shape(100.f);
 	//
@@ -40,8 +92,7 @@ int main()
 	//goal.setOutlineThickness(2.0);
 	goal.setFillColor(sf::Color::Blue);
 	goal.setPosition(sf::Vector2f(10.0f + goalPos._x * (float)TILE_WIDTH, 10.0f + goalPos._y * (float)TILE_HEIGHT));
-
-
+	
 	//2nd ai
 	sf::CircleShape ai2(0.4f * TILE_HEIGHT);
 	ai2.setPosition(sf::Vector2f(10.0f + startPos2._x * (float)TILE_WIDTH, 10.0f + startPos2._y * (float)TILE_HEIGHT));
@@ -49,9 +100,9 @@ int main()
 
 
 
-	for (int i = 0; i < GRID_WIDTH; i++)
+	/*for (int i = 0; i < WIDTH; i++)
 	{
-		for (int j = 0; j < GRID_HEIGHT; j++)
+		for (int j = 0; j < HEIGHT; j++)
 		{
 			//grid[i][j] = sf::RectangleShape(sf::Vector2f(TILE_WIDTH, TILE_HEIGHT));
 			//grid[i][j].setPosition(sf::Vector2f(10 + TILE_WIDTH * i, 10 + TILE_HEIGHT * j));
@@ -61,14 +112,14 @@ int main()
 			pathFinding.setTraversable({i, j}, true);
 		//	pathFinding2.setTileCost({i, j}, 1);
 		}
-	}
+	}*/
 	
-
+	/*
 	//walls
 	sf::RectangleShape walls[NR_OF_WALLS];
 	Vec2D wallPos[NR_OF_WALLS] = {{2, 0},{2, 1},{2, 2},{2, 3},{3, 4},{4, 4},{5, 4},{8, 4},{9, 4},{10, 4},{7, 5},{0, 6},{1, 6},{2, 6},{3, 6},{5, 6},{7, 6},{9, 6},{5, 7},{7, 7},{9, 7},
-	{4, 8},{7, 8},{9, 8},{3, 9},{7, 9},{9, 9},{2, 10},{7, 10},{9, 10},{1, 11},{9, 11}}; 
-
+	{4, 8},{7, 8},{9, 8},{3, 9},{7, 9},{9, 9},{2, 10},{7, 10},{9, 10},{1, 11},{9, 11}};
+	
 	for (int i = 0; i < NR_OF_WALLS; i++)
 	{
 		walls[i] = sf::RectangleShape(sf::Vector2f((float)TILE_WIDTH, (float)TILE_HEIGHT));
@@ -77,6 +128,7 @@ int main()
 		pathFinding.setTraversable(wallPos[i], false);
 		pathFinding2.setTraversable(wallPos[i], false);
 	}
+	*/
 
 	sf::RectangleShape* openedTiles = nullptr;
 	sf::RectangleShape* expandedTiles = nullptr;
@@ -197,7 +249,7 @@ int main()
 		
 		//window.draw(ai2);
 		window.draw(goal);
-		for (int i = 0; i < NR_OF_WALLS; i++)
+		for (int i = 0; i < nrOfWalls; i++)
 		{
 			window.draw(walls[i]);
 		}
@@ -219,5 +271,8 @@ int main()
 	delete[] expandedTiles;
 	delete[] openedTiles;
 	delete[] pathTiles;
+	delete[] map;
+	delete[] walls;
+	delete[] WallPos;
 	return 0;
 }

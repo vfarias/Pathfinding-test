@@ -8,6 +8,7 @@
     <ClCompile Include="Pathfinding.cpp" />
     <ClCompile Include="ThetaStar.cpp" />
     <ClCompile Include="HPAStar.cpp" />
+    <ClCompile Include="MapReader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AIUtil.h" />
@@ -19,5 +20,6 @@
     <ClInclude Include="Nodes.h" />
     <ClInclude Include="Pathfinding.h" />
     <ClInclude Include="ThetaStar.h" />
+    <ClInclude Include="MapReader.h" />
   </ItemGroup>
 </Project>

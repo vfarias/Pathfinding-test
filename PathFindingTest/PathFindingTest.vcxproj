@@ -161,6 +161,7 @@
     <ClCompile Include="HPAStar.cpp" />
     <ClCompile Include="IDAStar.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MapReader.cpp" />
     <ClCompile Include="Metrics.cpp" />
     <ClCompile Include="Pathfinding.cpp" />
     <ClCompile Include="ThetaStar.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="Heap.h" />
     <ClInclude Include="IDAStar.h" />
     <ClInclude Include="HPAStar.h" />
+    <ClInclude Include="MapReader.h" />
     <ClInclude Include="Metrics.h" />
     <ClInclude Include="Nodes.h" />
     <ClInclude Include="Pathfinding.h" />
