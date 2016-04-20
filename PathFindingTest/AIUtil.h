@@ -23,6 +23,10 @@ struct Vec2D
 	{
 		return _x != comp._x || _y != comp._y;
 	}
+	Vec2D operator=(const Vec2D& comp)
+	{
+		return{ _x = comp._x, _y = comp._y };
+	}
 	Vec2D operator+(const Vec2D& comp)
 	{
 		return{_x + comp._x, _y + comp._y};
