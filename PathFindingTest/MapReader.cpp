@@ -104,13 +104,10 @@ string* MapReader::ReadMap(string fileName)
 	if (file.is_open())
 	{
 		getline(file, trash);  //Ignore this line
-		file.ignore();
 		getline(file, Sheight);
-		file.ignore();
 		getline(file, Swidth);
-		file.ignore();
 		getline(file, trash);  //Ignore this line
-		file.ignore();
+
 		//Convert the strings to const char*
 		CCwidth = Swidth.c_str();
 		CCheight = Sheight.c_str();
@@ -186,7 +183,7 @@ void MapReader::GenerateRandomMap(int width, int height, float densityOfObstacle
 
 	int density = (int)(densityOfObstacles * 100.0f);  //Converting from decimal to percent
 	stringstream fileName;
-	fileName << "Maps/Randomized" << to_string(_width).c_str() << "x" << to_string(_height).c_str() << "-" << to_string(density).c_str() << "-" << to_string(0) << ".txt";
+	fileName << "Maps/Randomized" << to_string(_width).c_str() << "x" << to_string(_height).c_str() << "-" << to_string(density).c_str() << "-" << to_string(0) << ".map";
 
 	SaveMapToFile(fileName.str(), map);
 }

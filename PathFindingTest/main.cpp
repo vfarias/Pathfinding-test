@@ -29,7 +29,7 @@ int main()
 
 	string* map = nullptr;
 	//map = mr.ReadMap("Maps/Randomized20x20-30-0.txt");
-	map = mr.ReadMap("Maps/maze512-1-3.txt");
+	map = mr.ReadMap("Maps/8room_005.map");
 	int width = mr.GetWidth();
 	int height = mr.GetHeight();
 	float obstacleDensity = 1.00f;
@@ -137,14 +137,14 @@ int main()
 	for (int i = 0; i < AStar_metrics.getNrOfOpenedNodes(); i++)
 	{
 		openedTiles2[i] = sf::RectangleShape(sf::Vector2f((float)TILE_WIDTH, (float)TILE_HEIGHT));
-		openedTiles2[i].setFillColor(sf::Color(0,0,200, 120));
+		openedTiles2[i].setFillColor(sf::Color(0, 200, 200, 120));
 		openedTiles2[i].setPosition(sf::Vector2f(10.0f + (float)TILE_WIDTH * AStar_metrics.getOpenedNodes()[i]._x, 10.0f + (float)TILE_HEIGHT * AStar_metrics.getOpenedNodes()[i]._y));
 	}
 	expandedTiles2 = new sf::RectangleShape[AStar_metrics.getNrOfExpandedNodes()];
 	for (int i = 0; i < AStar_metrics.getNrOfExpandedNodes(); i++)
 	{
 		expandedTiles2[i] = sf::RectangleShape(sf::Vector2f((float)TILE_WIDTH, (float)TILE_HEIGHT));
-		expandedTiles2[i].setFillColor(sf::Color(0, 200, 0, 120));
+		expandedTiles2[i].setFillColor(sf::Color(200, 0, 0, 120));
 		expandedTiles2[i].setPosition(sf::Vector2f(10.0f + (float)TILE_WIDTH * AStar_metrics.getExpandedNodes()[i]._x, 10.0f + (float)TILE_HEIGHT * AStar_metrics.getExpandedNodes()[i]._y));
 	}
 
@@ -162,6 +162,7 @@ int main()
 	}
 	pathTiles[pathLength] = sf::Vector2f(10.0f + (float)TILE_WIDTH * (startPos._x + 0.5f), 10.0f + (float)TILE_HEIGHT * (startPos._y + 0.5f));
 	pathTiles2[pathLength2] = sf::Vector2f(10.0f + (float)TILE_WIDTH * (startPos2._x + 0.5f), 10.0f + (float)TILE_HEIGHT * (startPos2._y + 0.5f));
+	
 	while (window.isOpen())
 	{
 		ImGui::SFML::UpdateImGui();
@@ -173,25 +174,32 @@ int main()
 			if (event.type == sf::Event::Closed)
 				window.close();
 		}
-		ImGuiIO &io = ImGui::GetIO();
-		
-		ImGui::ShowTestWindow();
 
+		ImGuiIO &io = ImGui::GetIO();
+		ImGui::ShowTestWindow();
 		window.clear();
 		
 		//window.draw(ai2);
 		window.draw(goal);
-		for (int i = 0; i < nrOfWalls; i++)
-		{
-			window.draw(walls[i]);
-		}
-		for (int i = 0; i < ThetaStar_metrics.getNrOfOpenedNodes(); i++)
+		//for (int i = 0; i < nrOfWalls; i++)  //Draw all the walls
+		//{
+		//	window.draw(walls[i]);
+		//}
+		for (int i = 0; i < ThetaStar_metrics.getNrOfOpenedNodes(); i++)  //Draw Theta* opened nodes
 		{
 			window.draw(openedTiles[i]);
 		}
-		for (int i = 0; i <  ThetaStar_metrics.getNrOfExpandedNodes(); i++)
+		for (int i = 0; i < ThetaStar_metrics.getNrOfExpandedNodes(); i++)  //Draw Theta* expanded nodes
 		{
 			window.draw(expandedTiles[i]);
+		}
+		for (int i = 0; i < AStar_metrics.getNrOfOpenedNodes(); i++)  //Draw A* opened nodes
+		{
+			window.draw(openedTiles2[i]);
+		}
+		for (int i = 0; i < AStar_metrics.getNrOfExpandedNodes(); i++)  //Draw A* expanded nodes
+		{
+			window.draw(expandedTiles2[i]);
 		}
 
 		window.draw(pathTiles, pathLength + 1, sf::LinesStrip);
