@@ -22,4 +22,5 @@ public:
 	bool isTraversable(Vec2D pos)const;
 	void cleanMap();
 	bool findPath(Metrics& metrics);
+	float getPathLength();
 };

@@ -32,8 +32,8 @@ protected:
 	Metrics _metrics;										//TODO: Use instead of parameters for already implemented algorithms.
 
 	bool isPositionValid(Vec2D pos);						//Checks if position is within the grid
-	virtual void calculateHCost(Vec2D pos) = 0;							//Sets the approximate distance to the goal node according to the chosen heuristic
-	virtual void calculateGCost(Vec2D parentPos, Vec2D currentPos) = 0; //Sets cost from the start node
+	//virtual void calculateHCost(Vec2D pos) = 0;							//Sets the approximate distance to the goal node according to the chosen heuristic
+	//virtual void calculateGCost(Vec2D parentPos, Vec2D currentPos) = 0; //Sets cost from the start node
 public:
 	Pathfinding();
 	Pathfinding(int width, int height, Vec2D start, Vec2D goal, Heuristic heuristic = MANHATTAN);
@@ -45,7 +45,7 @@ public:
 	Vec2D* getPath() const;
 	int getNrOfPathNodes() const;
 	float getHeuristicDistance(Vec2D start, Vec2D goal) const;
-	void cleanMap();
-	void init(Vec2D start, Vec2D goal);
+	virtual void cleanMap();
+	virtual void init(Vec2D start, Vec2D goal);
 	virtual bool findPath(Metrics& metrics) = 0;
 };

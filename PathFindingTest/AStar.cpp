@@ -165,8 +165,8 @@ bool AStar::findPath(Metrics& metrics)
 		for (int i = 0; i < 8 && (_heuristicType != MANHATTAN || i < 4); i++)		//Manhattan skips diagonals 
 		{
 			Vec2D checkedPos = currentPos + NEIGHBOUR_OFFSETS[i];
-			if (isPositionValid(checkedPos) && _grid[checkedPos._x][checkedPos._y]._open != 2 && _grid[checkedPos._x][checkedPos._y]._traversable &&	 //checks for borders and already visited
-				_grid[checkedPos._x][currentPos._y]._traversable && _grid[currentPos._x][checkedPos._y]._traversable)								//checks for corners
+			if (isPositionValid(checkedPos) && _grid[checkedPos._x][checkedPos._y]._open != 2 && _grid[checkedPos._x][checkedPos._y]._traversable /*&&	 //checks for borders and already visited
+				_grid[checkedPos._x][currentPos._y]._traversable && _grid[currentPos._x][checkedPos._y]._traversable*/)							//checks for corners
 			{
 				bool openedBefore = true;
 				if (_grid[checkedPos._x][checkedPos._y]._open == 0)			//check that node is not already in open list
@@ -214,4 +214,9 @@ bool AStar::findPath(Metrics& metrics)
 	}
 	//	_path[c++] = currentPos;														//Excluding start position since it should already be known
 	return true;
+}
+
+float AStar::getPathLength()
+{
+	return _grid[_goal._x][_goal._y]._gCost;
 }

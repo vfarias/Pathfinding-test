@@ -9,7 +9,7 @@ private:
 	{
 		Vec2D _position;
 		HPANode** _internalNodes;		//pointers to all nodes within the cluster. All nodes are placed along the edges. cap = 2* _clusterSize
-		int** _internalPathLengths;		//table of path length between each internal node
+		float** _internalPathLengths;		//table of path length between each internal node
 		int _nrOfInternalNodes;
 		int _nodeCap;
 		Cluster()
@@ -25,10 +25,10 @@ private:
 			_nrOfInternalNodes = 0;
 			_nodeCap = maxInternalNodes;
 			_internalNodes = new HPANode*[_nodeCap];
-			_internalPathLengths = new int*[_nodeCap];
+			_internalPathLengths = new float*[_nodeCap];
 			for (int i = 0; i < _nodeCap; i++)
 			{
-				_internalPathLengths[i] = new int[_nodeCap];
+				_internalPathLengths[i] = new float[_nodeCap];
 			}
 		}
 		~Cluster()
@@ -51,8 +51,8 @@ private:
 	Cluster* findCluster(Vec2D position);		
 	void findEdges(Vec2D pos, const Vec2D dir, Cluster* cluster1, Cluster* cluster2);				//dir = along the edge from pos. symm(t) = t + {dir.y, dir.x}
 	void setEdgePair(HPANode* node1, HPANode* node2, Cluster* cluster1, Cluster* cluster2);
-	void findInternalPaths(Cluster* cluster);
-	int* attachNodeToGraph(HPANode* node);				//Used to fix start and goal nodes to the high level graph
+	void findInternalPaths(Cluster* cluster, Metrics& metrics);
+	int* attachNodeToGraph(HPANode* node, Metrics& metrics);				//Used to fix start and goal nodes to the high level graph
 	void calculateGCost(HPANode* parentNode, HPANode* childNode, int distance);
 	void calculateHCost(HPANode* node);
 public:
