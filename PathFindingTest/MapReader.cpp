@@ -11,6 +11,7 @@ MapReader::MapReader()
 {
 	_width = 1;
 	_height = 1;
+	_nrOfWalls = 0;
 }
 MapReader::MapReader(int width, int height)
 {
@@ -28,6 +29,7 @@ MapReader::MapReader(int width, int height)
 	{
 		_height = 1;
 	}
+	_nrOfWalls = 0;
 }
 MapReader::~MapReader()
 {
@@ -74,6 +76,7 @@ void MapReader::SetMapDimensions(int width, int height)
 	{
 		_height = 1;
 	}
+	_nrOfWalls = 0;
 }
 
 int MapReader::GetWidth() const
@@ -83,6 +86,10 @@ int MapReader::GetWidth() const
 int MapReader::GetHeight() const
 {
 	return _height;
+}
+int MapReader::GetNrOfWalls() const
+{
+	return _nrOfWalls;
 }
 
 string* MapReader::ReadMap(string fileName)
@@ -165,19 +172,18 @@ void MapReader::GenerateRandomMap(int width, int height, float densityOfObstacle
 		if (map[posY*_width + posX] != "@")  //The tile is walkable
 		{
 			map[posY*_width + posX] = "@";  //The tile is set as unwalkable
+			_nrOfWalls++;
 		}
 		else
 		{
-			posX = rand() % _width;
-			posY = rand() % _height;
-
-			while (map[posY*_width + posX] == "@")  //Randomize again until a walkable tile is found
+			while (map[posY*_width + posX] == "@" && _nrOfWalls<(_width*_height))  //Randomize again until a walkable tile is found or map is full
 			{
 				posX = rand() % _width;
 				posY = rand() % _height;
 			}
 
 			map[posY*_width + posX] = "@";  //The tile is set as unwalkable
+			_nrOfWalls++;
 		}
 	}
 
@@ -192,8 +198,11 @@ void MapReader::SaveMapToFile(string fileName, string* map)
 	ofstream saveFile;
 	
 	saveFile.open(fileName);
-	saveFile << "width " << _width << "\n";
+
+	saveFile << "type heuristic\n";
 	saveFile << "height " << _height << "\n";
+	saveFile << "width " << _width << "\n";
+	saveFile << "unnecessary line of text\n";
 
 	for (int i = 0; i < _height; i++)
 	{
