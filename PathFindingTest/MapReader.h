@@ -25,7 +25,6 @@ class MapReader
 private:
 	int _width;
 	int _height;
-	string* _map;
 
 public:
 	MapReader();
@@ -41,5 +40,5 @@ public:
 
 	string* ReadMap(string fileName);
 	void GenerateRandomMap(int width, int height, float densityOfObstacles);
-	void SaveMapToFile(string fileName);
+	void SaveMapToFile(string fileName, string* map);
 };

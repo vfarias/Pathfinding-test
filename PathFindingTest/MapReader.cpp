@@ -1,4 +1,9 @@
-
+//TODO: Change order the way the map file is read in.
+//Ignore the first line
+//Read the second line into height
+//Read the third line into width
+//Ignore the fourth line
+//Read the map data
 
 #include "MapReader.h"
 
@@ -6,7 +11,6 @@ MapReader::MapReader()
 {
 	_width = 1;
 	_height = 1;
-	_map = nullptr;
 }
 MapReader::MapReader(int width, int height)
 {
@@ -24,16 +28,10 @@ MapReader::MapReader(int width, int height)
 	{
 		_height = 1;
 	}
-
-	_map = new string[_width * _height];
 }
 MapReader::~MapReader()
 {
-	if (_map != nullptr)
-	{
-		delete[] _map;
-	}
-	_map = nullptr;
+
 }
 
 void MapReader::SetWidth(int width)
@@ -89,23 +87,30 @@ int MapReader::GetHeight() const
 
 string* MapReader::ReadMap(string fileName)
 {
-	stringstream ssWidth;
 	stringstream ssHeight;
+	stringstream ssWidth;
 	ifstream file;
 	string line;
+	string trash;  //Will store the values that aren't needed
 	string Swidth;
 	string Sheight;
-	const char* CCwidth;
+	string* map = nullptr;
 	const char* CCheight;
+	const char* CCwidth;
 	int counter = 0;
 
 	file.open(fileName);
 
 	if (file.is_open())
 	{
-		getline(file, Swidth);
+		getline(file, trash);  //Ignore this line
+		file.ignore();
 		getline(file, Sheight);
-
+		file.ignore();
+		getline(file, Swidth);
+		file.ignore();
+		getline(file, trash);  //Ignore this line
+		file.ignore();
 		//Convert the strings to const char*
 		CCwidth = Swidth.c_str();
 		CCheight = Sheight.c_str();
@@ -120,22 +125,20 @@ string* MapReader::ReadMap(string fileName)
 		ssHeight.seekg(7);  // 7 since 'height ' is 7 letters, note the space
 		ssHeight >> _height;
 
-		_map = new string[_width * _height];
+		map = new string[_width * _height];
 
-		//Read in the data from the txt-file into the _map
+		//Read in the data from the txt-file into the map
 		while (getline(file, line))
 		{
 			for (int i = 0; i < _width; i++)
 			{
-				_map[i + counter * _width] = line.at(i);
+				map[i + counter * _width] = line.at(i);
 			}
 			counter++;
 		}
-
-		return _map;
 	}
 
-	return nullptr;
+	return map;
 }
 void MapReader::GenerateRandomMap(int width, int height, float densityOfObstacles)
 {
@@ -145,14 +148,14 @@ void MapReader::GenerateRandomMap(int width, int height, float densityOfObstacle
 	int posY = -1;
 	srand((unsigned int)time(NULL));
 
-	_map = new string[_width * _height];
+	string* map = new string[_width * _height];
 
 	//Initiate the array with walkable tiles
 	for (int i = 0; i < _height; i++)
 	{
 		for (int j = 0; j < _width; j++)
 		{
-			_map[i * _width + j] = ".";  //All the tiles are initialized as walkable tiles
+			map[i * _width + j] = ".";  //All the tiles are initialized as walkable tiles
 		}
 	}
 
@@ -162,22 +165,22 @@ void MapReader::GenerateRandomMap(int width, int height, float densityOfObstacle
 		posX = rand() % _width;
 		posY = rand() % _height;
 
-		if (_map[posY*_width + posX] != "@")  //The tile is walkable
+		if (map[posY*_width + posX] != "@")  //The tile is walkable
 		{
-			_map[posY*_width + posX] = "@";  //The tile is set as unwalkable
+			map[posY*_width + posX] = "@";  //The tile is set as unwalkable
 		}
 		else
 		{
 			posX = rand() % _width;
 			posY = rand() % _height;
 
-			while (_map[posY*_width + posX] == "@")  //Randomize again until a walkable tile is found
+			while (map[posY*_width + posX] == "@")  //Randomize again until a walkable tile is found
 			{
 				posX = rand() % _width;
 				posY = rand() % _height;
 			}
 
-			_map[posY*_width + posX] = "@";  //The tile is set as unwalkable
+			map[posY*_width + posX] = "@";  //The tile is set as unwalkable
 		}
 	}
 
@@ -185,9 +188,9 @@ void MapReader::GenerateRandomMap(int width, int height, float densityOfObstacle
 	stringstream fileName;
 	fileName << "Maps/Randomized" << to_string(_width).c_str() << "x" << to_string(_height).c_str() << "-" << to_string(density).c_str() << "-" << to_string(0) << ".txt";
 
-	SaveMapToFile(fileName.str());
+	SaveMapToFile(fileName.str(), map);
 }
-void MapReader::SaveMapToFile(string fileName)
+void MapReader::SaveMapToFile(string fileName, string* map)
 {
 	ofstream saveFile;
 	
@@ -199,7 +202,7 @@ void MapReader::SaveMapToFile(string fileName)
 	{
 		for (int j = 0; j < _width; j++)
 		{
-			saveFile << _map[i * _width + j];
+			saveFile << map[i * _width + j];
 		}
 
 		saveFile << "\n";
