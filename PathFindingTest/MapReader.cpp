@@ -104,13 +104,9 @@ string* MapReader::ReadMap(string fileName)
 	if (file.is_open())
 	{
 		getline(file, trash);  //Ignore this line
-		file.ignore();
 		getline(file, Sheight);
-		file.ignore();
 		getline(file, Swidth);
-		file.ignore();
 		getline(file, trash);  //Ignore this line
-		file.ignore();
 		//Convert the strings to const char*
 		CCwidth = Swidth.c_str();
 		CCheight = Sheight.c_str();

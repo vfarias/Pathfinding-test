@@ -17,10 +17,10 @@ Vec2D* Metrics::_expandNodeCap(Vec2D* arr, int & currentCap)
 
 Metrics::Metrics()
 {
-	_openedNodesCapacity = 204800;
+	_openedNodesCapacity = 4800;
 	_nrOfOpenedNodes = 0;
 	_openedNodes = new Vec2D[_openedNodesCapacity];
-	_expandedNodesCapacity = 204800;
+	_expandedNodesCapacity = 4800;
 	_nrOfExpandedNodes = 0;
 	_expandedNodes = new Vec2D[_expandedNodesCapacity];
 }

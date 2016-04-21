@@ -52,7 +52,7 @@ private:
 	void findEdges(Vec2D pos, const Vec2D dir, Cluster* cluster1, Cluster* cluster2);				//dir = along the edge from pos. symm(t) = t + {dir.y, dir.x}
 	void setEdgePair(HPANode* node1, HPANode* node2, Cluster* cluster1, Cluster* cluster2);
 	void findInternalPaths(Cluster* cluster, Metrics& metrics);
-	int* attachNodeToGraph(HPANode* node, Metrics& metrics);				//Used to fix start and goal nodes to the high level graph
+	float* attachNodeToGraph(HPANode* node, Metrics& metrics);				//Used to fix start and goal nodes to the high level graph
 	void calculateGCost(HPANode* parentNode, HPANode* childNode, int distance);
 	void calculateHCost(HPANode* node);
 public:
