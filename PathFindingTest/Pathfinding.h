@@ -27,20 +27,22 @@ protected:
 	int _nrOfPathNodes;
 	Vec2D* _path;											//An ordered array moving from goal to start
 	__int16 _width, _height;								//Size of the grid
+	Vec2D _position;												//lower bounds of the map
 	Vec2D _start, _goal;
 	Heuristic _heuristicType;
-	Metrics _metrics;										//TODO: Use instead of parameters for already implemented algorithms.
+//	Metrics _metrics;										//TODO: Use instead of parameters for already implemented algorithms.
 
 	bool isPositionValid(Vec2D pos);						//Checks if position is within the grid
 	//virtual void calculateHCost(Vec2D pos) = 0;							//Sets the approximate distance to the goal node according to the chosen heuristic
 	//virtual void calculateGCost(Vec2D parentPos, Vec2D currentPos) = 0; //Sets cost from the start node
 public:
 	Pathfinding();
-	Pathfinding(int width, int height, Vec2D start, Vec2D goal, Heuristic heuristic = MANHATTAN);
-	Pathfinding(int width, int height, Heuristic heuristic = MANHATTAN);
+	Pathfinding(int width, int height, Vec2D start, Vec2D goal, Vec2D position = {0,0}, Heuristic heuristic = MANHATTAN);
+	Pathfinding(int width, int height, Vec2D position = {0,0}, Heuristic heuristic = MANHATTAN);
 	virtual ~Pathfinding();
-	void setStartPosition(Vec2D start);
-	void setGoalPosition(Vec2D goal);
+	void setPosition(const Vec2D pos);
+	void setStartPosition(const Vec2D start);
+	void setGoalPosition(const Vec2D goal);
 	virtual void setTraversable(Vec2D pos, bool isTraversable = true) = 0;
 	Vec2D* getPath() const;
 	int getNrOfPathNodes() const;

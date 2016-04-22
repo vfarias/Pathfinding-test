@@ -2,7 +2,7 @@
 
 bool Pathfinding::isPositionValid(Vec2D pos)
 {
-	return pos._x >= 0 && pos._x < _width && pos._y >= 0 && pos._y < _height;
+	return pos._x >= _position._x && pos._x < _position._x + _width && pos._y >= _position._y && pos._y < _position._y + _height;
 }
 
 Pathfinding::Pathfinding()
@@ -14,12 +14,13 @@ Pathfinding::Pathfinding()
 	_start = {0,0};
 	_goal = {0,0};
 	_heuristicType = MANHATTAN;
+	_position = {0,0};
 }
 
 /*
 Sets grid size, start- and goal positions and heuristic used for the pathfinding algorithm
 */
-Pathfinding::Pathfinding(int width, int height, Vec2D start, Vec2D goal, Heuristic heuristic)
+Pathfinding::Pathfinding(int width, int height, Vec2D start, Vec2D goal, Vec2D position, Heuristic heuristic)
 {
 	_nrOfPathNodes = 0;
 	_path = nullptr;
@@ -28,13 +29,14 @@ Pathfinding::Pathfinding(int width, int height, Vec2D start, Vec2D goal, Heurist
 	_start = start;
 	_goal = goal;
 	_heuristicType = heuristic;
+	_position = position;
 }
 
 
 /*
 Sets grid size and heuristic used for the pathfinding algorithm
 */
-Pathfinding::Pathfinding(int width, int height, Heuristic heuristic)
+Pathfinding::Pathfinding(int width, int height, Vec2D position, Heuristic heuristic)
 {
 	_nrOfPathNodes = 0;
 	_path = nullptr;
@@ -43,6 +45,7 @@ Pathfinding::Pathfinding(int width, int height, Heuristic heuristic)
 	_start = {0,0};
 	_goal = {0,0};
 	_heuristicType = heuristic;
+	_position = position;
 }
 
 Pathfinding::~Pathfinding()
@@ -51,12 +54,17 @@ Pathfinding::~Pathfinding()
 	_path = nullptr;
 }
 
-void Pathfinding::setStartPosition(Vec2D start)
+void Pathfinding::setPosition(const Vec2D pos)
+{
+	_position = pos;
+}
+
+void Pathfinding::setStartPosition(const Vec2D start)
 {
 	_start = start;
 }
 
-void Pathfinding::setGoalPosition(Vec2D goal)
+void Pathfinding::setGoalPosition(const Vec2D goal)
 {
 	_goal = goal;
 }

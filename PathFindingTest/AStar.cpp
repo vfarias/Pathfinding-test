@@ -53,6 +53,7 @@ AStar::AStar()
 	_height = 0;
 	_start = {0,0};
 	_goal = {0,0};
+	_position = {0,0};
 	_heuristicType = MANHATTAN;
 	_openQueue = Heap<AStarNode>();
 	_grid = nullptr;
@@ -61,25 +62,26 @@ AStar::AStar()
 /*
 Sets grid size, start- and goal positions and heuristic used for the pathfinding algorithm
 */
-AStar::AStar(int width, int height, Vec2D start, Vec2D goal, Heuristic heuristic)
+AStar::AStar(int width, int height, Vec2D position,Vec2D start, Vec2D goal, AStarNode** grid, Heuristic heuristic)
 {
 	_nrOfPathNodes = 0;
 	_path = nullptr;
 	_width = width;
 	_height = height;
+	_position = position;
 	_start = start;
 	_goal = goal;
 	_heuristicType = heuristic;
 	_openQueue = Heap<AStarNode>();
-	_grid = new AStarNode*[_width];
-	for (__int16 i = 0; i < _width; i++)
+	_grid = grid;
+	for (__int16 i = _position._x; i < _position._x + _width; i++)
 	{
-		_grid[i] = new AStarNode[_height];
-		for (__int16 j = 0; j < _height; j++)
+		for (__int16 j = _position._y; j < _position._y + _height; j++)
 		{
-			_grid[i][j] = AStarNode(i, j);
 			_grid[i][j]._open = 0;
-			//calculateHCost({i,j});
+			_grid[i][j]._gCost = 0;
+			_grid[i][j]._hCost = 0;
+			_grid[i][j]._parent = nullptr;
 		}
 	}
 }
@@ -88,36 +90,32 @@ AStar::AStar(int width, int height, Vec2D start, Vec2D goal, Heuristic heuristic
 /*
 Sets grid size and heuristic used for the pathfinding algorithm
 */
-AStar::AStar(int width, int height, Heuristic heuristic)
+AStar::AStar(int width, int height, Vec2D position, AStarNode** grid, Heuristic heuristic)
 {
 	_nrOfPathNodes = 0;
 	_path = nullptr;
 	_width = width;
 	_height = height;
+	_position = position;
 	_start = {0,0};
 	_goal = {0,0};
 	_heuristicType = heuristic;
 	_openQueue = Heap<AStarNode>();
-	_grid = new AStarNode*[_width];
-	for (__int16 i = 0; i < _width; i++)
+	_grid = grid;
+	for (__int16 i = _position._x; i < _position._x + _width; i++)
 	{
-		_grid[i] = new AStarNode[_height];
-		for (__int16 j = 0; j < _height; j++)
+		for (__int16 j = _position._y; j < _position._y + _height; j++)
 		{
-			_grid[i][j] = AStarNode(i, j);
 			_grid[i][j]._open = 0;
-			//calculateHCost({i,j});
+			_grid[i][j]._gCost = 0;
+			_grid[i][j]._hCost = 0;
+			_grid[i][j]._parent = nullptr;
 		}
 	}
 }
 
 AStar::~AStar()
 {
-	for (__int16 i = 0; i < _width; i++)
-	{
-		delete[] _grid[i];
-	}
-	delete[] _grid;
 }
 
 void AStar::setTraversable(Vec2D pos, bool isTraversable)
@@ -135,9 +133,9 @@ void AStar::cleanMap()
 	delete[] _path;
 	_path = nullptr;
 	_nrOfPathNodes = 0;
-	for (__int16 i = 0; i < _width; i++)
+	for (__int16 i = _position._x; i < _position._x + _width; i++)
 	{
-		for (__int16 j = 0; j < _height; j++)
+		for (__int16 j = _position._y; j < _position._y + _height; j++)
 		{
 			_grid[i][j]._open = 0;
 			_grid[i][j]._gCost = 0;
@@ -161,7 +159,7 @@ bool AStar::findPath(Metrics& metrics)
 
 	while (currentPos != _goal)														//loops until a path has been found
 	{
-		metrics.addExpandedNode(currentPos);
+		//metrics.addExpandedNode(currentPos);
 		for (int i = 0; i < 8 && (_heuristicType != MANHATTAN || i < 4); i++)		//Manhattan skips diagonals 
 		{
 			Vec2D checkedPos = currentPos + NEIGHBOUR_OFFSETS[i];
@@ -177,7 +175,7 @@ bool AStar::findPath(Metrics& metrics)
 				calculateGCost(currentPos, checkedPos);
 				if (!openedBefore && _grid[checkedPos._x][checkedPos._y]._open == 1)	//Check that node was added to open list
 				{
-					metrics.addOpenedNode(checkedPos);
+					//metrics.addOpenedNode(checkedPos);
 				}
 			}
 		}

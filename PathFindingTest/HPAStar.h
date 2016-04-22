@@ -25,23 +25,19 @@ private:
 			_nrOfInternalNodes = 0;
 			_nodeCap = maxInternalNodes;
 			_internalNodes = new HPANode*[_nodeCap];
-			_internalPathLengths = new float*[_nodeCap];
-			for (int i = 0; i < _nodeCap; i++)
-			{
-				_internalPathLengths[i] = new float[_nodeCap];
-			}
+			_internalPathLengths = nullptr;
 		}
 		~Cluster()
 		{
 			delete[] _internalNodes;
-			for (int i = 0; i < _nodeCap; i++)
+			for (int i = 0; i < _nrOfInternalNodes; i++)
 			{
 				delete[] _internalPathLengths[i];
 			}
 			delete[] _internalPathLengths;
 		}
 	};
-	BaseNode** _grid;
+	AStarNode** _grid;
 	int _clusterSize;				//Nr of tiles across in a cluster
 	int _nrOfClusters;				//Total amount of clusters on the grid
 	Cluster** _clusters;
@@ -49,8 +45,8 @@ private:
 
 	void setClusters();
 	Cluster* findCluster(Vec2D position);		
-	void findEdges(Vec2D pos, const Vec2D dir, Cluster* cluster1, Cluster* cluster2);				//dir = along the edge from pos. symm(t) = t + {dir.y, dir.x}
-	void setEdgePair(HPANode* node1, HPANode* node2, Cluster* cluster1, Cluster* cluster2);
+	void findEdges(Vec2D pos, const Vec2D dir, Cluster* cluster1, Cluster* cluster2, Metrics& metrics);		//dir = along the edge from pos. symm(t) = t + {dir.y, dir.x}
+	void setEdgePair(HPANode* node1, HPANode* node2, Cluster* cluster1, Cluster* cluster2, Metrics& metrics);
 	void findInternalPaths(Cluster* cluster, Metrics& metrics);
 	float* attachNodeToGraph(HPANode* node, Metrics& metrics);				//Used to fix start and goal nodes to the high level graph
 	void calculateGCost(HPANode* parentNode, HPANode* childNode, int distance);
@@ -61,4 +57,5 @@ public:
 	virtual ~HPAStar();
 	void setTraversable(Vec2D pos, bool isTraversable = true);
 	bool findPath(Metrics& metrics);
+	void cleanMap();
 };
