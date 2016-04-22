@@ -38,7 +38,7 @@ public:
 
 	int GetWidth() const;
 	int GetHeight() const;
-	int GetNrOfWalls() const;
+	int GetNrOfWalls(string* map);
 
 	string* ReadMap(string fileName);
 	void GenerateRandomMap(int width, int height, float densityOfObstacles);

@@ -87,8 +87,19 @@ int MapReader::GetHeight() const
 {
 	return _height;
 }
-int MapReader::GetNrOfWalls() const
+int MapReader::GetNrOfWalls(string* map)
 {
+	if (map != nullptr)
+	{
+		for (int i = 0; i < _width * _height; i++)
+		{
+			if (map[i] == "@")
+			{
+				_nrOfWalls++;
+			}
+		}
+	}
+
 	return _nrOfWalls;
 }
 
@@ -172,18 +183,16 @@ void MapReader::GenerateRandomMap(int width, int height, float densityOfObstacle
 		if (map[posY*_width + posX] != "@")  //The tile is walkable
 		{
 			map[posY*_width + posX] = "@";  //The tile is set as unwalkable
-			_nrOfWalls++;
 		}
 		else
 		{
-			while (map[posY*_width + posX] == "@" && _nrOfWalls<(_width*_height))  //Randomize again until a walkable tile is found or map is full
+			while (map[posY*_width + posX] == "@")  //Randomize again until a walkable tile is found or map is full
 			{
 				posX = rand() % _width;
 				posY = rand() % _height;
 			}
 
 			map[posY*_width + posX] = "@";  //The tile is set as unwalkable
-			_nrOfWalls++;
 		}
 	}
 
