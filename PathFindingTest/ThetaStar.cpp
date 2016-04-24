@@ -11,7 +11,7 @@ void ThetaStar::calculateGCost(Vec2D parentPos, Vec2D currentPos)
 		_grid[currentPos._x][currentPos._y]._open = 1;
 		_grid[currentPos._x][currentPos._y]._gCost = g;
 		_grid[currentPos._x][currentPos._y]._parent = &_grid[parentPos._x][parentPos._y];
-		_openQueue.insert(_grid[currentPos._x][currentPos._y]);										//insert should logically fit outside the function, but it works better with the if-check here.
+		_openQueue.insert(&_grid[currentPos._x][currentPos._y]);										//insert should logically fit outside the function, but it works better with the if-check here.
 	}
 }
 
@@ -153,7 +153,7 @@ ThetaStar::ThetaStar()
 	_start = {0,0};
 	_goal = {0,0};
 	_heuristicType = MANHATTAN;
-	_openQueue = Heap<AStarNode>();
+	_openQueue = Heap<AStarNode*>();
 	_grid = nullptr;
 }
 
@@ -169,7 +169,7 @@ ThetaStar::ThetaStar(int width, int height, Vec2D start, Vec2D goal, Heuristic h
 	_start = start;
 	_goal = goal;
 	_heuristicType = heuristic;
-	_openQueue = Heap<AStarNode>();
+	_openQueue = Heap<AStarNode*>();
 	_grid = new AStarNode*[_width];
 	for (__int16 i = 0; i < _width; i++)
 	{
@@ -196,7 +196,7 @@ ThetaStar::ThetaStar(int width, int height, Heuristic heuristic)
 	_start = {0,0};
 	_goal = {0,0};
 	_heuristicType = heuristic;
-	_openQueue = Heap<AStarNode>();
+	_openQueue = Heap<AStarNode*>();
 	_grid = new AStarNode*[_width];
 	for (__int16 i = 0; i < _width; i++)
 	{
@@ -265,14 +265,14 @@ bool ThetaStar::findPath(Metrics& metrics)
 			return false;
 		} else
 		{
-			currentPos = _openQueue.removeMin()._position;
+			currentPos = _openQueue.removeMin()->_position;
 			while (_grid[currentPos._x][currentPos._y]._open == 2)
 			{
 				if (_openQueue.size() <= 0)
 				{
 					return false;
 				}
-				currentPos = _openQueue.removeMin()._position;
+				currentPos = _openQueue.removeMin()->_position;
 			}
 			_grid[currentPos._x][currentPos._y]._open = 2;
 		}

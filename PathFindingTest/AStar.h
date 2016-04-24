@@ -10,7 +10,7 @@ class AStar : public Pathfinding
 protected:
 	AStarNode** _grid;
 	//std::vector<Node> _openQueue;							//A priority queue for open nodes
-	Heap<AStarNode> _openQueue;
+	Heap<AStarNode*> _openQueue;
 	void calculateHCost(Vec2D pos);
 	void calculateGCost(Vec2D parentPos, Vec2D currentPos);
 public:

@@ -41,7 +41,7 @@ void AStar::calculateGCost(Vec2D parentPos, Vec2D currentPos)
 		_grid[currentPos._x][currentPos._y]._open = 1;
 		_grid[currentPos._x][currentPos._y]._gCost = g;
 		_grid[currentPos._x][currentPos._y]._parent = &_grid[parentPos._x][parentPos._y];
-		_openQueue.insert(_grid[currentPos._x][currentPos._y]);										//insert should logically fit outside the function, but it works better with the if-check here.
+		_openQueue.insert(&_grid[currentPos._x][currentPos._y]);										//insert should logically fit outside the function, but it works better with the if-check here.
 	}
 }
 
@@ -55,7 +55,7 @@ AStar::AStar()
 	_goal = {0,0};
 	_position = {0,0};
 	_heuristicType = MANHATTAN;
-	_openQueue = Heap<AStarNode>();
+	_openQueue = Heap<AStarNode*>();
 	_grid = nullptr;
 }
 
@@ -72,7 +72,7 @@ AStar::AStar(int width, int height, Vec2D position,Vec2D start, Vec2D goal, ASta
 	_start = start;
 	_goal = goal;
 	_heuristicType = heuristic;
-	_openQueue = Heap<AStarNode>();
+	_openQueue = Heap<AStarNode*>();
 	_grid = grid;
 	for (__int16 i = _position._x; i < _position._x + _width; i++)
 	{
@@ -100,7 +100,7 @@ AStar::AStar(int width, int height, Vec2D position, AStarNode** grid, Heuristic 
 	_start = {0,0};
 	_goal = {0,0};
 	_heuristicType = heuristic;
-	_openQueue = Heap<AStarNode>();
+	_openQueue = Heap<AStarNode*>();
 	_grid = grid;
 	for (__int16 i = _position._x; i < _position._x + _width; i++)
 	{
@@ -144,7 +144,7 @@ void AStar::cleanMap()
 		}
 	}
 	_openQueue.empty();
-	_openQueue = Heap<AStarNode>();
+	_openQueue = Heap<AStarNode*>();
 }
 
 bool AStar::findPath(Metrics& metrics)
@@ -185,14 +185,14 @@ bool AStar::findPath(Metrics& metrics)
 		}
 		else
 		{
-			currentPos = _openQueue.removeMin()._position;
+			currentPos = _openQueue.removeMin()->_position;
 			while (_grid[currentPos._x][currentPos._y]._open == 2)
 			{
 				if (_openQueue.size() <= 0)
 				{
 					return false;
 				}
-				currentPos = _openQueue.removeMin()._position;
+				currentPos = _openQueue.removeMin()->_position;
 			}
 			_grid[currentPos._x][currentPos._y]._open = 2;
 		}

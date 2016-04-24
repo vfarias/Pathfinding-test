@@ -61,15 +61,50 @@ void HPAStar::findEdges(Vec2D pos, const Vec2D dir, Cluster* cluster1, Cluster* 
 	}
 }
 
-void HPAStar::setEdgePair(HPANode* node1, HPANode* node2, Cluster* cluster1, Cluster* cluster2, Metrics& metrics)
+void HPAStar::setEdgePair(Vec2D pos1, Vec2D pos2, Cluster* cluster1, Cluster* cluster2, Metrics& metrics)
 {
-	node1->_edge = node2;
-	node2->_edge = node1;
+
+	HPANode* node1 = new HPANode(pos1._x, pos1._y);
 	cluster1->_internalNodes[cluster1->_nrOfInternalNodes] = node1;
-	cluster2->_internalNodes[cluster2->_nrOfInternalNodes] = node2;
 	node1->_clusterIndex = cluster1->_nrOfInternalNodes;
-	node2->_clusterIndex = cluster2->_nrOfInternalNodes;
 	cluster1->_nrOfInternalNodes++;
+
+	bool makeNode2 = false;
+	if (pos2 == Vec2D(cluster2->_position._x + _clusterSize - 1, cluster2->_position._y + _clusterSize - 1))
+	{
+		if (!_grid[pos2._x + pos1._y - pos2._y][pos2._y + pos1._x - pos2._x]._traversable)
+		{
+			makeNode2 = true;
+		}
+	}
+	else if (true)
+	{
+
+	}
+
+	HPANode* node2 = new HPANode(pos2._x, pos2._y);
+
+
+	if (node1->_edge == nullptr)
+	{
+		node1->_edge = node2;
+	}
+	else
+	{
+		node1->_edge2 = node2;
+	}
+	if (node2->_edge == nullptr)
+	{
+		node2->_edge = node1;
+	} else
+	{
+		node2->_edge2 = node1;
+	}
+	
+	cluster2->_internalNodes[cluster2->_nrOfInternalNodes] = node2;
+	
+	node2->_clusterIndex = cluster2->_nrOfInternalNodes;
+	
 	cluster2->_nrOfInternalNodes++;
 	metrics.addGraphNode(node1->_position);
 	metrics.addGraphNode(node2->_position);
@@ -243,6 +278,8 @@ bool HPAStar::findPath(Metrics& metrics)
 			checkedNode->_parent = currentNode;
 			_openQueue.insert(checkedNode);
 			checkedNode->_open = 1;
+			metrics.addOpenedNode(checkedNode->_position);
+			metrics.addOpenedNode(currentNode->_position);
 		}
 	}
 
@@ -252,9 +289,11 @@ bool HPAStar::findPath(Metrics& metrics)
 	}
 	currentNode = _openQueue.removeMin();
 	currentNode->_open = 2;
+	metrics.addExpandedNode(currentNode->_parent->_position);
+	metrics.addExpandedNode(currentNode->_position);
 	while (currentNode->_position != _goal)														//loops until a path has been found
 	{
-		metrics.addExpandedNode(currentNode->_position);
+		//metrics.addExpandedNode(currentNode->_position);
 
 		if (currentCluster == findCluster(_goal) && goalToEdgePathLengths[currentNode->_clusterIndex] > 0)							//Check if the current node is linked to the goal
 		{
@@ -269,6 +308,8 @@ bool HPAStar::findPath(Metrics& metrics)
 			if (currentCluster->_internalPathLengths[currentNode->_clusterIndex][i] > 0)
 			{
 				HPANode* checkedNode = currentCluster->_internalNodes[i];
+				metrics.addOpenedNode(checkedNode->_position);
+				metrics.addOpenedNode(currentNode->_position);
 				float g = currentNode->_gCost + currentCluster->_internalPathLengths[currentNode->_clusterIndex][i];
 				if (checkedNode->_open == 0 ||(checkedNode->_open == 1 && checkedNode->_gCost > g))					//Add node to open
 				{
@@ -277,6 +318,7 @@ bool HPAStar::findPath(Metrics& metrics)
 					checkedNode->_parent = currentNode;
 					checkedNode->_open = 1;
 					_openQueue.insert(checkedNode);
+					
 				}
 			}
 		}
@@ -287,6 +329,8 @@ bool HPAStar::findPath(Metrics& metrics)
 			currentNode->_edge->_parent = currentNode;
 			currentNode->_edge->_open = 1;
 			_openQueue.insert(currentNode->_edge);
+			metrics.addOpenedNode(currentNode->_edge->_position);
+			metrics.addOpenedNode(currentNode->_position);
 		}
 		if (_openQueue.size() <= 0)
 		{
@@ -304,7 +348,8 @@ bool HPAStar::findPath(Metrics& metrics)
 				}
 				currentNode = _openQueue.removeMin();
 			}
-			metrics.addOpenedNode(currentNode->_position);
+			metrics.addExpandedNode(currentNode->_parent->_position);
+			metrics.addExpandedNode(currentNode->_position);
 			currentNode->_open = 2;
 			currentCluster = findCluster(currentNode->_position);
 		}
