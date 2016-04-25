@@ -171,6 +171,7 @@ void HPAStar::findInternalPaths(Cluster* cluster, Metrics& metrics)
 			}
 		}
 	}
+	delete aStar;
 }
 
 float* HPAStar::attachNodeToGraph(HPANode* node, Metrics& metrics)
@@ -279,18 +280,18 @@ bool HPAStar::findPath(Metrics& metrics)
 	{
 		findInternalPaths(_clusters[i], metrics);
 	}
-	HPANode* start = new HPANode(_start._x, _start._y);
-	start->_gCost = 0;
-	float* startToEdgePathLengths = attachNodeToGraph(start, metrics);
-	HPANode* goal = new HPANode(_goal._x, _goal._y);
-	goal->_hCost = 0;
-	float* goalToEdgePathLengths = attachNodeToGraph(goal, metrics);
+	HPANode start = HPANode(_start._x, _start._y);
+	start._gCost = 0;
+	float* startToEdgePathLengths = attachNodeToGraph(&start, metrics);
+	HPANode goal = HPANode(_goal._x, _goal._y);
+	goal._hCost = 0;
+	float* goalToEdgePathLengths = attachNodeToGraph(&goal, metrics);
 
-	HPANode* currentNode = start;
-	Cluster* currentCluster = findCluster(start->_position);
+	HPANode* currentNode = &start;
+	Cluster* currentCluster = findCluster(start._position);
 
 	_nrOfPathNodes = 0;	
-	start->_open = 2;
+	start._open = 2;
 
 
 	for (int i = 0; i < currentCluster->_nrOfInternalNodes; i++)					//Get path lengths from start to cluster edges
@@ -322,10 +323,10 @@ bool HPAStar::findPath(Metrics& metrics)
 
 		if (currentCluster == findCluster(_goal) && goalToEdgePathLengths[currentNode->_clusterIndex] > 0)							//Check if the current node is linked to the goal
 		{
-			goal->_gCost = currentNode->_gCost + goalToEdgePathLengths[currentNode->_clusterIndex];
-			goal->_parent = currentNode;
-			goal->_open = 1;
-			_openQueue.insert(goal);
+			goal._gCost = currentNode->_gCost + goalToEdgePathLengths[currentNode->_clusterIndex];
+			goal._parent = currentNode;
+			goal._open = 1;
+			_openQueue.insert(&goal);
 		}
 
 		for (int i = 0; i < currentCluster->_nrOfInternalNodes; i++)
@@ -420,6 +421,9 @@ bool HPAStar::findPath(Metrics& metrics)
 		currentNode = currentNode->_parent;
 		currentCluster = findCluster(currentNode->_position);
 	}
+	delete aStar;
+	delete startToEdgePathLengths;
+	delete goalToEdgePathLengths;
 	return true;
 }
 

@@ -29,12 +29,13 @@ private:
 		}
 		~Cluster()
 		{
-			delete[] _internalNodes;
 			for (int i = 0; i < _nrOfInternalNodes; i++)
 			{
 				delete[] _internalPathLengths[i];
+				delete _internalNodes[i];
 			}
 			delete[] _internalPathLengths;
+			delete[] _internalNodes;
 		}
 	};
 	AStarNode** _grid;

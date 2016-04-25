@@ -171,12 +171,12 @@ int main()
 		abstractGraph[i].color = sf::Color(200, 0, 0, 255);
 	}
 
-	expandedGraph = new sf::Vertex[ThetaStar_metrics.getNrOfExpandedNodes()];
-	for (int i = 0; i < ThetaStar_metrics.getNrOfExpandedNodes(); i++)
-	{
-		expandedGraph[i] = sf::Vertex(sf::Vector2f(10.0f + (float)TILE_WIDTH * (ThetaStar_metrics.getExpandedNodes()[i]._x + 0.5f), 10.0f + (float)TILE_HEIGHT * (ThetaStar_metrics.getExpandedNodes()[i]._y + 0.5f)));
-		expandedGraph[i].color = sf::Color(200, 200, 0, 255);
-	}
+	//expandedGraph = new sf::Vertex[ThetaStar_metrics.getNrOfExpandedNodes()];
+	//for (int i = 0; i < ThetaStar_metrics.getNrOfExpandedNodes(); i++)
+	//{
+	//	expandedGraph[i] = sf::Vertex(sf::Vector2f(10.0f + (float)TILE_WIDTH * (ThetaStar_metrics.getExpandedNodes()[i]._x + 0.5f), 10.0f + (float)TILE_HEIGHT * (ThetaStar_metrics.getExpandedNodes()[i]._y + 0.5f)));
+	//	expandedGraph[i].color = sf::Color(200, 200, 0, 255);
+	//}
 
 	//openedGraph = new sf::Vertex[ThetaStar_metrics.getNrOfOpenedNodes()];
 	//for (int i = 0; i < ThetaStar_metrics.getNrOfOpenedNodes(); i++)
@@ -244,12 +244,16 @@ int main()
 		window.display();
 	}
 	//pathFinding.cleanMap();
+	/*delete[] expandedGraph;
+	delete[] openedGraph;*/
+	delete[] abstractGraph;
 	delete[] expandedTiles;
 	delete[] openedTiles;
 	delete[] expandedTiles2;
 	delete[] openedTiles2;
 	delete[] pathTiles;
-	//delete[] walls;
+	delete[] pathTiles2;
+	delete[] walls;
 	delete[] map;
 	delete[] WallPos;
 	for (__int16 i = 0; i < width; i++)

@@ -34,6 +34,8 @@ Metrics::~Metrics()
 	_openedNodes = nullptr;
 	delete[] _expandedNodes;
 	_expandedNodes = nullptr;
+	delete[] _graphNodes;
+	_graphNodes = nullptr;
 }
 
 int Metrics::getNrOfOpenedNodes() const
