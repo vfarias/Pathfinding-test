@@ -125,7 +125,6 @@ string* MapReader::ReadMap(string fileName)
 		getline(file, Sheight);
 		getline(file, Swidth);
 		getline(file, trash);  //Ignore this line
-
 		//Convert the strings to const char*
 		CCwidth = Swidth.c_str();
 		CCheight = Sheight.c_str();
@@ -186,7 +185,7 @@ void MapReader::GenerateRandomMap(int width, int height, float densityOfObstacle
 		}
 		else
 		{
-			while (map[posY*_width + posX] == "@")  //Randomize again until a walkable tile is found or map is full
+			while (map[posY*_width + posX] == "@")  //Randomize again until a walkable tile is found
 			{
 				posX = rand() % _width;
 				posY = rand() % _height;

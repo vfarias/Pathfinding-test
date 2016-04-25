@@ -80,7 +80,7 @@ void Heap<T>::insert(T element)
 	}
 	int pos = _nrOfElements;
 	_tree[_nrOfElements++] = element;
-	while (_tree[pos] < _tree[(pos - 1) / 2])
+	while (*_tree[pos] < *_tree[(pos - 1) / 2])
 	{
 		swap(_tree[pos], _tree[(pos - 1) / 2]);
 		pos = (pos - 1) / 2;
@@ -93,9 +93,9 @@ T Heap<T>::removeMin()
 	int pos = 0;
 	T result = _tree[0];
 	swap(_tree[0], _tree[--_nrOfElements]);
-	while (2 * pos + 1 < _nrOfElements && (_tree[pos] > _tree[2 * pos + 1] || (_tree[pos] > _tree[2 * pos + 2] && 2 * pos + 2 < _nrOfElements)))
+	while (2 * pos + 1 < _nrOfElements && (*_tree[pos] > *_tree[2 * pos + 1] || (*_tree[pos] > *_tree[2 * pos + 2] && 2 * pos + 2 < _nrOfElements)))
 	{
-		if (_tree[2 * pos + 2] > _tree[2 * pos + 1] || 2 * pos + 2 >= _nrOfElements)
+		if (*_tree[2 * pos + 2] > *_tree[2 * pos + 1] || 2 * pos + 2 >= _nrOfElements)
 		{
 			swap(_tree[pos], _tree[2 * pos + 1]);
 			pos = 2 * pos + 1;

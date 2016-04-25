@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "AStar.h"
 #include "ThetaStar.h"
+#include "HPAStar.h"
 #include "Metrics.h"
 #include "MapReader.h"
 
@@ -19,6 +20,18 @@ int pathLength = 0;
 Vec2D* path = nullptr;
 Vec2D* wallPos = new Vec2D[nrOfWalls];
 sf::RectangleShape* walls = new sf::RectangleShape[nrOfWalls];
+	{
+		grid[i] = new AStarNode[height];
+		for (int j = 0; j < height; j++)
+		{
+			grid[i][j] = AStarNode(i, j);
+		}
+	}
+
+	HPAStar pathFinding(width, height, 32, Pathfinding::OCTILE);
+	//pathFinding.init(startPos, goalPos);
+	//ThetaStar pathFinding(WIDTH, HEIGHT, startPos, goalPos, ThetaStar::EUCLIDEAN);
+	AStar pathFinding2(width, height, {0,0}, startPos2, goalPos, grid, AStar::OCTILE);
 
 //Map positions
 Vec2D startPos = {1, 1};
@@ -64,6 +77,16 @@ int main()
 	ImGui::SFML::SetWindow(window);
 	ImGui::SFML::InitImGuiEvents();
 
+	AStarNode** grid = new AStarNode*[width];
+	for (int i = 0; i < width; i++)
+	{
+		grid[i] = new AStarNode[height];
+		for (int j = 0; j < height; j++)
+		{
+			grid[i][j] = AStarNode(i, j);
+		}
+	}
+
 	sf::CircleShape goal(0.4f * tileHeight);
 	goal.setFillColor(sf::Color::Yellow);
 	goal.setPosition(sf::Vector2f(10.0f + goalPos._x * (float)tileWidth, 10.0f + goalPos._y * (float)tileHeight));
@@ -72,65 +95,86 @@ int main()
 	sf::RectangleShape* expandedTiles = nullptr;
 	sf::Vertex* pathTiles = nullptr;
 	
-	
-	//First pathfinding algorithm
-	if (pathFinding.findPath(metrics))
+	sf::Vertex* abstractGraph = nullptr;
+	sf::Vertex* openedGraph = nullptr;
+	sf::Vertex* expandedGraph = nullptr;
+	pathFinding.init(startPos, goalPos);
+
+	if (pathFinding.findPath(ThetaStar_metrics))
 	{
 		pathLength = pathFinding.getNrOfPathNodes();
 		path = pathFinding.getPath();
 	}
-	openedTiles = new sf::RectangleShape[metrics.getNrOfOpenedNodes()];
-	for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
+	pathFinding2.init(startPos2, goalPos);
+	if (pathFinding2.findPath(AStar_metrics))
 	{
-		openedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
-		openedTiles[i].setFillColor(sf::Color(0,0,200, 120));
+		pathLength2 = pathFinding2.getNrOfPathNodes();
+		path2 = pathFinding2.getPath();
+	}
+	openedTiles = new sf::RectangleShape[ThetaStar_metrics.getNrOfOpenedNodes()];
+	for (int i = 0; i < ThetaStar_metrics.getNrOfOpenedNodes(); i++)
+	{
+		openedTiles[i] = sf::RectangleShape(sf::Vector2f((float)TILE_WIDTH, (float)TILE_HEIGHT));
+		openedTiles[i].setFillColor(sf::Color(0, 0, 200, 120));
 		openedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getOpenedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getOpenedNodes()[i]._y));
 	}
-	expandedTiles = new sf::RectangleShape[metrics.getNrOfExpandedNodes()];
-	for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
+	//expandedTiles = new sf::RectangleShape[ThetaStar_metrics.getNrOfExpandedNodes()];
+	//for (int i = 0; i < ThetaStar_metrics.getNrOfExpandedNodes(); i++)
+	//{
+	//	expandedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
+	//	expandedTiles[i].setFillColor(sf::Color(0, 200, 0, 120));
+	//	expandedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * ThetaStar_metrics.getExpandedNodes()[i]._x, 10.0f + (float)tileHeight * ThetaStar_metrics.getExpandedNodes()[i]._y));
+	//}
+
+	//openedTiles2 = new sf::RectangleShape[AStar_metrics.getNrOfOpenedNodes()];
+	//for (int i = 0; i < AStar_metrics.getNrOfOpenedNodes(); i++)
+	//{
+	//	openedTiles2[i] = sf::RectangleShape(sf::Vector2f((float)TILE_WIDTH, (float)TILE_HEIGHT));
+	//	openedTiles2[i].setFillColor(sf::Color(0, 0, 200, 120));
+	//	openedTiles2[i].setPosition(sf::Vector2f(10.0f + (float)TILE_WIDTH * AStar_metrics.getOpenedNodes()[i]._x, 10.0f + (float)TILE_HEIGHT * AStar_metrics.getOpenedNodes()[i]._y));
+	//}
+	//expandedTiles2 = new sf::RectangleShape[AStar_metrics.getNrOfExpandedNodes()];
+	//for (int i = 0; i < AStar_metrics.getNrOfExpandedNodes(); i++)
+	//{
+	//	expandedTiles2[i] = sf::RectangleShape(sf::Vector2f((float)TILE_WIDTH, (float)TILE_HEIGHT));
+	//	expandedTiles2[i].setFillColor(sf::Color(0, 200, 0, 120));
+	//	expandedTiles2[i].setPosition(sf::Vector2f(10.0f + (float)TILE_WIDTH * AStar_metrics.getExpandedNodes()[i]._x, 10.0f + (float)TILE_HEIGHT * AStar_metrics.getExpandedNodes()[i]._y));
+	//}
+	abstractGraph = new sf::Vertex[ThetaStar_metrics.getNrOfGraphNodes()];
+	for (int i = 0; i < ThetaStar_metrics.getNrOfGraphNodes(); i++)
 	{
-		expandedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
-		expandedTiles[i].setFillColor(sf::Color(0, 200, 0, 120));
-		expandedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getExpandedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getExpandedNodes()[i]._y));
+		abstractGraph[i] = sf::Vertex(sf::Vector2f(10.0f + (float)TILE_WIDTH * (ThetaStar_metrics.getGraphNodes()[i]._x + 0.5f), 10.0f + (float)TILE_HEIGHT * (ThetaStar_metrics.getGraphNodes()[i]._y + 0.5f)));
+		abstractGraph[i].color = sf::Color(200, 0, 0, 255);
 	}
+
+	//expandedGraph = new sf::Vertex[ThetaStar_metrics.getNrOfExpandedNodes()];
+	//for (int i = 0; i < ThetaStar_metrics.getNrOfExpandedNodes(); i++)
+	//{
+	//	expandedGraph[i] = sf::Vertex(sf::Vector2f(10.0f + (float)TILE_WIDTH * (ThetaStar_metrics.getExpandedNodes()[i]._x + 0.5f), 10.0f + (float)TILE_HEIGHT * (ThetaStar_metrics.getExpandedNodes()[i]._y + 0.5f)));
+	//	expandedGraph[i].color = sf::Color(200, 200, 0, 255);
+	//}
+
+	//openedGraph = new sf::Vertex[ThetaStar_metrics.getNrOfOpenedNodes()];
+	//for (int i = 0; i < ThetaStar_metrics.getNrOfOpenedNodes(); i++)
+	//{
+	//	openedGraph[i] = sf::Vertex(sf::Vector2f(10.0f + (float)TILE_WIDTH * (ThetaStar_metrics.getOpenedNodes()[i]._x + 0.5f), 10.0f + (float)TILE_HEIGHT * (ThetaStar_metrics.getOpenedNodes()[i]._y + 0.5f)));
+	//	openedGraph[i].color = sf::Color(50, 50, 250, 255);
+	//}
+
 	pathTiles = new sf::Vertex[pathLength + 1];
 	for (int i = 0; i < pathLength; i++)
 	{
-		pathTiles[i] = sf::Vertex(sf::Vector2f(10.0f + (float)tileWidth * (path[i]._x + 0.5f), 10.0f + (float)tileHeight * (path[i]._y + 0.5f)));
+		pathTiles[i] = sf::Vertex(sf::Vector2f(10.0f + (float)TILE_WIDTH * (path[i]._x + 0.5f), 10.0f + (float)TILE_HEIGHT * (path[i]._y + 0.5f)));
 		pathTiles[i].color = sf::Color(200, 200, 0, 255);
 	}
-	pathTiles[pathLength] = sf::Vector2f(10.0f + (float)tileWidth * (startPos._x + 0.5f), 10.0f + (float)tileHeight * (startPos._y + 0.5f));
-	
-	
-	
-	//Second pathfinding algorithm
-	if (pathFinding.findPath(metrics))
+	pathTiles2 = new sf::Vertex[pathLength2 + 1];
+	for (int i = 0; i < pathLength2; i++)
 	{
-		pathLength = pathFinding.getNrOfPathNodes();
-		path = pathFinding.getPath();
+		pathTiles2[i] = sf::Vertex(sf::Vector2f(10.0f + (float)TILE_WIDTH * (path2[i]._x + 0.5f), 10.0f + (float)TILE_HEIGHT * (path2[i]._y + 0.5f)));
+		pathTiles2[i].color = sf::Color(200, 0, 200, 255);
 	}
-	openedTiles = new sf::RectangleShape[metrics.getNrOfOpenedNodes()];
-	for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
-	{
-		openedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
-		openedTiles[i].setFillColor(sf::Color(0, 200, 200, 120));
-		openedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getOpenedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getOpenedNodes()[i]._y));
-	}
-	expandedTiles = new sf::RectangleShape[metrics.getNrOfExpandedNodes()];
-	for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
-	{
-		expandedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
-		expandedTiles[i].setFillColor(sf::Color(200, 0, 0, 120));
-		expandedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getExpandedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getExpandedNodes()[i]._y));
-	}
-	pathTiles = new sf::Vertex[pathLength + 1];
-	for (int i = 0; i < pathLength; i++)
-	{
-		pathTiles[i] = sf::Vertex(sf::Vector2f(10.0f + (float)tileWidth * (path[i]._x + 0.5f), 10.0f + (float)tileHeight * (path[i]._y + 0.5f)));
-		pathTiles[i].color = sf::Color(200, 0, 200, 255);
-	}
-	pathTiles[pathLength] = sf::Vector2f(10.0f + (float)tileWidth * (startPos._x + 0.5f), 10.0f + (float)tileHeight * (startPos._y + 0.5f));
-	
+	pathTiles[pathLength] = sf::Vector2f(10.0f + (float)TILE_WIDTH * (startPos._x + 0.5f), 10.0f + (float)TILE_HEIGHT * (startPos._y + 0.5f));
+	pathTiles2[pathLength2] = sf::Vector2f(10.0f + (float)TILE_WIDTH * (startPos2._x + 0.5f), 10.0f + (float)TILE_HEIGHT * (startPos2._y + 0.5f));
 
 	while (window.isOpen())
 	{
@@ -174,6 +218,7 @@ int main()
 			CalculateHPAStar(metrics, ThetaStar::MANHATTAN, pathTiles, openedTiles, expandedTiles);
 		}
 		else if (false)
+		//{
 		{
 			sf::CircleShape ai(0.4f * tileHeight);
 			ai.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
@@ -224,6 +269,7 @@ int main()
 		//	window.draw(expandedTiles[i]);
 		//}
 
+		window.draw(pathTiles2, pathLength2 + 1, sf::LinesStrip);
 		window.draw(pathTiles, pathLength + 1, sf::LinesStrip);
 
 		//window.draw(ai);
@@ -231,10 +277,18 @@ int main()
 		window.display();
 	}
 	//pathFinding.cleanMap();
+	/*delete[] expandedGraph;
+	delete[] openedGraph;*/
+	delete[] abstractGraph;
 	delete[] expandedTiles;
 	delete[] openedTiles;
 	delete[] pathTiles;
 	delete[] walls;
+	for (__int16 i = 0; i < width; i++)
+	{
+		delete[] grid[i];
+	}
+	delete[] grid;
 	ImGui::SFML::Shutdown();
 	return 0;
 }

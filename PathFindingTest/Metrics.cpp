@@ -17,12 +17,15 @@ Vec2D* Metrics::_expandNodeCap(Vec2D* arr, int & currentCap)
 
 Metrics::Metrics()
 {
-	_openedNodesCapacity = 204800;
+	_openedNodesCapacity = 4800;
 	_nrOfOpenedNodes = 0;
 	_openedNodes = new Vec2D[_openedNodesCapacity];
-	_expandedNodesCapacity = 204800;
+	_expandedNodesCapacity = 4800;
 	_nrOfExpandedNodes = 0;
 	_expandedNodes = new Vec2D[_expandedNodesCapacity];
+	_graphNodesCapacity = 4800;
+	_nrOfGraphNodes = 0;
+	_graphNodes = new Vec2D[_graphNodesCapacity];
 }
 
 Metrics::~Metrics()
@@ -31,6 +34,8 @@ Metrics::~Metrics()
 	_openedNodes = nullptr;
 	delete[] _expandedNodes;
 	_expandedNodes = nullptr;
+	delete[] _graphNodes;
+	_graphNodes = nullptr;
 }
 
 int Metrics::getNrOfOpenedNodes() const
@@ -53,6 +58,16 @@ Vec2D * Metrics::getExpandedNodes() const
 	return _expandedNodes;
 }
 
+int Metrics::getNrOfGraphNodes() const
+{
+	return _nrOfGraphNodes;
+}
+
+Vec2D * Metrics::getGraphNodes() const
+{
+	return _graphNodes;
+}
+
 void Metrics::addOpenedNode(const Vec2D node)
 {
 	if (_nrOfOpenedNodes >= _openedNodesCapacity)
@@ -69,4 +84,13 @@ void Metrics::addExpandedNode(const Vec2D node)
 		_expandedNodes = _expandNodeCap(_expandedNodes, _expandedNodesCapacity);
 	}
 	_expandedNodes[_nrOfExpandedNodes++] = node;
+}
+
+void Metrics::addGraphNode(const Vec2D node)
+{
+	if (_nrOfGraphNodes >= _graphNodesCapacity)
+	{
+		_graphNodes = _expandNodeCap(_graphNodes, _graphNodesCapacity);
+	}
+	_graphNodes[_nrOfGraphNodes++] = node;
 }

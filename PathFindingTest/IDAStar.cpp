@@ -34,7 +34,7 @@ IDAStar::IDAStar() :
 	_heuristicType = MANHATTAN;
 }
 IDAStar::IDAStar(int width, int height, Heuristic heuristicType) :
-	Pathfinding(width, height, heuristicType)
+	Pathfinding(width, height, {0,0}, heuristicType)
 {
 	_nrOfPathNodes = 0;
 	_path = nullptr;
@@ -45,7 +45,7 @@ IDAStar::IDAStar(int width, int height, Heuristic heuristicType) :
 	_heuristicType = heuristicType;
 }
 IDAStar::IDAStar(int width, int height, Vec2D start, Vec2D goal, Heuristic heuristicType) :
-	Pathfinding(width, height, start, goal, heuristicType)
+	Pathfinding(width, height, start, goal, {0,0}, heuristicType)
 {
 	_nrOfPathNodes = 0;
 	_path = nullptr;
