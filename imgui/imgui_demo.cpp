@@ -167,7 +167,7 @@ void ImGui::ShowTestWindow(bool* p_opened)
     {
         if (ImGui::BeginMenu("Menu"))
         {
-            ShowExampleMenuFile();
+			ShowExampleMenuFile();
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Examples"))
@@ -1722,40 +1722,40 @@ static void ShowExampleMenuFile()
 		}
 		if (ImGui::BeginMenu("HPA*", true))
 		{
-			ImGui::MenuItem("Manhattan", NULL, &ThetaStarManhattan);
-			ImGui::MenuItem("Chebyshev", NULL, &ThetaStarChebyshev);
-			ImGui::MenuItem("Octile", NULL, &ThetaStarOctile);
-			ImGui::MenuItem("Euclidean", NULL, &ThetaStarEuclidean);
+			ImGui::MenuItem("Manhattan", NULL, &HPAStarManhattan);
+			ImGui::MenuItem("Chebyshev", NULL, &HPAStarChebyshev);
+			ImGui::MenuItem("Octile", NULL, &HPAStarOctile);
+			ImGui::MenuItem("Euclidean", NULL, &HPAStarEuclidean);
 			ImGui::EndMenu();
 
 			//TODO: Read the HPA* path finding
 		}
 		if (ImGui::BeginMenu("IDA*", true))
 		{
-			ImGui::MenuItem("Manhattan", NULL, &ThetaStarManhattan);
-			ImGui::MenuItem("Chebyshev", NULL, &ThetaStarChebyshev);
-			ImGui::MenuItem("Octile", NULL, &ThetaStarOctile);
-			ImGui::MenuItem("Euclidean", NULL, &ThetaStarEuclidean);
+			ImGui::MenuItem("Manhattan", NULL, &IDAStarManhattan);
+			ImGui::MenuItem("Chebyshev", NULL, &IDAStarChebyshev);
+			ImGui::MenuItem("Octile", NULL, &IDAStarOctile);
+			ImGui::MenuItem("Euclidean", NULL, &IDAStarEuclidean);
 			ImGui::EndMenu();
 
 			//TODO: Read the IDA* path finding
 		}
 		if (ImGui::BeginMenu("GAA*", true))
 		{
-			ImGui::MenuItem("Manhattan", NULL, &ThetaStarManhattan);
-			ImGui::MenuItem("Chebyshev", NULL, &ThetaStarChebyshev);
-			ImGui::MenuItem("Octile", NULL, &ThetaStarOctile);
-			ImGui::MenuItem("Euclidean", NULL, &ThetaStarEuclidean);
+			ImGui::MenuItem("Manhattan", NULL, &GAAStarManhattan);
+			ImGui::MenuItem("Chebyshev", NULL, &GAAStarChebyshev);
+			ImGui::MenuItem("Octile", NULL, &GAAStarOctile);
+			ImGui::MenuItem("Euclidean", NULL, &GAAStarEuclidean);
 			ImGui::EndMenu();
 
 			//TODO: Read the GAA* path finding
 		}
 		if (ImGui::BeginMenu("D* Lite", true))
 		{
-			ImGui::MenuItem("Manhattan", NULL, &ThetaStarManhattan);
-			ImGui::MenuItem("Chebyshev", NULL, &ThetaStarChebyshev);
-			ImGui::MenuItem("Octile", NULL, &ThetaStarOctile);
-			ImGui::MenuItem("Euclidean", NULL, &ThetaStarEuclidean);
+			ImGui::MenuItem("Manhattan", NULL, &DStarLiteManhattan);
+			ImGui::MenuItem("Chebyshev", NULL, &DStarLiteChebyshev);
+			ImGui::MenuItem("Octile", NULL, &DStarLiteOctile);
+			ImGui::MenuItem("Euclidean", NULL, &DStarLiteEuclidean);
 			ImGui::EndMenu();
 
 			//TODO: Read the D* Lite path finding
@@ -1764,117 +1764,9 @@ static void ShowExampleMenuFile()
 		ImGui::EndMenu();
 	}
 
-	int a = -1;
-	//A*
-	if (AStarManhattan)
-	{
-		a = 1;
-	}
-	if (AStarChebyshev)
-	{
-		a = 2;
-	}
-	if (AStarOctile)
-	{
-		a = 3;
-	}
-	if (AStarEuclidean)
-	{
-		a = 4;
-	}
-
-	//Theta*
-	if (ThetaStarManhattan)
-	{
-		a = 5;
-	}
-	if (ThetaStarChebyshev)
-	{
-		a = 6;
-	}
-	if (ThetaStarOctile)
-	{
-		a = 7;
-	}
-	if (ThetaStarEuclidean)
-	{
-		a = 8;
-	}
-
-	//IDA*
-	if (IDAStarManhattan)
-	{
-		a = 9;
-	}
-	if (IDAStarChebyshev)
-	{
-		a = 10;
-	}
-	if (IDAStarOctile)
-	{
-		a = 11;
-	}
-	if (IDAStarEuclidean)
-	{
-		a = 12;
-	}
-
-	//HPA*
-	if (HPAStarManhattan)
-	{
-		a = 13;
-	}
-	if (HPAStarChebyshev)
-	{
-		a = 14;
-	}
-	if (HPAStarOctile)
-	{
-		a = 15;
-	}
-	if (HPAStarEuclidean)
-	{
-		a = 16;
-	}
-
-	//GAA*
-	if (GAAStarManhattan)
-	{
-		a = 17;
-	}
-	if (GAAStarChebyshev)
-	{
-		a = 18;
-	}
-	if (GAAStarOctile)
-	{
-		a = 19;
-	}
-	if (GAAStarEuclidean)
-	{
-		a = 20;
-	}
-
-	//D* Lite
-	if (DStarLiteManhattan)
-	{
-		a = 21;
-	}
-	if (DStarLiteChebyshev)
-	{
-		a = 22;
-	}
-	if (DStarLiteOctile)
-	{
-		a = 23;
-	}
-	if (DStarLiteEuclidean)
-	{
-		a = 24;
-	}
-
 	/************************************************/
 
+	
     if (ImGui::BeginMenu("Open Recent"))
     {
         ImGui::MenuItem("fish_hat.c");
