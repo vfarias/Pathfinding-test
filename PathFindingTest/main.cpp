@@ -13,8 +13,8 @@ int main()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	int timer = 0;
 	//Visual size of tiles
-	const int TILE_WIDTH = 10;
-	const int TILE_HEIGHT = 10;
+	const int TILE_WIDTH = 3;
+	const int TILE_HEIGHT = 3;
 	Vec2D startPos = {1, 1};
 	Vec2D goalPos = {511, 511};
 	Vec2D startPos2 = {1, 1};
@@ -28,7 +28,7 @@ int main()
 
 	string* map = nullptr;
 	//map = mr.ReadMap("Maps/32room_008.map");
-	map = mr.ReadMap("Maps/maze512-1-5.map");
+	map = mr.ReadMap("Maps/32room_008.map");
 	int width = mr.GetWidth();
 	int height = mr.GetHeight();
 	float obstacleDensity = 1.00f;
@@ -47,7 +47,7 @@ int main()
 		}
 	}
 
-	HPAStar pathFinding(width, height, 16, Pathfinding::OCTILE);
+	HPAStar pathFinding(width, height, 32, Pathfinding::OCTILE);
 	//pathFinding.init(startPos, goalPos);
 	//ThetaStar pathFinding(WIDTH, HEIGHT, startPos, goalPos, ThetaStar::EUCLIDEAN);
 	AStar pathFinding2(width, height, {0,0}, startPos2, goalPos, grid, AStar::OCTILE);
@@ -86,7 +86,7 @@ int main()
 	Metrics ThetaStar_metrics = Metrics();
 	Metrics AStar_metrics = Metrics();
 
-	sf::RenderWindow window(sf::VideoMode(1300, 1200), "AI test");
+	sf::RenderWindow window(sf::VideoMode(1300, 720), "AI test");
 	window.setFramerateLimit(60);
 
 	ImGui::SFML::SetRenderTarget(window);
@@ -135,13 +135,13 @@ int main()
 		pathLength2 = pathFinding2.getNrOfPathNodes();
 		path2 = pathFinding2.getPath();
 	}
-	//openedTiles = new sf::RectangleShape[ThetaStar_metrics.getNrOfOpenedNodes()];
-	//for (int i = 0; i < ThetaStar_metrics.getNrOfOpenedNodes(); i++)
-	//{
-	//	openedTiles[i] = sf::RectangleShape(sf::Vector2f((float)TILE_WIDTH, (float)TILE_HEIGHT));
-	//	openedTiles[i].setFillColor(sf::Color(0, 0, 200, 120));
-	//	openedTiles[i].setPosition(sf::Vector2f(10.0f + (float)TILE_WIDTH * ThetaStar_metrics.getOpenedNodes()[i]._x, 10.0f + (float)TILE_HEIGHT * ThetaStar_metrics.getOpenedNodes()[i]._y));
-	//}
+	openedTiles = new sf::RectangleShape[ThetaStar_metrics.getNrOfOpenedNodes()];
+	for (int i = 0; i < ThetaStar_metrics.getNrOfOpenedNodes(); i++)
+	{
+		openedTiles[i] = sf::RectangleShape(sf::Vector2f((float)TILE_WIDTH, (float)TILE_HEIGHT));
+		openedTiles[i].setFillColor(sf::Color(0, 0, 200, 120));
+		openedTiles[i].setPosition(sf::Vector2f(10.0f + (float)TILE_WIDTH * ThetaStar_metrics.getOpenedNodes()[i]._x, 10.0f + (float)TILE_HEIGHT * ThetaStar_metrics.getOpenedNodes()[i]._y));
+	}
 	//expandedTiles = new sf::RectangleShape[ThetaStar_metrics.getNrOfExpandedNodes()];
 	//for (int i = 0; i < ThetaStar_metrics.getNrOfExpandedNodes(); i++)
 	//{
@@ -178,12 +178,12 @@ int main()
 		expandedGraph[i].color = sf::Color(200, 200, 0, 255);
 	}
 
-	openedGraph = new sf::Vertex[ThetaStar_metrics.getNrOfOpenedNodes()];
-	for (int i = 0; i < ThetaStar_metrics.getNrOfOpenedNodes(); i++)
-	{
-		openedGraph[i] = sf::Vertex(sf::Vector2f(10.0f + (float)TILE_WIDTH * (ThetaStar_metrics.getOpenedNodes()[i]._x + 0.5f), 10.0f + (float)TILE_HEIGHT * (ThetaStar_metrics.getOpenedNodes()[i]._y + 0.5f)));
-		openedGraph[i].color = sf::Color(50, 50, 250, 255);
-	}
+	//openedGraph = new sf::Vertex[ThetaStar_metrics.getNrOfOpenedNodes()];
+	//for (int i = 0; i < ThetaStar_metrics.getNrOfOpenedNodes(); i++)
+	//{
+	//	openedGraph[i] = sf::Vertex(sf::Vector2f(10.0f + (float)TILE_WIDTH * (ThetaStar_metrics.getOpenedNodes()[i]._x + 0.5f), 10.0f + (float)TILE_HEIGHT * (ThetaStar_metrics.getOpenedNodes()[i]._y + 0.5f)));
+	//	openedGraph[i].color = sf::Color(50, 50, 250, 255);
+	//}
 
 	pathTiles = new sf::Vertex[pathLength + 1];
 	for (int i = 0; i < pathLength; i++)
@@ -219,25 +219,25 @@ int main()
 
 		//window.draw(ai2);
 		window.draw(goal);
-		for (int i = 0; i < nrOfWalls; i++)
-		{
-			window.draw(walls[i]);
-		}
-		//for (int i = 0; i < ThetaStar_metrics.getNrOfOpenedNodes(); i++)
+		//for (int i = 0; i < nrOfWalls; i++)
 		//{
-		//	window.draw(openedTiles[i]);
+		//	window.draw(walls[i]);
 		//}
+		for (int i = 0; i < ThetaStar_metrics.getNrOfOpenedNodes(); i++)
+		{
+			window.draw(openedTiles[i]);
+		}
 		//for (int i = 0; i <  metrics.getNrOfExpandedNodes(); i++)
 		//{
 		//	window.draw(expandedTiles[i]);
 		//}
 		window.draw(abstractGraph, ThetaStar_metrics.getNrOfGraphNodes(), sf::Lines);
 
-		window.draw(openedGraph, ThetaStar_metrics.getNrOfOpenedNodes(), sf::Lines);
+	//	window.draw(openedGraph, ThetaStar_metrics.getNrOfOpenedNodes(), sf::Lines);
 		//window.draw(expandedGraph, ThetaStar_metrics.getNrOfExpandedNodes(), sf::Lines);
 
-		//window.draw(pathTiles2, pathLength2 + 1, sf::LinesStrip);
-		//window.draw(pathTiles, pathLength + 1, sf::LinesStrip);
+		window.draw(pathTiles2, pathLength2 + 1, sf::LinesStrip);
+		window.draw(pathTiles, pathLength + 1, sf::LinesStrip);
 
 		//	window.draw(ai);
 		ImGui::Render();

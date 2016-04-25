@@ -26,18 +26,18 @@ void HPAStar::findEdges(Vec2D pos, const Vec2D dir, Cluster* cluster1, Cluster* 
 		{
 			if (edgeLength > 5)			//Cut off for an edge being long enough to get two node crossings.
 			{
-				HPANode* node1 = new HPANode(pos._x - dir._x, pos._y - dir._y);
-				HPANode* node2 = new HPANode(pos._x - dir._x - dir._y, pos._y - dir._y - dir._x);
+				Vec2D node1 = Vec2D(pos._x - dir._x, pos._y - dir._y);
+				Vec2D node2 = Vec2D(node1._x - dir._y, node1._y - dir._x);
 				setEdgePair(node1, node2, cluster1, cluster2, metrics);
 
-				node1 = new HPANode(pos._x - dir._x * edgeLength, pos._y - dir._y * edgeLength);
-				node2 = new HPANode(node1->_position._x - dir._y, node1->_position._y - dir._x);
+				node1 = Vec2D(pos._x - dir._x * edgeLength, pos._y - dir._y * edgeLength);
+				node2 = Vec2D(node1._x - dir._y, node1._y - dir._x);
 				setEdgePair(node1, node2, cluster1, cluster2, metrics);
 			}
 			else if(edgeLength > 0)
 			{
-				HPANode* node1 = new HPANode(pos._x - dir._x * (edgeLength + 1) / 2, pos._y - dir._y * (edgeLength + 1) / 2);
-				HPANode* node2 = new HPANode(pos._x - dir._y - dir._x * (edgeLength + 1) / 2, pos._y - dir._x - dir._y *(edgeLength + 1) / 2);
+				Vec2D node1 = Vec2D(pos._x - dir._x * (edgeLength + 1) / 2, pos._y - dir._y * (edgeLength + 1) / 2);
+				Vec2D node2 = Vec2D(node1._x - dir._y, node1._y - dir._x);
 				setEdgePair(node1, node2, cluster1, cluster2, metrics);
 			}
 			edgeLength = 0;
@@ -46,45 +46,82 @@ void HPAStar::findEdges(Vec2D pos, const Vec2D dir, Cluster* cluster1, Cluster* 
 	}
 	if (edgeLength > 5)					//Extra check in case the corner node is traversable
 	{
-		HPANode* node1 = new HPANode(pos._x - dir._x, pos._y - dir._y);
-		HPANode* node2 = new HPANode(pos._x - dir._x - dir._y, pos._y - dir._y - dir._x);
+		Vec2D node1 = Vec2D(pos._x - dir._x, pos._y - dir._y);
+		Vec2D node2 = Vec2D(node1._x - dir._y, node1._y - dir._x);
 		setEdgePair(node1, node2, cluster1, cluster2, metrics);
 
-		node1 = new HPANode(pos._x - dir._x * edgeLength, pos._y - dir._y * edgeLength);
-		node2 = new HPANode(node1->_position._x - dir._y, node1->_position._y - dir._x);
+		node1 = Vec2D(pos._x - dir._x * edgeLength, pos._y - dir._y * edgeLength);
+		node2 = Vec2D(node1._x - dir._y, node1._y - dir._x);
 		setEdgePair(node1, node2, cluster1, cluster2, metrics);
 	} else if (edgeLength > 0)
 	{
-		HPANode* node1 = new HPANode(pos._x - dir._x * (edgeLength + 1) / 2, pos._y - dir._y * (edgeLength + 1) / 2);
-		HPANode* node2 = new HPANode(pos._x - dir._y - dir._x * (edgeLength + 1) / 2, pos._y - dir._x - dir._y *(edgeLength + 1) / 2);
+		Vec2D node1 = Vec2D(pos._x - dir._x * (edgeLength + 1) / 2, pos._y - dir._y * (edgeLength + 1) / 2);
+		Vec2D node2 = Vec2D(node1._x - dir._y, node1._y - dir._x);
 		setEdgePair(node1, node2, cluster1, cluster2, metrics);
 	}
 }
 
 void HPAStar::setEdgePair(Vec2D pos1, Vec2D pos2, Cluster* cluster1, Cluster* cluster2, Metrics& metrics)
 {
+	//HPANode* node1 = new HPANode(pos1._x, pos1._y);
+	HPANode* node1 = nullptr;
+	HPANode* node2 = nullptr;
 
-	HPANode* node1 = new HPANode(pos1._x, pos1._y);
-	cluster1->_internalNodes[cluster1->_nrOfInternalNodes] = node1;
-	node1->_clusterIndex = cluster1->_nrOfInternalNodes;
-	cluster1->_nrOfInternalNodes++;
-
-	bool makeNode2 = false;
-	if (pos2 == Vec2D(cluster2->_position._x + _clusterSize - 1, cluster2->_position._y + _clusterSize - 1))
+	if (pos1 == cluster1->_position && pos2 == pos1 + Vec2D(0, -1) &&
+		isPositionValid({pos1._x - 1, pos1._y}) && _grid[pos1._x - 1][pos1._y]._traversable)		// 2nd edge for top left corner
 	{
-		if (!_grid[pos2._x + pos1._y - pos2._y][pos2._y + pos1._x - pos2._x]._traversable)
+		for (int i = 0; i < cluster1->_nrOfInternalNodes && node1 == nullptr; i++)
 		{
-			makeNode2 = true;
+			if (pos1 == cluster1->_internalNodes[i]->_position)
+			{
+				node1 = cluster1->_internalNodes[i];
+			}
 		}
 	}
-	else if (true)
+	else
 	{
-
+		node1 = new HPANode(pos1._x, pos1._y);
+		cluster1->_internalNodes[cluster1->_nrOfInternalNodes] = node1;
+		node1->_clusterIndex = cluster1->_nrOfInternalNodes;
+		cluster1->_nrOfInternalNodes++;
 	}
 
-	HPANode* node2 = new HPANode(pos2._x, pos2._y);
-
-
+	bool makeNode2 = true;
+	if (pos1 == (pos2 + Vec2D(0,1)) && pos2 == Vec2D(cluster2->_position._x + _clusterSize - 1, cluster2->_position._y + _clusterSize - 1))	//bottom right
+	{
+		if ( isPositionValid({pos2._x + 1, pos2._y}) && _grid[pos2._x + 1][pos2._y]._traversable)
+		{
+			makeNode2 = false;
+		}
+	}
+	else if (pos2 == Vec2D(cluster2->_position._x + _clusterSize - 1, cluster2->_position._y) ||				//top right
+			 pos2 == Vec2D(cluster2->_position._x, cluster2->_position._y + _clusterSize - 1))					//bottom left
+	{
+		Vec2D cornerPos = {pos2._x - (pos1._y - pos2._y), pos2._y - (pos1._x - pos2._x)};
+		if (isPositionValid(cornerPos) && _grid[cornerPos._x][cornerPos._y]._traversable)
+		{
+			makeNode2 = false;
+		}
+	}
+	if (makeNode2)
+	{
+		node2 = new HPANode(pos2._x, pos2._y);
+		cluster2->_internalNodes[cluster2->_nrOfInternalNodes] = node2;
+		node2->_clusterIndex = cluster2->_nrOfInternalNodes;
+		cluster2->_nrOfInternalNodes++;
+		node2->_edge = node1;
+	}
+	else
+	{
+		for (int i = 0; i < cluster2->_nrOfInternalNodes && node2 == nullptr; i++)
+		{
+			if (pos2 == cluster2->_internalNodes[i]->_position)
+			{
+				node2 = cluster2->_internalNodes[i];
+				node2->_edge2 = node1;
+			}
+		}
+	}
 	if (node1->_edge == nullptr)
 	{
 		node1->_edge = node2;
@@ -93,21 +130,9 @@ void HPAStar::setEdgePair(Vec2D pos1, Vec2D pos2, Cluster* cluster1, Cluster* cl
 	{
 		node1->_edge2 = node2;
 	}
-	if (node2->_edge == nullptr)
-	{
-		node2->_edge = node1;
-	} else
-	{
-		node2->_edge2 = node1;
-	}
-	
-	cluster2->_internalNodes[cluster2->_nrOfInternalNodes] = node2;
-	
-	node2->_clusterIndex = cluster2->_nrOfInternalNodes;
-	
-	cluster2->_nrOfInternalNodes++;
-	metrics.addGraphNode(node1->_position);
-	metrics.addGraphNode(node2->_position);
+
+	metrics.addGraphNode(pos1);
+	metrics.addGraphNode(pos2);
 }
 
 void HPAStar::findInternalPaths(Cluster* cluster, Metrics& metrics)
@@ -330,6 +355,16 @@ bool HPAStar::findPath(Metrics& metrics)
 			currentNode->_edge->_open = 1;
 			_openQueue.insert(currentNode->_edge);
 			metrics.addOpenedNode(currentNode->_edge->_position);
+			metrics.addOpenedNode(currentNode->_position);
+		}
+		if (currentNode->_edge2 != nullptr && (currentNode->_edge2->_open == 0 || (currentNode->_edge2->_open == 1 && currentNode->_edge2->_gCost > currentNode->_gCost + 1)))
+		{
+			currentNode->_edge2->_hCost = getHeuristicDistance(currentNode->_edge2->_position, _goal);
+			currentNode->_edge2->_gCost = currentNode->_gCost + 1;
+			currentNode->_edge2->_parent = currentNode;
+			currentNode->_edge2->_open = 1;
+			_openQueue.insert(currentNode->_edge2);
+			metrics.addOpenedNode(currentNode->_edge2->_position);
 			metrics.addOpenedNode(currentNode->_position);
 		}
 		if (_openQueue.size() <= 0)

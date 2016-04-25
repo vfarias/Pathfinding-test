@@ -159,7 +159,7 @@ bool AStar::findPath(Metrics& metrics)
 
 	while (currentPos != _goal)														//loops until a path has been found
 	{
-		//metrics.addExpandedNode(currentPos);
+		metrics.addExpandedNode(currentPos);
 		for (int i = 0; i < 8 && (_heuristicType != MANHATTAN || i < 4); i++)		//Manhattan skips diagonals 
 		{
 			Vec2D checkedPos = currentPos + NEIGHBOUR_OFFSETS[i];
@@ -175,7 +175,7 @@ bool AStar::findPath(Metrics& metrics)
 				calculateGCost(currentPos, checkedPos);
 				if (!openedBefore && _grid[checkedPos._x][checkedPos._y]._open == 1)	//Check that node was added to open list
 				{
-					//metrics.addOpenedNode(checkedPos);
+					metrics.addOpenedNode(checkedPos);
 				}
 			}
 		}
