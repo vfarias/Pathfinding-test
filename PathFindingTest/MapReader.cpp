@@ -11,6 +11,7 @@ MapReader::MapReader()
 {
 	_width = 1;
 	_height = 1;
+	_nrOfWalls = 0;
 }
 MapReader::MapReader(int width, int height)
 {
@@ -28,6 +29,7 @@ MapReader::MapReader(int width, int height)
 	{
 		_height = 1;
 	}
+	_nrOfWalls = 0;
 }
 MapReader::~MapReader()
 {
@@ -74,6 +76,7 @@ void MapReader::SetMapDimensions(int width, int height)
 	{
 		_height = 1;
 	}
+	_nrOfWalls = 0;
 }
 
 int MapReader::GetWidth() const
@@ -83,6 +86,21 @@ int MapReader::GetWidth() const
 int MapReader::GetHeight() const
 {
 	return _height;
+}
+int MapReader::GetNrOfWalls(string* map)
+{
+	if (map != nullptr)
+	{
+		for (int i = 0; i < _width * _height; i++)
+		{
+			if (map[i] == "@")
+			{
+				_nrOfWalls++;
+			}
+		}
+	}
+
+	return _nrOfWalls;
 }
 
 string* MapReader::ReadMap(string fileName)
@@ -167,9 +185,6 @@ void MapReader::GenerateRandomMap(int width, int height, float densityOfObstacle
 		}
 		else
 		{
-			posX = rand() % _width;
-			posY = rand() % _height;
-
 			while (map[posY*_width + posX] == "@")  //Randomize again until a walkable tile is found
 			{
 				posX = rand() % _width;
@@ -182,7 +197,7 @@ void MapReader::GenerateRandomMap(int width, int height, float densityOfObstacle
 
 	int density = (int)(densityOfObstacles * 100.0f);  //Converting from decimal to percent
 	stringstream fileName;
-	fileName << "Maps/Randomized" << to_string(_width).c_str() << "x" << to_string(_height).c_str() << "-" << to_string(density).c_str() << "-" << to_string(0) << ".txt";
+	fileName << "Maps/Randomized" << to_string(_width).c_str() << "x" << to_string(_height).c_str() << "-" << to_string(density).c_str() << "-" << to_string(0) << ".map";
 
 	SaveMapToFile(fileName.str(), map);
 }
@@ -191,8 +206,11 @@ void MapReader::SaveMapToFile(string fileName, string* map)
 	ofstream saveFile;
 	
 	saveFile.open(fileName);
-	saveFile << "width " << _width << "\n";
+
+	saveFile << "type heuristic\n";
 	saveFile << "height " << _height << "\n";
+	saveFile << "width " << _width << "\n";
+	saveFile << "unnecessary line of text\n";
 
 	for (int i = 0; i < _height; i++)
 	{

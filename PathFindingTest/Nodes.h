@@ -19,7 +19,7 @@ struct AStarNode : public BaseNode
 		_open = 0;
 		_parent = nullptr;
 	}
-	AStarNode(__int16 x, __int16 y, float h = -1.0f)
+	AStarNode(__int16 x, __int16 y, float h = -1.0f)  //Remove the weighting
 	{
 		_position = {x, y};
 		_hCost = h;
@@ -45,7 +45,7 @@ struct HPANode : public BaseNode
 {
 	__int8 _open;
 	float _gCost, _hCost;					//distance from start and heuristic to goal, respectively
-	HPANode* _parent;							//the path back to the start node 
+	HPANode* _parent;						//the path back to the start node 
 	HPANode* _edge;							//The correspending node across the cluster border
 	HPANode* _edge2;						//Because fuck corners
 	int _clusterIndex;						//which index the node has in Cluster::_internalNodes
