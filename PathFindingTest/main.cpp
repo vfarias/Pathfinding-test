@@ -5,6 +5,7 @@
 #include "AStar.h"
 #include "ThetaStar.h"
 #include "HPAStar.h"
+#include "IDAStar.h"
 #include "Metrics.h"
 #include "MapReader.h"
 
@@ -16,7 +17,7 @@ int main()
 	const int TILE_WIDTH = 3;
 	const int TILE_HEIGHT = 3;
 	Vec2D startPos = {1, 1};
-	Vec2D goalPos = {511, 511};
+	Vec2D goalPos = {9, 9};
 	Vec2D startPos2 = {1, 1};
 	int pathLength = 0;
 	int pathLength2 = 0;
@@ -24,11 +25,12 @@ int main()
 	Vec2D* path2 = nullptr;
 	MapReader mr = MapReader();
 	//float obstacleDensity = 0.30f;
-	//mr.GenerateRandomMap(width, height, obstacleDensity);
+	mr.GenerateRandomMap(10, 10, 0.0f);
 
 	string* map = nullptr;
 	//map = mr.ReadMap("Maps/32room_008.map");
-	map = mr.ReadMap("Maps/32room_008.map");
+	//map = mr.ReadMap("Maps/adaptive-depth-1.map");
+	map = mr.ReadMap("Maps/Randomized10x10-0-0.map");
 	int width = mr.GetWidth();
 	int height = mr.GetHeight();
 	float obstacleDensity = 1.00f;
@@ -47,11 +49,11 @@ int main()
 		}
 	}
 
-	HPAStar pathFinding(width, height, 32, Pathfinding::OCTILE);
+	HPAStar pathFinding(width, height, 5, Pathfinding::OCTILE);
 	//pathFinding.init(startPos, goalPos);
 	//ThetaStar pathFinding(WIDTH, HEIGHT, startPos, goalPos, ThetaStar::EUCLIDEAN);
-	AStar pathFinding2(width, height, {0,0}, startPos2, goalPos, grid, AStar::OCTILE);
-
+	//AStar pathFinding2(width, height, {0,0}, startPos2, goalPos, grid, AStar::OCTILE);
+	IDAStar pathFinding2(width, height, startPos2, goalPos, grid, AStar::OCTILE);
 	/*for (int i = 0; i < HEIGHT; i++)
 	{
 	for (int j = 0; j < WIDTH; j++)
@@ -223,21 +225,21 @@ int main()
 		//{
 		//	window.draw(walls[i]);
 		//}
-		for (int i = 0; i < ThetaStar_metrics.getNrOfOpenedNodes(); i++)
-		{
-			window.draw(openedTiles[i]);
-		}
+		//for (int i = 0; i < ThetaStar_metrics.getNrOfOpenedNodes(); i++)
+		//{
+		//	window.draw(openedTiles[i]);
+		//}
 		//for (int i = 0; i <  metrics.getNrOfExpandedNodes(); i++)
 		//{
 		//	window.draw(expandedTiles[i]);
 		//}
-		window.draw(abstractGraph, ThetaStar_metrics.getNrOfGraphNodes(), sf::Lines);
+	//	window.draw(abstractGraph, ThetaStar_metrics.getNrOfGraphNodes(), sf::Lines);
 
 	//	window.draw(openedGraph, ThetaStar_metrics.getNrOfOpenedNodes(), sf::Lines);
 		//window.draw(expandedGraph, ThetaStar_metrics.getNrOfExpandedNodes(), sf::Lines);
 
 		window.draw(pathTiles2, pathLength2 + 1, sf::LinesStrip);
-		window.draw(pathTiles, pathLength + 1, sf::LinesStrip);
+	//	window.draw(pathTiles, pathLength + 1, sf::LinesStrip);
 
 		//	window.draw(ai);
 		ImGui::Render();
