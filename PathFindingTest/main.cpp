@@ -9,12 +9,10 @@
 #include "MapReader.h"
 
 string* GenerateMap(int width, int height, float obstacleDensity, MapReader &mr);
-bool CalculateAStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, int width, int height);
-bool CalculateThetaStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, int width, int height);
-bool CalculateHPAStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, int width, int height);
-bool CalculateIDAStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, int width, int height);
-bool CalculateGAAStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, int width, int height);
-bool CalculateDStarLite(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, int width, int height);
+bool CalculateAStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height);
+bool CalculateThetaStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height);
+bool CalculateHPAStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height);
+bool CalculateIDAStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height);
 
 int main()
 {
@@ -108,11 +106,13 @@ int main()
 	sf::RectangleShape* expandedTiles2 = nullptr;
 	sf::Vertex* pathTiles2 = nullptr;
 
-	sf::Vertex* abstractGraph = nullptr;
-	sf::Vertex* openedGraph = nullptr;
-	sf::Vertex* expandedGraph = nullptr;
+	//HPA*
+	sf::Vertex* HPAabstractGraph = nullptr;
+	sf::Vertex* HPAopenedGraph = nullptr;
+	sf::Vertex* HPAexpandedGraph = nullptr;
 	
-	/*expandedTiles = new sf::RectangleShape[ThetaStar_metrics.getNrOfExpandedNodes()];
+	/*
+	expandedTiles = new sf::RectangleShape[ThetaStar_metrics.getNrOfExpandedNodes()];
 	for (int i = 0; i < ThetaStar_metrics.getNrOfExpandedNodes(); i++)
 	{
 		expandedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
@@ -170,6 +170,11 @@ int main()
 	pathTiles2[pathLength2] = sf::Vector2f(10.0f + (float)tileWidth * (startPos._x + 0.5f), 10.0f + (float)tileHeight * (startPos._y + 0.5f));
 	*/
 
+	Metrics AStar_metrics = Metrics();
+	Metrics ThetaStar_metrics = Metrics();
+	Metrics HPAStar_metrics = Metrics();
+	Metrics IDAStar_metrics = Metrics();
+
 	while (window.isOpen())
 	{
 		ImGui::SFML::UpdateImGui();
@@ -186,56 +191,39 @@ int main()
 
 		ImGuiIO &io = ImGui::GetIO();
 		ImGui::ShowTestWindow();
-		//	
-		//	if (false)
-		//	{
-		//		sf::CircleShape ai(0.4f * tileHeight);
-		//		ai.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
-		//		ai.setFillColor(sf::Color::Red);
+			
+			if (false)  //A*
+			{
+				sf::CircleShape ai(0.4f * tileHeight);
+				ai.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
+				ai.setFillColor(sf::Color::Red);
 
-		//		CalculateAStar(metrics, AStar::MANHATTAN, pathTiles, openedTiles, expandedTiles);
-		//	}
-		//	else if (false)
-		//	{
-		//		sf::CircleShape ai(0.4f * tileHeight);
-		//		ai.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
-		//		ai.setFillColor(sf::Color::Blue);
+				CalculateAStar(AStar_metrics, Pathfinding::MANHATTAN, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
+			else if (false)  //Theta*
+			{
+				sf::CircleShape ai(0.4f * tileHeight);
+				ai.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
+				ai.setFillColor(sf::Color::Blue);
 
-		//		CalculateThetaStar(metrics, ThetaStar::MANHATTAN, pathTiles, openedTiles, expandedTiles);
-		//	}
-		//	else if (false)
-		//	{
-		//		sf::CircleShape ai(0.4f * tileHeight);
-		//		ai.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
-		//		ai.setFillColor(sf::Color::Green);
+				CalculateThetaStar(ThetaStar_metrics, Pathfinding::MANHATTAN, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
+			else if (false)  //HPA*
+			{
+				sf::CircleShape ai(0.4f * tileHeight);
+				ai.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
+				ai.setFillColor(sf::Color::Green);
 
-		//		CalculateHPAStar(metrics, ThetaStar::MANHATTAN, pathTiles, openedTiles, expandedTiles);
-		//	}
-		//	else if (false)
-		//	//{
-		//	{
-		//		sf::CircleShape ai(0.4f * tileHeight);
-		//		ai.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
-		//		ai.setFillColor(sf::Color::Magenta);
+				CalculateHPAStar(HPAStar_metrics, Pathfinding::MANHATTAN, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
+			else if (false)  //IDA*
+			{
+				sf::CircleShape ai(0.4f * tileHeight);
+				ai.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
+				ai.setFillColor(sf::Color::Magenta);
 
-		//		CalculateIDAStar(metrics, ThetaStar::MANHATTAN, pathTiles, openedTiles, expandedTiles);
-		//	}
-		//	else if (false)
-		//	{
-		//		sf::CircleShape ai(0.4f * tileHeight);
-		//		ai.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
-		//		ai.setFillColor(sf::Color::Cyan);
-
-		//		CalculateGAAStar(metrics, ThetaStar::MANHATTAN, pathTiles, openedTiles, expandedTiles);
-		//	}
-		//	else if (false)
-		//	{
-		//		sf::CircleShape ai(0.4f * tileHeight);
-		//		ai.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
-		//		ai.setFillColor(sf::Color::White);
-
-		//		CalculateDStarLite(metrics, ThetaStar::MANHATTAN, pathTiles, openedTiles, expandedTiles);
-		//	}
+				CalculateIDAStar(IDAStar_metrics, Pathfinding::MANHATTAN, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
 
 
 		window.clear();
@@ -271,9 +259,9 @@ int main()
 		window.display();
 	}
 	//pathFinding.cleanMap();
-	delete[] expandedGraph;
-	delete[] openedGraph;
-	delete[] abstractGraph;
+	delete[] HPAexpandedGraph;
+	delete[] HPAopenedGraph;
+	delete[] HPAabstractGraph;
 	delete[] expandedTiles;
 	delete[] openedTiles;
 	delete[] pathTiles;
@@ -301,123 +289,97 @@ string* GenerateMap(int width, int height, float obstacleDensity, MapReader &mr)
 
 	return map;
 }
-//bool CalculateAStar(Metrics metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height)
-//{
-//	//TODO loopa över hela mapen och sätt traversable
-//	//pathFinding.setTraversable({ (i % width), (i / width) }, true);
-//
-//	AStar pathFinding(width, height, { 0, 0 }, startPos, goalPos, grid, heuristic);
-//	pathFinding.init(startPos, goalPos);
-//
-//	initiateMap(width, height);
-//
-//	if (pathFinding.findPath(metrics))
-//	{
-//		pathLength = pathFinding.getNrOfPathNodes();
-//		path = pathFinding.getPath();
-//	}
-//	openedTiles = new sf::RectangleShape[metrics.getNrOfOpenedNodes()];
-//	for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
-//	{
-//		openedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
-//		openedTiles[i].setFillColor(sf::Color(0, 200, 200, 120));
-//		openedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getOpenedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getOpenedNodes()[i]._y));
-//	}
-//	expandedTiles = new sf::RectangleShape[metrics.getNrOfExpandedNodes()];
-//	for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
-//	{
-//		expandedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
-//		expandedTiles[i].setFillColor(sf::Color(200, 0, 0, 120));
-//		expandedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getExpandedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getExpandedNodes()[i]._y));
-//	}
-//	pathTiles = new sf::Vertex[pathLength + 1];
-//	for (int i = 0; i < pathLength; i++)
-//	{
-//		pathTiles[i] = sf::Vertex(sf::Vector2f(10.0f + (float)tileWidth * (path[i]._x + 0.5f), 10.0f + (float)tileHeight * (path[i]._y + 0.5f)));
-//		pathTiles[i].color = sf::Color(200, 0, 200, 255);
-//	}
-//	pathTiles[pathLength] = sf::Vector2f(10.0f + (float)tileWidth * (startPos._x + 0.5f), 10.0f + (float)tileHeight * (startPos._y + 0.5f));
-//	
-//	return false;
-//}
-//bool CalculateThetaStar(Metrics metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height)
-//{
-//	//TODO loopa över hela mapen och sätt traversable
-//	//pathFinding.setTraversable({ (i % width), (i / width) }, true);
-//
-//	ThetaStar pathFinding2(width, height, startPos, goalPos, heuristic);
-//	pathFinding2.init(startPos, goalPos);
-//
-//	AStar pathFinding(width, height, startPos, goalPos, heuristic);
-//	initiateMap(width, height);
-//
-//	if (pathFinding.findPath(metrics))
-//	{
-//		pathLength = pathFinding.getNrOfPathNodes();
-//		path = pathFinding.getPath();
-//	}
-//	openedTiles = new sf::RectangleShape[metrics.getNrOfOpenedNodes()];
-//	for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
-//	{
-//		openedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
-//		openedTiles[i].setFillColor(sf::Color(0, 0, 200, 120));
-//		openedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getOpenedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getOpenedNodes()[i]._y));
-//	}
-//	expandedTiles = new sf::RectangleShape[metrics.getNrOfExpandedNodes()];
-//	for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
-//	{
-//		expandedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
-//		expandedTiles[i].setFillColor(sf::Color(0, 200, 0, 120));
-//		expandedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getExpandedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getExpandedNodes()[i]._y));
-//	}
-//	pathTiles = new sf::Vertex[pathLength + 1];
-//	for (int i = 0; i < pathLength; i++)
-//	{
-//		pathTiles[i] = sf::Vertex(sf::Vector2f(10.0f + (float)tileWidth * (path[i]._x + 0.5f), 10.0f + (float)tileHeight * (path[i]._y + 0.5f)));
-//		pathTiles[i].color = sf::Color(200, 200, 0, 255);
-//	}
-//	pathTiles[pathLength] = sf::Vector2f(10.0f + (float)tileWidth * (startPos._x + 0.5f), 10.0f + (float)tileHeight * (startPos._y + 0.5f));
-//	return false;
-//}
-//bool CalculateHPAStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height)
-//{
-//	//TODO loopa över hela mapen och sätt traversable
-//	//pathFinding.setTraversable({ (i % width), (i / width) }, true);
-//	HPAStar pathFinding3(width, height, clusterSize, Pathfinding::OCTILE);
-//	pathFinding3.init(startPos, goalPos);
-//
-//	initiateMap(width, height);
-//
-//	/**/
-//	return false;
-//}
-//bool CalculateIDAStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height)
-//{
-//	//TODO loopa över hela mapen och sätt traversable
-//	//pathFinding.setTraversable({ (i % width), (i / width) }, true);
-//
-//	initiateMap(width, height);
-//
-//	/**/
-//	return false;
-//}
-//bool CalculateGAAStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height)
-//{
-//	//TODO loopa över hela mapen och sätt traversable
-//	//pathFinding.setTraversable({ (i % width), (i / width) }, true);
-//
-//	initiateMap(width, height);
-//
-//	/**/
-//	return false;
-//}
-//bool CalculateDStarLite(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height)
-//{
-//	//TODO loopa över hela mapen och sätt traversable
-//	//pathFinding.setTraversable({ (i % width), (i / width) }, true);
-//
-//	initiateMap(width, height);
-//
-//	/**/
-//	return false;
-//}
+bool CalculateAStar(Metrics metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height)
+{
+	//TODO loopa över hela mapen och sätt traversable
+	//pathFinding.setTraversable({ (i % width), (i / width) }, true);
+
+	//AStar pathFinding(width, height, { 0, 0 }, startPos, goalPos, grid, heuristic);
+	//pathFinding.init(startPos, goalPos);
+
+	//if (pathFinding.findPath(metrics))
+	//{
+	//	pathLength = pathFinding.getNrOfPathNodes();
+	//	path = pathFinding.getPath();
+	//}
+	//openedTiles = new sf::RectangleShape[metrics.getNrOfOpenedNodes()];
+	//for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
+	//{
+	//	openedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
+	//	openedTiles[i].setFillColor(sf::Color(0, 200, 200, 120));
+	//	openedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getOpenedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getOpenedNodes()[i]._y));
+	//}
+	//expandedTiles = new sf::RectangleShape[metrics.getNrOfExpandedNodes()];
+	//for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
+	//{
+	//	expandedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
+	//	expandedTiles[i].setFillColor(sf::Color(200, 0, 0, 120));
+	//	expandedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getExpandedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getExpandedNodes()[i]._y));
+	//}
+	//pathTiles = new sf::Vertex[pathLength + 1];
+	//for (int i = 0; i < pathLength; i++)
+	//{
+	//	pathTiles[i] = sf::Vertex(sf::Vector2f(10.0f + (float)tileWidth * (path[i]._x + 0.5f), 10.0f + (float)tileHeight * (path[i]._y + 0.5f)));
+	//	pathTiles[i].color = sf::Color(200, 0, 200, 255);
+	//}
+	//pathTiles[pathLength] = sf::Vector2f(10.0f + (float)tileWidth * (startPos._x + 0.5f), 10.0f + (float)tileHeight * (startPos._y + 0.5f));
+	//
+	return false;
+}
+bool CalculateThetaStar(Metrics metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height)
+{
+	//TODO loopa över hela mapen och sätt traversable
+	//pathFinding.setTraversable({ (i % width), (i / width) }, true);
+
+	//ThetaStar pathFinding2(width, height, startPos, goalPos, heuristic);
+	//pathFinding2.init(startPos, goalPos);
+
+	//AStar pathFinding(width, height, startPos, goalPos, heuristic);
+
+	//if (pathFinding.findPath(metrics))
+	//{
+	//	pathLength = pathFinding.getNrOfPathNodes();
+	//	path = pathFinding.getPath();
+	//}
+	//openedTiles = new sf::RectangleShape[metrics.getNrOfOpenedNodes()];
+	//for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
+	//{
+	//	openedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
+	//	openedTiles[i].setFillColor(sf::Color(0, 0, 200, 120));
+	//	openedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getOpenedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getOpenedNodes()[i]._y));
+	//}
+	//expandedTiles = new sf::RectangleShape[metrics.getNrOfExpandedNodes()];
+	//for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
+	//{
+	//	expandedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
+	//	expandedTiles[i].setFillColor(sf::Color(0, 200, 0, 120));
+	//	expandedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getExpandedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getExpandedNodes()[i]._y));
+	//}
+	//pathTiles = new sf::Vertex[pathLength + 1];
+	//for (int i = 0; i < pathLength; i++)
+	//{
+	//	pathTiles[i] = sf::Vertex(sf::Vector2f(10.0f + (float)tileWidth * (path[i]._x + 0.5f), 10.0f + (float)tileHeight * (path[i]._y + 0.5f)));
+	//	pathTiles[i].color = sf::Color(200, 200, 0, 255);
+	//}
+	//pathTiles[pathLength] = sf::Vector2f(10.0f + (float)tileWidth * (startPos._x + 0.5f), 10.0f + (float)tileHeight * (startPos._y + 0.5f));
+
+	return false;
+}
+bool CalculateHPAStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height)
+{
+	//TODO loopa över hela mapen och sätt traversable
+	//pathFinding.setTraversable({ (i % width), (i / width) }, true);
+	//HPAStar pathFinding3(width, height, clusterSize, Pathfinding::OCTILE);
+	//pathFinding3.init(startPos, goalPos);
+
+	//
+	return false;
+}
+bool CalculateIDAStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height)
+{
+	//TODO loopa över hela mapen och sätt traversable
+	//pathFinding.setTraversable({ (i % width), (i / width) }, true);
+
+	/**/
+	return false;
+}
