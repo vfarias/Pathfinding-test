@@ -25,6 +25,7 @@ class MapReader
 private:
 	int _width;
 	int _height;
+	int _nrOfWalls;
 
 public:
 	MapReader();
@@ -37,6 +38,7 @@ public:
 
 	int GetWidth() const;
 	int GetHeight() const;
+	int GetNrOfWalls(string* map);
 
 	string* ReadMap(string fileName);
 	void GenerateRandomMap(int width, int height, float densityOfObstacles);
