@@ -8,6 +8,8 @@
 #include "Metrics.h"
 #include "MapReader.h"
 
+#define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
+
 string* GenerateMap(int width, int height, float obstacleDensity, MapReader &mr);
 bool CalculateAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height);
 bool CalculateThetaStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height);
@@ -36,8 +38,8 @@ int main()
 
 	//Map data
 	string* map = nullptr;
-	//map = mr.ReadMap("Maps/Randomized480x480-10-0.map");
-	map = GenerateMap(10, 10, 0.0f, mr);
+	map = mr.ReadMap("Maps/Randomized10x10-0-0.map");
+	//map = GenerateMap(10, 10, 0.0f, mr);
 	int width = mr.GetWidth();
 	int height = mr.GetHeight();
 	int nrOfWalls = mr.GetNrOfWalls(map);
@@ -213,6 +215,13 @@ int main()
 	static bool DStarLiteOctile = false;
 	static bool DStarLiteEuclidean = false;
 
+	//Other variables
+	bool removePathFinding = false;
+	bool randomizeMap = false;
+	static char widthBuffer[4] = "512";
+	static char heightBuffer[4] = "512";
+	static char densityBuffer[3] = "30";
+
 	while (window.isOpen())
 	{
 		ImGui::SFML::UpdateImGui();
@@ -227,6 +236,7 @@ int main()
 			}
 		}
 
+		ImGuiIO &io = ImGui::GetIO();
 		window.clear();
 
 		/**************************************/
@@ -279,9 +289,24 @@ int main()
 
 			ImGui::EndMenu();
 		}
-		if (ImGui::BeginMenu("Another option"))
+		ImGui::MenuItem("Remove all pathfinding", NULL, &removePathFinding);
+		if (ImGui::BeginMenu("Randomize a map"))
+		{
+			//Set width, height and obstacle density
+			ImGui::InputText("Width", widthBuffer, IM_ARRAYSIZE(widthBuffer));
+			ImGui::InputText("Height", heightBuffer, IM_ARRAYSIZE(heightBuffer));
+			ImGui::InputText("Density (%)", densityBuffer, IM_ARRAYSIZE(densityBuffer));
+			if (ImGui::SmallButton("Generate map"))
+			{
+				mr.GenerateRandomMap(stoi(string(widthBuffer)), stoi(string(heightBuffer)), 0.01f*stof(string(densityBuffer)));
+			}
+
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Set start position"))
 		{
 			//
+
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Yet another option"))
@@ -290,8 +315,7 @@ int main()
 			ImGui::EndMenu();
 		}
 
-		ImGuiIO &io = ImGui::GetIO();
-		//ImGui::ShowTestWindow();
+		ImGui::ShowTestWindow();
 
 		if (AStarManhattan || AStarChebyshev || AStarOctile || AStarEuclidean)  //A*
 		{
@@ -388,6 +412,39 @@ int main()
 			}
 
 			window.draw(IDAStar_start);
+		}
+
+		if (removePathFinding)
+		{
+			AStarManhattan = false;
+			AStarChebyshev = false;
+			AStarOctile = false;
+			AStarEuclidean = false;
+
+			ThetaStarManhattan = false;
+			ThetaStarChebyshev = false;
+			ThetaStarOctile = false;
+			ThetaStarEuclidean = false;
+
+			IDAStarManhattan = false;
+			IDAStarChebyshev = false;
+			IDAStarOctile = false;
+			IDAStarEuclidean = false;
+
+			HPAStarManhattan = false;
+			HPAStarChebyshev = false;
+			HPAStarOctile = false;
+			HPAStarEuclidean = false;
+
+			GAAStarManhattan = false;
+			GAAStarChebyshev = false;
+			GAAStarOctile = false;
+			GAAStarEuclidean = false;
+
+			DStarLiteManhattan = false;
+			DStarLiteChebyshev = false;
+			DStarLiteOctile = false;
+			DStarLiteEuclidean = false;
 		}
 
 		/**************************************/
