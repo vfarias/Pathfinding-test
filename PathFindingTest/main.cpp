@@ -9,10 +9,10 @@
 #include "MapReader.h"
 
 string* GenerateMap(int width, int height, float obstacleDensity, MapReader &mr);
-bool CalculateAStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height);
-bool CalculateThetaStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height);
-bool CalculateHPAStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height);
-bool CalculateIDAStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height);
+bool CalculateAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height);
+bool CalculateThetaStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height);
+bool CalculateHPAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height);
+bool CalculateIDAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height);
 
 int main()
 {
@@ -20,8 +20,8 @@ int main()
 	int timer = 0;
 
 	//Visual size of tiles
-	int tileWidth = 2;
-	int tileHeight = 2;
+	int tileWidth = 10;
+	int tileHeight = 10;
 
 	//AI variables
 	int pathLength = 0;
@@ -33,8 +33,8 @@ int main()
 
 	//Map data
 	string* map = nullptr;
-	map = mr.ReadMap("Maps/Randomized480x480-10-0.map");
-	//map = GenerateMap(10, 10, 0.1f, mr);
+	//map = mr.ReadMap("Maps/Randomized480x480-10-0.map");
+	map = GenerateMap(10, 10, 0.0f, mr);
 	int width = mr.GetWidth();
 	int height = mr.GetHeight();
 	int nrOfWalls = mr.GetNrOfWalls(map);
@@ -175,6 +175,21 @@ int main()
 	Metrics HPAStar_metrics = Metrics();
 	Metrics IDAStar_metrics = Metrics();
 
+	sf::CircleShape AStar_start(0.4f * tileHeight);
+	sf::CircleShape ThetaStar_start(0.4f * tileHeight);
+	sf::CircleShape HPAStar_start(0.4f * tileHeight);
+	sf::CircleShape IDAStar_start(0.4f * tileHeight);
+
+	startPos = { 0,0 };
+	Vec2D startPos2 = { 0,2 };
+	Vec2D startPos3 = { 2,0 };
+	Vec2D startPos4 = { 2,2 };
+
+	static bool exploredAStar = false;
+	static bool exploredThetaStar = false;
+	static bool exploredHPAStar = false;
+	static bool exploredIDAStar = false;
+
 	while (window.isOpen())
 	{
 		ImGui::SFML::UpdateImGui();
@@ -192,44 +207,52 @@ int main()
 		ImGuiIO &io = ImGui::GetIO();
 		ImGui::ShowTestWindow();
 			
-			if (false)  //A*
+			if (!exploredAStar)  //A*
 			{
-				sf::CircleShape ai(0.4f * tileHeight);
-				ai.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
-				ai.setFillColor(sf::Color::Red);
+				AStar_start.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
+				AStar_start.setFillColor(sf::Color::Red);
 
 				CalculateAStar(AStar_metrics, Pathfinding::MANHATTAN, pathTiles, openedTiles, expandedTiles, map, width, height);
+
+				exploredAStar = true;
 			}
-			else if (false)  //Theta*
+			if (!exploredThetaStar)  //Theta*
 			{
-				sf::CircleShape ai(0.4f * tileHeight);
-				ai.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
-				ai.setFillColor(sf::Color::Blue);
+				ThetaStar_start.setPosition(sf::Vector2f(10.0f + startPos2._x * (float)tileWidth, 10.0f + startPos2._y * (float)tileHeight));
+				ThetaStar_start.setFillColor(sf::Color::Blue);
 
 				CalculateThetaStar(ThetaStar_metrics, Pathfinding::MANHATTAN, pathTiles, openedTiles, expandedTiles, map, width, height);
+
+				exploredThetaStar = true;
 			}
-			else if (false)  //HPA*
+			if (!exploredHPAStar)  //HPA*
 			{
-				sf::CircleShape ai(0.4f * tileHeight);
-				ai.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
-				ai.setFillColor(sf::Color::Green);
+				HPAStar_start.setPosition(sf::Vector2f(10.0f + startPos3._x * (float)tileWidth, 10.0f + startPos3._y * (float)tileHeight));
+				HPAStar_start.setFillColor(sf::Color::Green);
 
 				CalculateHPAStar(HPAStar_metrics, Pathfinding::MANHATTAN, pathTiles, openedTiles, expandedTiles, map, width, height);
+
+				exploredHPAStar = true;
 			}
-			else if (false)  //IDA*
+			if (!exploredIDAStar)  //IDA*
 			{
-				sf::CircleShape ai(0.4f * tileHeight);
-				ai.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
-				ai.setFillColor(sf::Color::Magenta);
+				IDAStar_start.setPosition(sf::Vector2f(10.0f + startPos4._x * (float)tileWidth, 10.0f + startPos4._y * (float)tileHeight));
+				IDAStar_start.setFillColor(sf::Color::Magenta);
 
 				CalculateIDAStar(IDAStar_metrics, Pathfinding::MANHATTAN, pathTiles, openedTiles, expandedTiles, map, width, height);
+
+				exploredIDAStar = true;
 			}
 
 
 		window.clear();
 
-		//window.draw(ai2);
 		window.draw(goal);
+		window.draw(AStar_start);
+		window.draw(ThetaStar_start);
+		window.draw(HPAStar_start);
+		window.draw(IDAStar_start);
+
 		for (int i = 0; i < nrOfWalls; i++)  //Draw all the walls
 		{
 			window.draw(walls[i]);
@@ -289,7 +312,7 @@ string* GenerateMap(int width, int height, float obstacleDensity, MapReader &mr)
 
 	return map;
 }
-bool CalculateAStar(Metrics metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height)
+bool CalculateAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height)
 {
 	//TODO loopa över hela mapen och sätt traversable
 	//pathFinding.setTraversable({ (i % width), (i / width) }, true);
@@ -326,7 +349,7 @@ bool CalculateAStar(Metrics metrics, Pathfinding::Heuristic heuristic, sf::Verte
 	//
 	return false;
 }
-bool CalculateThetaStar(Metrics metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height)
+bool CalculateThetaStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height)
 {
 	//TODO loopa över hela mapen och sätt traversable
 	//pathFinding.setTraversable({ (i % width), (i / width) }, true);
@@ -365,7 +388,7 @@ bool CalculateThetaStar(Metrics metrics, Pathfinding::Heuristic heuristic, sf::V
 
 	return false;
 }
-bool CalculateHPAStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height)
+bool CalculateHPAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height)
 {
 	//TODO loopa över hela mapen och sätt traversable
 	//pathFinding.setTraversable({ (i % width), (i / width) }, true);
@@ -375,7 +398,7 @@ bool CalculateHPAStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf
 	//
 	return false;
 }
-bool CalculateIDAStar(Metrics AStarMetrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height)
+bool CalculateIDAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, string* map, int width, int height)
 {
 	//TODO loopa över hela mapen och sätt traversable
 	//pathFinding.setTraversable({ (i % width), (i / width) }, true);
