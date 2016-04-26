@@ -27,7 +27,10 @@ int main()
 	int pathLength = 0;
 	int pathLength2 = 0;
 	MapReader mr = MapReader();
-	Vec2D startPos = { 1, 1 };
+	Vec2D startPos =  { 0,0 };
+	Vec2D startPos2 = { 0,2 };
+	Vec2D startPos3 = { 2,0 };
+	Vec2D startPos4 = { 2,2 };
 	Vec2D goalPos = { 479, 479 };
 	Vec2D* path = nullptr;
 
@@ -98,7 +101,6 @@ int main()
 	sf::RectangleShape* openedTiles = nullptr;
 	sf::RectangleShape* expandedTiles = nullptr;
 	sf::Vertex* pathTiles = nullptr;
-	
 
 	/////////////////////////////////////////////////////////////////////////////
 
@@ -110,7 +112,7 @@ int main()
 	sf::Vertex* HPAabstractGraph = nullptr;
 	sf::Vertex* HPAopenedGraph = nullptr;
 	sf::Vertex* HPAexpandedGraph = nullptr;
-	
+
 	/*
 	expandedTiles = new sf::RectangleShape[ThetaStar_metrics.getNrOfExpandedNodes()];
 	for (int i = 0; i < ThetaStar_metrics.getNrOfExpandedNodes(); i++)
@@ -180,15 +182,36 @@ int main()
 	sf::CircleShape HPAStar_start(0.4f * tileHeight);
 	sf::CircleShape IDAStar_start(0.4f * tileHeight);
 
-	startPos = { 0,0 };
-	Vec2D startPos2 = { 0,2 };
-	Vec2D startPos3 = { 2,0 };
-	Vec2D startPos4 = { 2,2 };
+	//Different pathfinding and heuristic combinations
+	static bool AStarManhattan = false;
+	static bool AStarChebyshev = false;
+	static bool AStarOctile = false;
+	static bool AStarEuclidean = false;
 
-	static bool exploredAStar = false;
-	static bool exploredThetaStar = false;
-	static bool exploredHPAStar = false;
-	static bool exploredIDAStar = false;
+	static bool ThetaStarManhattan = false;
+	static bool ThetaStarChebyshev = false;
+	static bool ThetaStarOctile = false;
+	static bool ThetaStarEuclidean = false;
+
+	static bool IDAStarManhattan = false;
+	static bool IDAStarChebyshev = false;
+	static bool IDAStarOctile = false;
+	static bool IDAStarEuclidean = false;
+
+	static bool HPAStarManhattan = false;
+	static bool HPAStarChebyshev = false;
+	static bool HPAStarOctile = false;
+	static bool HPAStarEuclidean = false;
+
+	static bool GAAStarManhattan = false;
+	static bool GAAStarChebyshev = false;
+	static bool GAAStarOctile = false;
+	static bool GAAStarEuclidean = false;
+
+	static bool DStarLiteManhattan = false;
+	static bool DStarLiteChebyshev = false;
+	static bool DStarLiteOctile = false;
+	static bool DStarLiteEuclidean = false;
 
 	while (window.isOpen())
 	{
@@ -204,83 +227,210 @@ int main()
 			}
 		}
 
-		ImGuiIO &io = ImGui::GetIO();
-		ImGui::ShowTestWindow();
-			
-			if (!exploredAStar)  //A*
-			{
-				AStar_start.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
-				AStar_start.setFillColor(sf::Color::Red);
-
-				CalculateAStar(AStar_metrics, Pathfinding::MANHATTAN, pathTiles, openedTiles, expandedTiles, map, width, height);
-
-				exploredAStar = true;
-			}
-			if (!exploredThetaStar)  //Theta*
-			{
-				ThetaStar_start.setPosition(sf::Vector2f(10.0f + startPos2._x * (float)tileWidth, 10.0f + startPos2._y * (float)tileHeight));
-				ThetaStar_start.setFillColor(sf::Color::Blue);
-
-				CalculateThetaStar(ThetaStar_metrics, Pathfinding::MANHATTAN, pathTiles, openedTiles, expandedTiles, map, width, height);
-
-				exploredThetaStar = true;
-			}
-			if (!exploredHPAStar)  //HPA*
-			{
-				HPAStar_start.setPosition(sf::Vector2f(10.0f + startPos3._x * (float)tileWidth, 10.0f + startPos3._y * (float)tileHeight));
-				HPAStar_start.setFillColor(sf::Color::Green);
-
-				CalculateHPAStar(HPAStar_metrics, Pathfinding::MANHATTAN, pathTiles, openedTiles, expandedTiles, map, width, height);
-
-				exploredHPAStar = true;
-			}
-			if (!exploredIDAStar)  //IDA*
-			{
-				IDAStar_start.setPosition(sf::Vector2f(10.0f + startPos4._x * (float)tileWidth, 10.0f + startPos4._y * (float)tileHeight));
-				IDAStar_start.setFillColor(sf::Color::Magenta);
-
-				CalculateIDAStar(IDAStar_metrics, Pathfinding::MANHATTAN, pathTiles, openedTiles, expandedTiles, map, width, height);
-
-				exploredIDAStar = true;
-			}
-
-
 		window.clear();
 
-		window.draw(goal);
-		window.draw(AStar_start);
-		window.draw(ThetaStar_start);
-		window.draw(HPAStar_start);
-		window.draw(IDAStar_start);
+		/**************************************/
+		/*          Start of GUI code         */
+		/**************************************/
 
-		for (int i = 0; i < nrOfWalls; i++)  //Draw all the walls
+		if (ImGui::BeginMenu("Choose pathfinding"))
+		{
+			//TODO: Add interaction with the file system
+			if (ImGui::BeginMenu("A*", true))
+			{
+				ImGui::MenuItem("Manhattan", NULL, &AStarManhattan);
+				ImGui::MenuItem("Chebyshev", NULL, &AStarChebyshev);
+				ImGui::MenuItem("Octile", NULL, &AStarOctile);
+				ImGui::MenuItem("Euclidean", NULL, &AStarEuclidean);
+				ImGui::EndMenu();
+
+				//TODO: Read the A* path finding with the heuristic chosen
+			}
+			if (ImGui::BeginMenu("Theta*", true))
+			{
+				ImGui::MenuItem("Manhattan", NULL, &ThetaStarManhattan);
+				ImGui::MenuItem("Chebyshev", NULL, &ThetaStarChebyshev);
+				ImGui::MenuItem("Octile", NULL, &ThetaStarOctile);
+				ImGui::MenuItem("Euclidean", NULL, &ThetaStarEuclidean);
+				ImGui::EndMenu();
+
+				//TODO: Read the Theta* path finding
+			}
+			if (ImGui::BeginMenu("HPA*", true))
+			{
+				ImGui::MenuItem("Manhattan", NULL, &HPAStarManhattan);
+				ImGui::MenuItem("Chebyshev", NULL, &HPAStarChebyshev);
+				ImGui::MenuItem("Octile", NULL, &HPAStarOctile);
+				ImGui::MenuItem("Euclidean", NULL, &HPAStarEuclidean);
+				ImGui::EndMenu();
+
+				//TODO: Read the HPA* path finding
+			}
+			if (ImGui::BeginMenu("IDA*", true))
+			{
+				ImGui::MenuItem("Manhattan", NULL, &IDAStarManhattan);
+				ImGui::MenuItem("Chebyshev", NULL, &IDAStarChebyshev);
+				ImGui::MenuItem("Octile", NULL, &IDAStarOctile);
+				ImGui::MenuItem("Euclidean", NULL, &IDAStarEuclidean);
+				ImGui::EndMenu();
+
+				//TODO: Read the IDA* path finding
+			}
+
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Another option"))
+		{
+			//
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Yet another option"))
+		{
+			//
+			ImGui::EndMenu();
+		}
+
+		ImGuiIO &io = ImGui::GetIO();
+		//ImGui::ShowTestWindow();
+
+		if (AStarManhattan || AStarChebyshev || AStarOctile || AStarEuclidean)  //A*
+		{
+			AStar_start.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
+			AStar_start.setFillColor(sf::Color::Red);
+
+			if (AStarManhattan)
+			{
+				CalculateAStar(AStar_metrics, Pathfinding::MANHATTAN, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
+			else if (AStarChebyshev)
+			{
+				CalculateAStar(AStar_metrics, Pathfinding::CHEBYSHEV, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
+			else if (AStarOctile)
+			{
+				CalculateAStar(AStar_metrics, Pathfinding::OCTILE, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
+			else if (AStarEuclidean)
+			{
+				CalculateAStar(AStar_metrics, Pathfinding::EUCLIDEAN, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
+
+			window.draw(AStar_start);
+		}
+		if (ThetaStarManhattan || ThetaStarChebyshev ||ThetaStarOctile || ThetaStarEuclidean)  //Theta*
+		{
+			ThetaStar_start.setPosition(sf::Vector2f(10.0f + startPos2._x * (float)tileWidth, 10.0f + startPos2._y * (float)tileHeight));
+			ThetaStar_start.setFillColor(sf::Color::Blue);
+
+			if (ThetaStarManhattan)
+			{
+				CalculateThetaStar(ThetaStar_metrics, Pathfinding::MANHATTAN, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
+			else if (ThetaStarChebyshev)
+			{
+				CalculateThetaStar(ThetaStar_metrics, Pathfinding::CHEBYSHEV, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
+			else if (ThetaStarOctile)
+			{
+				CalculateThetaStar(ThetaStar_metrics, Pathfinding::OCTILE, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
+			else if (ThetaStarEuclidean)
+			{
+				CalculateThetaStar(ThetaStar_metrics, Pathfinding::EUCLIDEAN, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
+
+			window.draw(ThetaStar_start);
+		}
+		if (HPAStarManhattan || HPAStarChebyshev || HPAStarOctile || HPAStarEuclidean)  //HPA*
+		{
+			HPAStar_start.setPosition(sf::Vector2f(10.0f + startPos3._x * (float)tileWidth, 10.0f + startPos3._y * (float)tileHeight));
+			HPAStar_start.setFillColor(sf::Color::Green);
+
+			if (HPAStarManhattan)
+			{
+				CalculateHPAStar(HPAStar_metrics, Pathfinding::MANHATTAN, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
+			else if (HPAStarChebyshev)
+			{
+				CalculateHPAStar(HPAStar_metrics, Pathfinding::CHEBYSHEV, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
+			else if (HPAStarOctile)
+			{
+				CalculateHPAStar(HPAStar_metrics, Pathfinding::OCTILE, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
+			else if (HPAStarEuclidean)
+			{
+				CalculateHPAStar(HPAStar_metrics, Pathfinding::EUCLIDEAN, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
+
+			window.draw(HPAStar_start);
+		}
+		if (IDAStarManhattan || IDAStarChebyshev || IDAStarOctile || IDAStarEuclidean)  //IDA*
+		{
+			IDAStar_start.setPosition(sf::Vector2f(10.0f + startPos4._x * (float)tileWidth, 10.0f + startPos4._y * (float)tileHeight));
+			IDAStar_start.setFillColor(sf::Color::Magenta);
+
+			if (IDAStarManhattan)
+			{
+				CalculateIDAStar(IDAStar_metrics, Pathfinding::MANHATTAN, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
+			else if (IDAStarChebyshev)
+			{
+				CalculateIDAStar(IDAStar_metrics, Pathfinding::CHEBYSHEV, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
+			else if (IDAStarOctile)
+			{
+				CalculateIDAStar(IDAStar_metrics, Pathfinding::OCTILE, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
+			else if (IDAStarEuclidean)
+			{
+				CalculateIDAStar(IDAStar_metrics, Pathfinding::EUCLIDEAN, pathTiles, openedTiles, expandedTiles, map, width, height);
+			}
+
+			window.draw(IDAStar_start);
+		}
+
+		/**************************************/
+		/*            End of GUI code         */
+		/**************************************/
+
+		//Draw the goal node(s)
+		window.draw(goal);
+
+		//Draw all the walls
+		for (int i = 0; i < nrOfWalls; i++)
 		{
 			window.draw(walls[i]);
 		}
-		//for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)  //Draw Theta* opened nodes
+		//Draw Theta* opened nodes
+		//for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
 		//{
 		//	window.draw(openedTiles[i]);
 		//}
-		//for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)  //Draw Theta* expanded nodes
+		//Draw Theta* expanded nodes
+		//for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
 		//{
 		//	window.draw(expandedTiles[i]);
 		//}
-		//for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)  //Draw A* opened nodes
+		//Draw A* opened nodes
+		//for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
 		//{
 		//	window.draw(openedTiles[i]);
 		//}
-		//for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)  //Draw A* expanded nodes
+		//Draw A* expanded nodes
+		//for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
 		//{
 		//	window.draw(expandedTiles[i]);
 		//}
 
+		//Draw the lines that the pathfinding are traversing
 		//window.draw(pathTiles2, pathLength2 + 1, sf::LinesStrip);
 		//window.draw(pathTiles, pathLength + 1, sf::LinesStrip);
 
-		//window.draw(ai);
 		ImGui::Render();
 		window.display();
 	}
+
 	//pathFinding.cleanMap();
 	delete[] HPAexpandedGraph;
 	delete[] HPAopenedGraph;
