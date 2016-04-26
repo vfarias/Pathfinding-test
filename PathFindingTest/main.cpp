@@ -14,10 +14,10 @@ int main()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	int timer = 0;
 	//Visual size of tiles
-	const int TILE_WIDTH = 3;
-	const int TILE_HEIGHT = 3;
-	Vec2D startPos = {1, 1};
-	Vec2D goalPos = {9, 9};
+	const int TILE_WIDTH = 16;
+	const int TILE_HEIGHT = 16;
+	Vec2D startPos = {0, 0};
+	Vec2D goalPos = {511, 511};
 	Vec2D startPos2 = {1, 1};
 	int pathLength = 0;
 	int pathLength2 = 0;
@@ -25,16 +25,16 @@ int main()
 	Vec2D* path2 = nullptr;
 	MapReader mr = MapReader();
 	//float obstacleDensity = 0.30f;
-	mr.GenerateRandomMap(10, 10, 0.0f);
+	//mr.GenerateRandomMap(10, 10, 0.10f);
 
 	string* map = nullptr;
 	//map = mr.ReadMap("Maps/32room_008.map");
-	//map = mr.ReadMap("Maps/adaptive-depth-1.map");
-	map = mr.ReadMap("Maps/Randomized10x10-0-0.map");
+	map = mr.ReadMap("Maps/maze512-1-5.map");
+	//map = mr.ReadMap("Maps/Randomized20x20-30-0.map");
 	int width = mr.GetWidth();
 	int height = mr.GetHeight();
 	float obstacleDensity = 1.00f;
-	int nrOfWalls = (int)(width * height * obstacleDensity);
+	int nrOfWalls = mr.GetNrOfWalls(map);
 	Vec2D* WallPos = new Vec2D[nrOfWalls];
 	int counter = 0;
 	int test = sizeof(sf::RectangleShape);
@@ -49,7 +49,7 @@ int main()
 		}
 	}
 
-	HPAStar pathFinding(width, height, 5, Pathfinding::OCTILE);
+	HPAStar pathFinding(width, height, 16, Pathfinding::OCTILE);
 	//pathFinding.init(startPos, goalPos);
 	//ThetaStar pathFinding(WIDTH, HEIGHT, startPos, goalPos, ThetaStar::EUCLIDEAN);
 	//AStar pathFinding2(width, height, {0,0}, startPos2, goalPos, grid, AStar::OCTILE);
@@ -221,10 +221,10 @@ int main()
 
 		//window.draw(ai2);
 		window.draw(goal);
-		//for (int i = 0; i < nrOfWalls; i++)
-		//{
-		//	window.draw(walls[i]);
-		//}
+		for (int i = 0; i < nrOfWalls; i++)
+		{
+			window.draw(walls[i]);
+		}
 		//for (int i = 0; i < ThetaStar_metrics.getNrOfOpenedNodes(); i++)
 		//{
 		//	window.draw(openedTiles[i]);

@@ -83,36 +83,44 @@ IDAStar::~IDAStar()
 Vec2D IDAStar::evaluateNode(Vec2D pos, float g, float threshold)
 {
 	_grid[pos._x][pos._y]._gCost = g;
-	if (pos == _goal || (g + getHeuristicDistance(pos, _goal)) - threshold > 0.1f)
+	if (pos == _goal || (g + getHeuristicDistance(pos, _goal)) - threshold > 0.0f)
 	{
 		return pos;
 	}
-	Vec2D minPos = {pos._x - 1, pos._y};
+	Vec2D minPos = {-1, -1};
 	float minValue = -1.0f;
 	for (int i = 0; i < 8 && (_heuristicType != MANHATTAN || i < 4); i++)		//Manhattan skips diagonals 
 	{
 		Vec2D checkedPos = pos + NEIGHBOUR_OFFSETS[i];
-		_grid[checkedPos._x][checkedPos._y]._parent = &_grid[pos._x][pos._y];
-		
-		float tileDist = 1;
-		if (i >= 4)
+		Vec2D foundPos = {-1,-1};
+		if ((_grid[pos._x][pos._y]._parent == nullptr || checkedPos != _grid[pos._x][pos._y]._parent->_position)
+			&& isPositionValid(checkedPos) && _grid[checkedPos._x][checkedPos._y]._traversable)
 		{
-			tileDist = SQRT2;
-		}
-		if (_grid[checkedPos._x][checkedPos._y]._traversable)
-		{
-			checkedPos = evaluateNode(checkedPos, g + tileDist, threshold);
 
-			if (checkedPos == _goal)
+			float tileDist = 1;
+			if (i >= 4)
 			{
-				return checkedPos;
+				tileDist = SQRT2;
 			}
-
-			float checkedValue = _grid[checkedPos._x][checkedPos._y]._gCost + getHeuristicDistance(checkedPos, _goal);
-			if (checkedValue < minValue || minValue < 0)
+			if (_grid[checkedPos._x][checkedPos._y]._gCost <= 0 || (g + tileDist) - _grid[checkedPos._x][checkedPos._y]._gCost < 0.0000001f)
 			{
-				minValue = checkedValue;
-				minPos = checkedPos;
+				_grid[checkedPos._x][checkedPos._y]._parent = &_grid[pos._x][pos._y];
+				foundPos = evaluateNode(checkedPos, g + tileDist, threshold);
+			}
+			
+			if (isPositionValid(foundPos))
+			{
+				if (foundPos == _goal)
+				{
+					return foundPos;
+				}
+				float foundValue = _grid[foundPos._x][foundPos._y]._gCost + getHeuristicDistance(foundPos, _goal);
+				if (/*foundValue > threshold && */(foundValue < minValue || minValue < 0) ||
+					(minValue - foundValue < 0.0f && _grid[foundPos._x][foundPos._y]._gCost > _grid[minPos._x][minPos._y]._gCost))
+				{
+					minValue = foundValue;
+					minPos = foundPos;
+				}
 			}
 		}
 	}
@@ -129,13 +137,14 @@ bool IDAStar::findPath(Metrics& metrics)
 	float g = 0.0f;
 	_nrOfPathNodes = 0;																//It's 1 because there's an offset in the loop later.
 	Vec2D currentPos = _start;
+
 	float threshold = getHeuristicDistance(_start, _goal);
 
 	while (currentPos != _goal)
 	{
 		currentPos = evaluateNode(_start, 0.0f, threshold);
-		threshold = _grid[currentPos._x][currentPos._y]._gCost + getHeuristicDistance(currentPos, _goal);
-		if (threshold >= _width * _height)
+ 		threshold = _grid[currentPos._x][currentPos._y]._gCost + getHeuristicDistance(currentPos, _goal);
+		if (threshold >= _width * _height || !isPositionValid(currentPos))
 		{
 			return false;
 		}
