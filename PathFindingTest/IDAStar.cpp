@@ -22,9 +22,6 @@ void IDAStar::calculateGCost(Vec2D parentPos, Vec2D currentPos)
 IDAStar::IDAStar() :
 	Pathfinding()
 {
-	_g = 0;
-	_f = 0;
-
 	_nrOfPathNodes = 0;
 	_path = nullptr;
 	_width = 0;
@@ -32,8 +29,9 @@ IDAStar::IDAStar() :
 	_start = {0,0};
 	_goal = {0,0};
 	_heuristicType = MANHATTAN;
+	_grid = nullptr;
 }
-IDAStar::IDAStar(int width, int height, Heuristic heuristicType) :
+IDAStar::IDAStar(int width, int height, AStarNode** grid, Heuristic heuristicType) :
 	Pathfinding(width, height, {0,0}, heuristicType)
 {
 	_nrOfPathNodes = 0;
@@ -43,8 +41,19 @@ IDAStar::IDAStar(int width, int height, Heuristic heuristicType) :
 	_start = { 0, 0 };
 	_goal = { 0, 0 };
 	_heuristicType = heuristicType;
+	_grid = grid;
+	for (__int16 i = _position._x; i < _position._x + _width; i++)
+	{
+		for (__int16 j = _position._y; j < _position._y + _height; j++)
+		{
+			_grid[i][j]._open = 0;
+			_grid[i][j]._gCost = 0;
+			_grid[i][j]._hCost = 0;
+			_grid[i][j]._parent = nullptr;
+		}
+	}
 }
-IDAStar::IDAStar(int width, int height, Vec2D start, Vec2D goal, Heuristic heuristicType) :
+IDAStar::IDAStar(int width, int height, Vec2D start, Vec2D goal, AStarNode** grid, Heuristic heuristicType) :
 	Pathfinding(width, height, start, goal, {0,0}, heuristicType)
 {
 	_nrOfPathNodes = 0;
@@ -54,19 +63,96 @@ IDAStar::IDAStar(int width, int height, Vec2D start, Vec2D goal, Heuristic heuri
 	_start = start;
 	_goal = goal;
 	_heuristicType = heuristicType;
+	_grid = grid;
+	for (__int16 i = _position._x; i < _position._x + _width; i++)
+	{
+		for (__int16 j = _position._y; j < _position._y + _height; j++)
+		{
+			_grid[i][j]._open = 0;
+			_grid[i][j]._gCost = 0;
+			_grid[i][j]._hCost = 0;
+			_grid[i][j]._parent = nullptr;
+		}
+	}
 }
 
 IDAStar::~IDAStar()
 {
-	delete[] _path;
-	_path = nullptr;
 }
 
-Vec2D IDAStar::evaluateNode()
+Vec2D IDAStar::evaluateNode(Vec2D pos, float g, float threshold)
 {
-	return{ 0,0 };
+	_grid[pos._x][pos._y]._gCost = g;
+	if (pos == _goal || (g + getHeuristicDistance(pos, _goal)) - threshold > 0.1f)
+	{
+		return pos;
+	}
+	Vec2D minPos = {pos._x - 1, pos._y};
+	float minValue = -1.0f;
+	for (int i = 0; i < 8 && (_heuristicType != MANHATTAN || i < 4); i++)		//Manhattan skips diagonals 
+	{
+		Vec2D checkedPos = pos + NEIGHBOUR_OFFSETS[i];
+		_grid[checkedPos._x][checkedPos._y]._parent = &_grid[pos._x][pos._y];
+		
+		float tileDist = 1;
+		if (i >= 4)
+		{
+			tileDist = SQRT2;
+		}
+		if (_grid[checkedPos._x][checkedPos._y]._traversable)
+		{
+			checkedPos = evaluateNode(checkedPos, g + tileDist, threshold);
+
+			if (checkedPos == _goal)
+			{
+				return checkedPos;
+			}
+
+			float checkedValue = _grid[checkedPos._x][checkedPos._y]._gCost + getHeuristicDistance(checkedPos, _goal);
+			if (checkedValue < minValue || minValue < 0)
+			{
+				minValue = checkedValue;
+				minPos = checkedPos;
+			}
+		}
+	}
+	return minPos;
 }
-bool findPath(Metrics& metrics)
+
+void IDAStar::setTraversable(Vec2D pos, bool isTraversable)
 {
-	return false;
+	_grid[pos._x][pos._y]._traversable = isTraversable;
+}
+
+bool IDAStar::findPath(Metrics& metrics)
+{
+	float g = 0.0f;
+	_nrOfPathNodes = 0;																//It's 1 because there's an offset in the loop later.
+	Vec2D currentPos = _start;
+	float threshold = getHeuristicDistance(_start, _goal);
+
+	while (currentPos != _goal)
+	{
+		currentPos = evaluateNode(_start, 0.0f, threshold);
+		threshold = _grid[currentPos._x][currentPos._y]._gCost + getHeuristicDistance(currentPos, _goal);
+		if (threshold >= _width * _height)
+		{
+			return false;
+		}
+	}
+	while (currentPos != _start)													//traces the route back to start
+	{
+		_nrOfPathNodes++;
+		currentPos = _grid[currentPos._x][currentPos._y]._parent->_position;
+	}
+	_path = new Vec2D[_nrOfPathNodes];
+	int c = 0;
+	currentPos = _goal;
+	while (currentPos != _start)													//traces the route back to start
+	{
+		_path[c++] = currentPos;
+		currentPos = _grid[currentPos._x][currentPos._y]._parent->_position;
+	}
+
+	return true;
 }
