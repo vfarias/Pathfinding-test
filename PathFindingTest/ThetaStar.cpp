@@ -54,7 +54,7 @@ bool ThetaStar::lineOfSightBresenham(Vec2D parentPos, Vec2D currentPos)
 			{
 				return false;
 			}
-			if (dY == 0 && !_grid[x0 + ((sX - 1) / 2)][y0]._traversable && !_grid[x0 + ((sX - 1) / 2)][y0 - 1]._traversable <= 0)
+			if (dY == 0 && !_grid[x0 + ((sX - 1) / 2)][y0]._traversable && !_grid[x0 + ((sX - 1) / 2)][y0 - 1]._traversable)
 			{
 				return false;
 			}

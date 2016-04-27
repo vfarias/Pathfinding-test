@@ -255,11 +255,6 @@ HPAStar::~HPAStar()
 	delete[] _grid;
 }
 
-void HPAStar::setTraversable(Vec2D pos, bool isTraversable)
-{
-	_grid[pos._x][pos._y]._traversable = isTraversable;
-}
-
 bool HPAStar::findPath(Metrics& metrics)
 {
 	if (_goal == _start)

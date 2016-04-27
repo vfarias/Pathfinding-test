@@ -14,8 +14,8 @@ struct AStarNode : public BaseNode
 	AStarNode()
 	{
 		_position = {0, 0};
-		_hCost = -1.0f;
-		_gCost = -1.0f;
+		_hCost = 0.0f;
+		_gCost = 0.0f;
 		_open = 0;
 		_parent = nullptr;
 	}
@@ -23,7 +23,7 @@ struct AStarNode : public BaseNode
 	{
 		_position = {x, y};
 		_hCost = h;
-		_gCost = -1.0f;
+		_gCost = 0.0f;
 		_open = 0;
 		_parent = nullptr;
 	}

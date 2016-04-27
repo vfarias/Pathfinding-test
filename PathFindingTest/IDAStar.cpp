@@ -127,11 +127,6 @@ Vec2D IDAStar::evaluateNode(Vec2D pos, float g, float threshold)
 	return minPos;
 }
 
-void IDAStar::setTraversable(Vec2D pos, bool isTraversable)
-{
-	_grid[pos._x][pos._y]._traversable = isTraversable;
-}
-
 bool IDAStar::findPath(Metrics& metrics)
 {
 	float g = 0.0f;

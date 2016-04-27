@@ -69,6 +69,16 @@ void Pathfinding::setGoalPosition(const Vec2D goal)
 	_goal = goal;
 }
 
+void Pathfinding::setTraversable(Vec2D pos, bool isTraversable)
+{
+	_grid[pos._x][pos._y]._traversable = isTraversable;
+}
+
+bool Pathfinding::isTraversable(Vec2D pos) const
+{
+	return _grid[pos._x][pos._y]._traversable;
+}
+
 Vec2D * Pathfinding::getPath() const
 {
 	return _path;
