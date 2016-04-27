@@ -303,15 +303,48 @@ int main()
 		if (saveDataToFile)
 		{
 			ofstream saveFile;
-			saveFile.open("metrics000.txt");
+			saveFile.open("Metrics/metrics000.txt");
 			
 			saveFile << "Algorithm used: ";
+			if (algorithmUsed[0])
+			{
+				saveFile << "A Star. ";
+			}
+			if (algorithmUsed[1])
+			{
+				saveFile << "Theta Star. ";
+			}
+			if (algorithmUsed[2])
+			{
+				saveFile << "HPA Star. ";
+			}
+			if (algorithmUsed[3])
+			{
+				saveFile << "IDA Star. ";
+			}
+			saveFile << "\nHeuristic used: ";
+			if (heuristicUsed[0])
+			{
+				saveFile << "Manhattan. ";
+			}
+			if (heuristicUsed[1])
+			{
+				saveFile << "Chebyshev. ";
+			}
+			if (heuristicUsed[2])
+			{
+				saveFile << "Octile. ";
+			}
+			if (heuristicUsed[3])
+			{
+				saveFile << "Euclidean. ";
+			}
+
+
+
 
 			saveDataToFile = false;
 		}
-
-
-		//TODO ändra så denna meny är två st istället, en gör algoritmer och en för heurestiker
 		if (ImGui::BeginMenu("Choose pathfinding"))
 		{
 			//TODO: Add interaction with the file system
@@ -373,19 +406,19 @@ int main()
 		}
 		if (calculatePaths && algorithmUsed[2])  //HPA*
 		{
-			//if (algorithmCombinations[8])
+			//if (heuristicUsed[0])
 			//{
 			//	CalculateHPAStar(metrics[2], Pathfinding::MANHATTAN, HPAabstractGraph, HPAopenedGraph, HPAexpandedGraph, width, height);
 			//}
-			//else if (algorithmCombinations[9])
+			//else if (heuristicUsed[1])
 			//{
 			//	CalculateHPAStar(metrics[2], Pathfinding::CHEBYSHEV, HPAabstractGraph, HPAopenedGraph, HPAexpandedGraph, width, height);
 			//}
-			//else if (algorithmCombinations[10])
+			//else if (heuristicUsed[2])
 			//{
 			//	CalculateHPAStar(metrics[2], Pathfinding::OCTILE, HPAabstractGraph, HPAopenedGraph, HPAexpandedGraph, width, height);
 			//}
-			//else if (algorithmCombinations[11])
+			//else if (heuristicUsed[3])
 			//{
 			//	CalculateHPAStar(metrics[2], Pathfinding::EUCLIDEAN, HPAabstractGraph, HPAopenedGraph, HPAexpandedGraph, width, height);
 			//}
