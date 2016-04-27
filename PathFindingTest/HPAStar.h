@@ -53,7 +53,7 @@ private:
 	void calculateHCost(HPANode* node);
 public:
 	HPAStar();
-	HPAStar(int width, int height, int clusterSize, Heuristic heuristic = MANHATTAN);
+	HPAStar(int width, int height, int clusterSize, AStarNode** grid, Heuristic heuristic = MANHATTAN);
 	virtual ~HPAStar();
 	bool findPath(Metrics& metrics);
 	void cleanMap();

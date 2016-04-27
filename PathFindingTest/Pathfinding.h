@@ -38,8 +38,8 @@ protected:
 	//virtual void calculateGCost(Vec2D parentPos, Vec2D currentPos) = 0; //Sets cost from the start node
 public:
 	Pathfinding();
-	Pathfinding(int width, int height, Vec2D start, Vec2D goal, Vec2D position = {0,0}, Heuristic heuristic = MANHATTAN);
-	Pathfinding(int width, int height, Vec2D position = {0,0}, Heuristic heuristic = MANHATTAN);
+	Pathfinding(int width, int height, AStarNode** grid, Vec2D start, Vec2D goal, Vec2D position = {0,0}, Heuristic heuristic = MANHATTAN);
+	Pathfinding(int width, int height, AStarNode** grid, Vec2D position = {0,0}, Heuristic heuristic = MANHATTAN);
 	virtual ~Pathfinding();
 	void setPosition(const Vec2D pos);
 	void setStartPosition(const Vec2D start);

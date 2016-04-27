@@ -68,6 +68,7 @@ int main()
 			grid = new AStarNode*[width];
 
 			//Initiate the grid** with walkable or non-walkable tiles
+			int wallCounter = 0;
 			for (int i = 0; i < width; i++)
 			{
 				grid[i] = new AStarNode[height];
@@ -75,27 +76,18 @@ int main()
 				{
 					grid[i][j] = AStarNode(i, j);
 
-					if (map[i*width + j] != "@")
+					if (map[j*width + i] != "@")
 					{
 						grid[i][j]._traversable = true;
 					}
 					else
 					{
 						grid[i][j]._traversable = false;
+						walls[wallCounter] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
+						walls[wallCounter].setFillColor(sf::Color::White);
+						walls[wallCounter].setPosition(sf::Vector2f(10.0f + (float)(tileWidth * i), 10.0f + (float)(tileHeight * j)));
+						wallCounter++;
 					}
-				}
-			}
-
-			//Place the walls in an array of its own (easier to traverse through)
-			int counter = 0;
-			for (int i = 0; i < width * height; i++)
-			{
-				if (!grid[(i / width)][(i % width)]._traversable)
-				{
-					walls[counter] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
-					walls[counter].setFillColor(sf::Color::White);
-					walls[counter].setPosition(sf::Vector2f(10.0f + (float)tileWidth * (i%width), 10.0f + (float)tileHeight * (i / width)));
-					counter++;
 				}
 			}
 		}
@@ -190,12 +182,12 @@ int main()
 	pathTiles2[pathLength2] = sf::Vector2f(10.0f + (float)tileWidth * (startPos._x + 0.5f), 10.0f + (float)tileHeight * (startPos._y + 0.5f));
 	*/
 
-	bool algorithmCombinations[NR_OF_ALGORITHMS * NR_OF_HEURISTICS];
+	//bool algorithmCombinations[NR_OF_ALGORITHMS * NR_OF_HEURISTICS];
 
-	for (int i = 0; i < NR_OF_ALGORITHMS * NR_OF_HEURISTICS; i++)
-	{
-		algorithmCombinations[i] = false;
-	}
+	//for (int i = 0; i < NR_OF_ALGORITHMS * NR_OF_HEURISTICS; i++)
+	//{
+	//	algorithmCombinations[i] = false;
+	//}
 	/**************************************
 	--Order of the algorithms:
 	AStarManhattan
@@ -227,7 +219,7 @@ int main()
 	bool heuristicUsed[NR_OF_HEURISTICS];
 	for (int i = 0; i < NR_OF_HEURISTICS; i++)
 	{
-		algorithmUsed[i] = false;
+		heuristicUsed[i] = false;
 	}
 	/*
 	Order of the algorithms: AStar, Theta*, HPA*, IDA*
@@ -308,11 +300,6 @@ int main()
 		/**************************************/
 		/*          Start of GUI code         */
 		/**************************************/
-
-		if (calculatePaths)
-		{
-			calculatePaths = false;
-		}
 		if (saveDataToFile)
 		{
 			ofstream saveFile;
@@ -328,80 +315,63 @@ int main()
 		if (ImGui::BeginMenu("Choose pathfinding"))
 		{
 			//TODO: Add interaction with the file system
-			if (ImGui::BeginMenu("A*", true))
+			if (ImGui::BeginMenu("Algorithm", true))
 			{
-				ImGui::MenuItem("Manhattan", NULL, &algorithmCombinations[0]);
-				ImGui::MenuItem("Chebyshev", NULL, &algorithmCombinations[1]);
-				ImGui::MenuItem("Octile", NULL, &algorithmCombinations[2]);
-				ImGui::MenuItem("Euclidean", NULL, &algorithmCombinations[3]);
+				ImGui::MenuItem("A*", NULL, &algorithmUsed[0]);
+				ImGui::MenuItem("Theta*", NULL, &algorithmUsed[1]);
+				ImGui::MenuItem("HPA*", NULL, &algorithmUsed[2]);
+				ImGui::MenuItem("IDA*", NULL, &algorithmUsed[3]);
 				ImGui::EndMenu();
 			}
-			if (ImGui::BeginMenu("Theta*", true))
+			if (ImGui::BeginMenu("Heuristic", true))
 			{
-				ImGui::MenuItem("Manhattan", NULL, &algorithmCombinations[4]);
-				ImGui::MenuItem("Chebyshev", NULL, &algorithmCombinations[5]);
-				ImGui::MenuItem("Octile", NULL, &algorithmCombinations[6]);
-				ImGui::MenuItem("Euclidean", NULL, &algorithmCombinations[7]);
+				ImGui::MenuItem("Manhattan", NULL, &heuristicUsed[0]);
+				ImGui::MenuItem("Chebyshev", NULL, &heuristicUsed[1]);
+				ImGui::MenuItem("Octile", NULL, &heuristicUsed[2]);
+				ImGui::MenuItem("Euclidean", NULL, &heuristicUsed[3]);
 				ImGui::EndMenu();
 			}
-			if (ImGui::BeginMenu("HPA*", true))
-			{
-				ImGui::MenuItem("Manhattan", NULL, &algorithmCombinations[8]);
-				ImGui::MenuItem("Chebyshev", NULL, &algorithmCombinations[9]);
-				ImGui::MenuItem("Octile", NULL, &algorithmCombinations[10]);
-				ImGui::MenuItem("Euclidean", NULL, &algorithmCombinations[11]);
-				ImGui::EndMenu();
-			}
-			if (ImGui::BeginMenu("IDA*", true))
-			{
-				ImGui::MenuItem("Manhattan", NULL, &algorithmCombinations[12]);
-				ImGui::MenuItem("Chebyshev", NULL, &algorithmCombinations[13]);
-				ImGui::MenuItem("Octile", NULL, &algorithmCombinations[14]);
-				ImGui::MenuItem("Euclidean", NULL, &algorithmCombinations[15]);
-				ImGui::EndMenu();
-			}
-
 			ImGui::EndMenu();
 		}
-		if (calculatePaths && (algorithmCombinations[0] || algorithmCombinations[1] || algorithmCombinations[2] || algorithmCombinations[3]))  //A*
+		if (calculatePaths && algorithmUsed[0])  //A*
 		{
-			if (algorithmCombinations[0])
+			if (heuristicUsed[0])
 			{
 				CalculateAStar(metrics[0], Pathfinding::MANHATTAN, AStar_pathTiles, AStar_openedTiles, AStar_expandedTiles, width, height, startPos[0], goalPos[0], grid, path, AStar_pathLength);
 			}
-			else if (algorithmCombinations[1])
+			else if (heuristicUsed[1])
 			{
 				CalculateAStar(metrics[0], Pathfinding::CHEBYSHEV, AStar_pathTiles, AStar_openedTiles, AStar_expandedTiles, width, height, startPos[0], goalPos[0], grid, path, AStar_pathLength);
 			}
-			else if (algorithmCombinations[2])
+			else if (heuristicUsed[2])
 			{
 				CalculateAStar(metrics[0], Pathfinding::OCTILE, AStar_pathTiles, AStar_openedTiles, AStar_expandedTiles, width, height, startPos[0], goalPos[0], grid, path, AStar_pathLength);
 			}
-			else if (algorithmCombinations[3])
+			else if (heuristicUsed[3])
 			{
 				CalculateAStar(metrics[0], Pathfinding::EUCLIDEAN, AStar_pathTiles, AStar_openedTiles, AStar_expandedTiles, width, height, startPos[0], goalPos[0], grid, path, AStar_pathLength);
 			}
 		}
-		if (calculatePaths && (algorithmCombinations[4] || algorithmCombinations[5] || algorithmCombinations[6] || algorithmCombinations[7]))  //Theta*
+		if (calculatePaths && algorithmUsed[1])  //Theta*
 		{
-			if (algorithmCombinations[4])
+			if (heuristicUsed[0])
 			{
 				CalculateThetaStar(metrics[1], Pathfinding::MANHATTAN, ThetaStar_pathTiles, ThetaStar_openedTiles, ThetaStar_expandedTiles, width, height);
 			}
-			else if (algorithmCombinations[5])
+			else if (heuristicUsed[1])
 			{
 				CalculateThetaStar(metrics[1], Pathfinding::CHEBYSHEV, ThetaStar_pathTiles, ThetaStar_openedTiles, ThetaStar_expandedTiles, width, height);
 			}
-			else if (algorithmCombinations[6])
+			else if (heuristicUsed[2])
 			{
 				CalculateThetaStar(metrics[1], Pathfinding::OCTILE, ThetaStar_pathTiles, ThetaStar_openedTiles, ThetaStar_expandedTiles, width, height);
 			}
-			else if (algorithmCombinations[7])
+			else if (heuristicUsed[3])
 			{
 				CalculateThetaStar(metrics[1], Pathfinding::EUCLIDEAN, ThetaStar_pathTiles, ThetaStar_openedTiles, ThetaStar_expandedTiles, width, height);
 			}
 		}
-		if (calculatePaths && (algorithmCombinations[8] || algorithmCombinations[9] || algorithmCombinations[10] || algorithmCombinations[11]))  //HPA*
+		if (calculatePaths && algorithmUsed[2])  //HPA*
 		{
 			//if (algorithmCombinations[8])
 			//{
@@ -420,24 +390,28 @@ int main()
 			//	CalculateHPAStar(metrics[2], Pathfinding::EUCLIDEAN, HPAabstractGraph, HPAopenedGraph, HPAexpandedGraph, width, height);
 			//}
 		}
-		if (calculatePaths && (algorithmCombinations[12] || algorithmCombinations[13] || algorithmCombinations[14] || algorithmCombinations[15]))  //IDA*
+		if (calculatePaths && algorithmUsed[3])  //IDA*
 		{
-			if (algorithmCombinations[12])
+			if (heuristicUsed[0])
 			{
 				CalculateIDAStar(metrics[3], Pathfinding::MANHATTAN, IDAStar_pathTiles, IDAStar_openedTiles, IDAStar_expandedTiles, width, height);
 			}
-			else if (algorithmCombinations[13])
+			else if (heuristicUsed[1])
 			{
 				CalculateIDAStar(metrics[3], Pathfinding::CHEBYSHEV, IDAStar_pathTiles, IDAStar_openedTiles, IDAStar_expandedTiles, width, height);
 			}
-			else if (algorithmCombinations[14])
+			else if (heuristicUsed[2])
 			{
 				CalculateIDAStar(metrics[3], Pathfinding::OCTILE, IDAStar_pathTiles, IDAStar_openedTiles, IDAStar_expandedTiles, width, height);
 			}
-			else if (algorithmCombinations[15])
+			else if (heuristicUsed[3])
 			{
 				CalculateIDAStar(metrics[3], Pathfinding::EUCLIDEAN, IDAStar_pathTiles, IDAStar_openedTiles, IDAStar_expandedTiles, width, height);
 			}
+		}
+		if (calculatePaths)
+		{
+			calculatePaths = false;
 		}
 		ImGui::MenuItem("Remove all pathfinding", NULL, &removePathFinding);
 		if (ImGui::BeginMenu("Randomize a map"))
@@ -537,14 +511,18 @@ int main()
 
 			ImGui::EndMenu();
 		}
-		ImGui::MenuItem("Save data to file", NULL, &calculatePaths);
+		ImGui::MenuItem("Save data to file", NULL, &saveDataToFile);
 		ImGui::MenuItem("Calculate paths", NULL, &calculatePaths);
 		
 		if (removePathFinding)
 		{
-			for (int i = 0; i < NR_OF_ALGORITHMS*NR_OF_HEURISTICS; i++)
+			for (int i = 0; i < NR_OF_ALGORITHMS; i++)
 			{
-				algorithmCombinations[i] = false;
+				algorithmUsed[i] = false;
+			}
+			for (int i = 0; i < NR_OF_HEURISTICS; i++)
+			{
+				heuristicUsed[i] = false;
 			}
 
 			removePathFinding = false;
@@ -555,7 +533,7 @@ int main()
 		/**************************************/
 
 		//Draw the start and goal node(s)
-		if (algorithmCombinations[0] || algorithmCombinations[1] || algorithmCombinations[2] || algorithmCombinations[3])
+		if (algorithmUsed[0])
 		{
 			window.draw(startNodes[0]);
 			window.draw(goalNodes[0]);
@@ -576,7 +554,7 @@ int main()
 				}
 			}
 		}
-		if (algorithmCombinations[4] || algorithmCombinations[5] || algorithmCombinations[6] || algorithmCombinations[7])
+		if (algorithmUsed[1])
 		{
 			window.draw(startNodes[1]);
 			window.draw(goalNodes[1]);
@@ -598,7 +576,7 @@ int main()
 				}
 			}
 		}
-		if (algorithmCombinations[8] || algorithmCombinations[9] || algorithmCombinations[10] || algorithmCombinations[11])
+		if (algorithmUsed[2])
 		{
 			window.draw(startNodes[2]);
 			window.draw(goalNodes[2]);
@@ -620,7 +598,7 @@ int main()
 				}
 			}
 		}
-		if (algorithmCombinations[12] || algorithmCombinations[13] || algorithmCombinations[14] || algorithmCombinations[15])
+		if (algorithmUsed[3])
 		{
 			window.draw(startNodes[3]);
 			window.draw(goalNodes[3]);
