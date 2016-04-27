@@ -74,6 +74,8 @@ AStar::AStar(int width, int height, Vec2D position,Vec2D start, Vec2D goal, ASta
 	_heuristicType = heuristic;
 	_openQueue = Heap<AStarNode*>();
 	_grid = grid;
+
+	//Used for HPA* to loop through the cluster sizes
 	for (__int16 i = _position._x; i < _position._x + _width; i++)
 	{
 		for (__int16 j = _position._y; j < _position._y + _height; j++)
@@ -102,6 +104,8 @@ AStar::AStar(int width, int height, Vec2D position, AStarNode** grid, Heuristic 
 	_heuristicType = heuristic;
 	_openQueue = Heap<AStarNode*>();
 	_grid = grid;
+
+	//Used for HPA* to loop through the cluster sizes
 	for (__int16 i = _position._x; i < _position._x + _width; i++)
 	{
 		for (__int16 j = _position._y; j < _position._y + _height; j++)

@@ -200,6 +200,7 @@ void MapReader::GenerateRandomMap(int width, int height, float densityOfObstacle
 	fileName << "Maps/Randomized" << to_string(_width).c_str() << "x" << to_string(_height).c_str() << "-" << to_string(density).c_str() << "-" << to_string(0) << ".map";
 
 	SaveMapToFile(fileName.str(), map);
+	delete[] map;
 }
 void MapReader::SaveMapToFile(string fileName, string* map)
 {
