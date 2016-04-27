@@ -12,6 +12,7 @@
     <ClCompile Include="..\imgui\imgui.cpp" />
     <ClCompile Include="..\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Dijkstra.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AIUtil.h" />
@@ -26,5 +27,6 @@
     <ClInclude Include="MapReader.h" />
     <ClInclude Include="imguiSFML\imgui-rendering-SFML.h" />
     <ClInclude Include="imguiSFML\imgui-events-SFML.h" />
+    <ClInclude Include="Dijkstra.h" />
   </ItemGroup>
 </Project>

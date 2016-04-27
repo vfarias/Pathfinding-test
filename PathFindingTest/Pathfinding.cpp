@@ -69,6 +69,16 @@ void Pathfinding::setGoalPosition(const Vec2D goal)
 	_goal = goal;
 }
 
+void Pathfinding::setTraversable(Vec2D pos, bool isTraversable)
+{
+	_grid[pos._x][pos._y]._traversable = isTraversable;
+}
+
+bool Pathfinding::isTraversable(Vec2D pos) const
+{
+	return _grid[pos._x][pos._y]._traversable;
+}
+
 Vec2D * Pathfinding::getPath() const
 {
 	return _path;
@@ -82,8 +92,8 @@ int Pathfinding::getNrOfPathNodes() const
 float Pathfinding::getHeuristicDistance(Vec2D start, Vec2D goal) const
 {
 	float h = 0;
-	short x = abs(goal._x - start._x);						//horizontal distance to goal
-	short y = abs(goal._y - start._y);						//vertical distance to goal
+	float x = (float)abs(goal._x - start._x);						//horizontal distance to goal
+	float y = (float)abs(goal._y - start._y);						//vertical distance to goal
 	switch (_heuristicType)
 	{
 	case Pathfinding::MANHATTAN:

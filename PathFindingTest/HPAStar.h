@@ -38,7 +38,6 @@ private:
 			delete[] _internalNodes;
 		}
 	};
-	AStarNode** _grid;
 	int _clusterSize;				//Nr of tiles across in a cluster
 	int _nrOfClusters;				//Total amount of clusters on the grid
 	Cluster** _clusters;
@@ -56,7 +55,6 @@ public:
 	HPAStar();
 	HPAStar(int width, int height, int clusterSize, Heuristic heuristic = MANHATTAN);
 	virtual ~HPAStar();
-	void setTraversable(Vec2D pos, bool isTraversable = true);
 	bool findPath(Metrics& metrics);
 	void cleanMap();
 };

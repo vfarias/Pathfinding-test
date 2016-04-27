@@ -1,32 +1,21 @@
-#include "AStar.h"
+#include "Dijkstra.h"
 
-/*
-Calculates h based on the distance to the goal
-*/
-void AStar::calculateHCost(Vec2D pos)
-{
-	_grid[pos._x][pos._y]._hCost = getHeuristicDistance(pos, _goal);
-}
-/*
-Calculates g by adding the preceding nodes g-cost to the current tilecost.
-*/
-void AStar::calculateGCost(Vec2D parentPos, Vec2D currentPos)
+void Dijkstra::calculateGCost(Vec2D parentPos, Vec2D currentPos)
 {
 	float g = 0.0f;
 	//Euclidean heuristic is locked to octile movement for now.
 	switch (_heuristicType)
 	{
-	case AStar::MANHATTAN:
-	case AStar::CHEBYSHEV:
+	case Pathfinding::MANHATTAN:
+	case Pathfinding::CHEBYSHEV:
 		g = _grid[parentPos._x][parentPos._y]._gCost + 1;
 		break;
-	case AStar::OCTILE:
-	case AStar::EUCLIDEAN:
+	case Pathfinding::OCTILE:
+	case Pathfinding::EUCLIDEAN:
 		if (parentPos._x == currentPos._x || parentPos._y == currentPos._y)
 		{
 			g = _grid[parentPos._x][parentPos._y]._gCost + 1;
-		}
-		else
+		} else
 		{
 			g = _grid[parentPos._x][parentPos._y]._gCost + SQRT2;
 		}
@@ -34,18 +23,16 @@ void AStar::calculateGCost(Vec2D parentPos, Vec2D currentPos)
 	default:
 		break;
 	}
-
-	// tileCost <= 0 means unwalkable. open == 0 means no previous gCost, meaning g is automatically better.
 	if (_grid[currentPos._x][currentPos._y]._traversable && (_grid[currentPos._x][currentPos._y]._open == 0 || _grid[currentPos._x][currentPos._y]._gCost > g))
 	{
 		_grid[currentPos._x][currentPos._y]._open = 1;
 		_grid[currentPos._x][currentPos._y]._gCost = g;
 		_grid[currentPos._x][currentPos._y]._parent = &_grid[parentPos._x][parentPos._y];
-		_openQueue.insert(&_grid[currentPos._x][currentPos._y]);										//insert should logically fit outside the function, but it works better with the if-check here.
+		_openQueue.insert(&_grid[currentPos._x][currentPos._y]);
 	}
 }
 
-AStar::AStar()
+Dijkstra::Dijkstra()
 {
 	_nrOfPathNodes = 0;
 	_path = nullptr;
@@ -59,23 +46,11 @@ AStar::AStar()
 	_grid = nullptr;
 }
 
-/*
-Sets grid size, start- and goal positions and heuristic used for the pathfinding algorithm
-*/
-AStar::AStar(int width, int height, Vec2D position,Vec2D start, Vec2D goal, AStarNode** grid, Heuristic heuristic)
+Dijkstra::Dijkstra(int width, int height, Vec2D start, Vec2D goal, AStarNode ** grid, Heuristic heuristic)
+	:Pathfinding(width, height, start, goal)
 {
-	_nrOfPathNodes = 0;
-	_path = nullptr;
-	_width = width;
-	_height = height;
-	_position = position;
-	_start = start;
-	_goal = goal;
-	_heuristicType = heuristic;
 	_openQueue = Heap<AStarNode*>();
 	_grid = grid;
-
-	//Used for HPA* to loop through the cluster sizes
 	for (__int16 i = _position._x; i < _position._x + _width; i++)
 	{
 		for (__int16 j = _position._y; j < _position._y + _height; j++)
@@ -88,24 +63,11 @@ AStar::AStar(int width, int height, Vec2D position,Vec2D start, Vec2D goal, ASta
 	}
 }
 
-
-/*
-Sets grid size and heuristic used for the pathfinding algorithm
-*/
-AStar::AStar(int width, int height, Vec2D position, AStarNode** grid, Heuristic heuristic)
+Dijkstra::Dijkstra(int width, int height, AStarNode ** grid, Heuristic heuristic)
+	:Pathfinding(width, height)
 {
-	_nrOfPathNodes = 0;
-	_path = nullptr;
-	_width = width;
-	_height = height;
-	_position = position;
-	_start = {0,0};
-	_goal = {0,0};
-	_heuristicType = heuristic;
 	_openQueue = Heap<AStarNode*>();
 	_grid = grid;
-
-	//Used for HPA* to loop through the cluster sizes
 	for (__int16 i = _position._x; i < _position._x + _width; i++)
 	{
 		for (__int16 j = _position._y; j < _position._y + _height; j++)
@@ -118,15 +80,12 @@ AStar::AStar(int width, int height, Vec2D position, AStarNode** grid, Heuristic 
 	}
 }
 
-AStar::~AStar()
-{
-}
+Dijkstra::~Dijkstra()
+{}
 
-void AStar::cleanMap()
+void Dijkstra::cleanMap()
 {
-	delete[] _path;
-	_path = nullptr;
-	_nrOfPathNodes = 0;
+	Pathfinding::cleanMap();
 	for (__int16 i = _position._x; i < _position._x + _width; i++)
 	{
 		for (__int16 j = _position._y; j < _position._y + _height; j++)
@@ -141,7 +100,7 @@ void AStar::cleanMap()
 	_openQueue = Heap<AStarNode*>();
 }
 
-bool AStar::findPath(Metrics& metrics)
+bool Dijkstra::findPath(Metrics & metrics)
 {
 	if (_goal == _start)
 	{
@@ -161,13 +120,12 @@ bool AStar::findPath(Metrics& metrics)
 				_grid[checkedPos._x][currentPos._y]._traversable && _grid[currentPos._x][checkedPos._y]._traversable*/)							//checks for corners
 			{
 				bool openedBefore = true;
-				if (_grid[checkedPos._x][checkedPos._y]._open == 0)			//check that node is not already in open list
+				if (_grid[checkedPos._x][checkedPos._y]._open == 0)
 				{
-					calculateHCost(checkedPos);						//As the program works now, h must be calculated before g.
 					openedBefore = false;
-				}												
+				}
 				calculateGCost(currentPos, checkedPos);
-				if (!openedBefore && _grid[checkedPos._x][checkedPos._y]._open == 1)	//Check that node was added to open list
+				if (_grid[checkedPos._x][checkedPos._y]._open == 1 && !openedBefore)	//Check that node was added to open list
 				{
 					metrics.addOpenedNode(checkedPos);
 				}
@@ -176,8 +134,7 @@ bool AStar::findPath(Metrics& metrics)
 		if (_openQueue.size() <= 0)
 		{
 			return false;
-		}
-		else
+		} else
 		{
 			currentPos = _openQueue.removeMin()->_position;
 			while (_grid[currentPos._x][currentPos._y]._open == 2)
@@ -208,7 +165,7 @@ bool AStar::findPath(Metrics& metrics)
 	return true;
 }
 
-float AStar::getPathLength()
+float Dijkstra::getPathLength()
 {
-	return _grid[_goal._x][_goal._y]._gCost;
+	return 0.0f;
 }

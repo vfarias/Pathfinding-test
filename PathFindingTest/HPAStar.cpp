@@ -66,7 +66,7 @@ void HPAStar::setEdgePair(Vec2D pos1, Vec2D pos2, Cluster* cluster1, Cluster* cl
 	//HPANode* node1 = new HPANode(pos1._x, pos1._y);
 	HPANode* node1 = nullptr;
 	HPANode* node2 = nullptr;
-
+	bool makeNode1 = false;
 	if (pos1 == cluster1->_position && pos2 == pos1 + Vec2D(0, -1) &&
 		isPositionValid({pos1._x - 1, pos1._y}) && _grid[pos1._x - 1][pos1._y]._traversable)		// 2nd edge for top left corner
 	{
@@ -78,12 +78,13 @@ void HPAStar::setEdgePair(Vec2D pos1, Vec2D pos2, Cluster* cluster1, Cluster* cl
 			}
 		}
 	}
-	else
+	if (node1 == nullptr)
 	{
 		node1 = new HPANode(pos1._x, pos1._y);
 		cluster1->_internalNodes[cluster1->_nrOfInternalNodes] = node1;
 		node1->_clusterIndex = cluster1->_nrOfInternalNodes;
 		cluster1->_nrOfInternalNodes++;
+		makeNode1 = true;
 	}
 
 	bool makeNode2 = true;
@@ -103,15 +104,7 @@ void HPAStar::setEdgePair(Vec2D pos1, Vec2D pos2, Cluster* cluster1, Cluster* cl
 			makeNode2 = false;
 		}
 	}
-	if (makeNode2)
-	{
-		node2 = new HPANode(pos2._x, pos2._y);
-		cluster2->_internalNodes[cluster2->_nrOfInternalNodes] = node2;
-		node2->_clusterIndex = cluster2->_nrOfInternalNodes;
-		cluster2->_nrOfInternalNodes++;
-		node2->_edge = node1;
-	}
-	else
+	if (!makeNode2)
 	{
 		for (int i = 0; i < cluster2->_nrOfInternalNodes && node2 == nullptr; i++)
 		{
@@ -121,6 +114,14 @@ void HPAStar::setEdgePair(Vec2D pos1, Vec2D pos2, Cluster* cluster1, Cluster* cl
 				node2->_edge2 = node1;
 			}
 		}
+	}
+	if (node2 == nullptr)
+	{
+		node2 = new HPANode(pos2._x, pos2._y);
+		cluster2->_internalNodes[cluster2->_nrOfInternalNodes] = node2;
+		node2->_clusterIndex = cluster2->_nrOfInternalNodes;
+		cluster2->_nrOfInternalNodes++;
+		node2->_edge = node1;
 	}
 	if (node1->_edge == nullptr)
 	{
@@ -252,11 +253,6 @@ HPAStar::~HPAStar()
 		delete[] _grid[i];
 	}
 	delete[] _grid;
-}
-
-void HPAStar::setTraversable(Vec2D pos, bool isTraversable)
-{
-	_grid[pos._x][pos._y]._traversable = isTraversable;
 }
 
 bool HPAStar::findPath(Metrics& metrics)

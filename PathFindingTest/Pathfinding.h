@@ -24,6 +24,7 @@ public:
 		MANHATTAN, CHEBYSHEV, OCTILE, EUCLIDEAN
 	};
 protected:
+	AStarNode** _grid;
 	int _nrOfPathNodes;
 	Vec2D* _path;											//An ordered array moving from goal to start
 	__int16 _width, _height;								//Size of the grid
@@ -43,7 +44,8 @@ public:
 	void setPosition(const Vec2D pos);
 	void setStartPosition(const Vec2D start);
 	void setGoalPosition(const Vec2D goal);
-	virtual void setTraversable(Vec2D pos, bool isTraversable = true) = 0;
+	void setTraversable(Vec2D pos, bool isTraversable = true);
+	bool isTraversable(Vec2D pos)const;
 	Vec2D* getPath() const;
 	int getNrOfPathNodes() const;
 	float getHeuristicDistance(Vec2D start, Vec2D goal) const;

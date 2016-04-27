@@ -161,6 +161,7 @@
     <ClCompile Include="..\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\imgui\imgui_draw.cpp" />
     <ClCompile Include="AStar.cpp" />
+    <ClCompile Include="Dijkstra.cpp" />
     <ClCompile Include="HPAStar.cpp" />
     <ClCompile Include="IDAStar.cpp" />
     <ClCompile Include="main.cpp" />
@@ -172,6 +173,7 @@
   <ItemGroup>
     <ClInclude Include="AIUtil.h" />
     <ClInclude Include="AStar.h" />
+    <ClInclude Include="Dijkstra.h" />
     <ClInclude Include="Heap.h" />
     <ClInclude Include="IDAStar.h" />
     <ClInclude Include="HPAStar.h" />
