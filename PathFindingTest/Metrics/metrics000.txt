@@ -1,0 +1,2 @@
+Algorithm used: A Star. Theta Star. HPA Star. IDA Star. 
+Heuristic used: Manhattan. 
