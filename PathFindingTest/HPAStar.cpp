@@ -215,7 +215,10 @@ void HPAStar::calculateHCost(HPANode* node)
 }
 
 HPAStar::HPAStar()
+	:Pathfinding()
 {
+	_openQueue = Heap<HPANode*>();
+	_clusters = nullptr;
 }
 
 HPAStar::HPAStar(int width, int height, int clusterSize, AStarNode** grid, Heuristic heuristic)
@@ -229,15 +232,6 @@ HPAStar::HPAStar(int width, int height, int clusterSize, AStarNode** grid, Heuri
 	{
 		_clusters[i] = new Cluster(Vec2D((i * _clusterSize)%_width, _clusterSize *  (i/ (_width / _clusterSize))), _clusterSize * 2);
 	}
-	_grid = new AStarNode*[_width];
-	for (int i = 0; i < _width; i++)
-	{
-		_grid[i] = new AStarNode[_height];
-		for (int j = 0; j < _height; j++)
-		{
-			_grid[i][j] = AStarNode(i,j);
-		}
-	}
 }
 
 HPAStar::~HPAStar()
@@ -248,11 +242,6 @@ HPAStar::~HPAStar()
 	}
 	delete[] _clusters;
 	_clusters = nullptr;
-	for (int i = 0; i < _width; i++)
-	{
-		delete[] _grid[i];
-	}
-	delete[] _grid;
 }
 
 bool HPAStar::findPath(Metrics& metrics)

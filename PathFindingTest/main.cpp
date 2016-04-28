@@ -31,7 +31,8 @@ int main()
 
 	//Map data
 	string* map = nullptr;
-	map = mr.ReadMap("Maps/Randomized10x10-10-0.map");
+	//map = mr.ReadMap("Maps/Randomized10x10-10-0.map");
+	map = mr.ReadMap("Maps/adaptive-depth-1.map");
 	//map = mr.ReadMap("Maps/maze512-1-1.map");
 	//map = GenerateMap(10, 10, 0.0f, mr);
 	int width = mr.GetWidth();
@@ -186,10 +187,9 @@ int main()
 			ImGui::InputText("Y position", xBuffer, IM_ARRAYSIZE(xBuffer));
 			ImGui::InputText("X position", yBuffer, IM_ARRAYSIZE(yBuffer));
 
-			Vec2D pos = {stoi(string(xBuffer)), stoi(string(yBuffer))};
-
 			if (ImGui::SmallButton("Set position"))
 			{
+				Vec2D pos = {stoi(string(xBuffer)), stoi(string(yBuffer))};
 				if (startOrGoal == 0)  //Start pos
 				{
 					startPos = pos;
