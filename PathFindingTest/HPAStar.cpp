@@ -417,6 +417,7 @@ bool HPAStar::findPath(Metrics& metrics)
 		currentNode = currentNode->_parent;
 		currentCluster = findCluster(currentNode->_position);
 	}
+	metrics.setPathNodes(_path, _nrOfPathNodes, _grid[_goal._x][_goal._y]._gCost);
 	delete aStar;
 	delete startToEdgePathLengths;
 	delete goalToEdgePathLengths;

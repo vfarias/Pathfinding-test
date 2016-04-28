@@ -110,6 +110,6 @@ bool IDAStar::findPath(Metrics& metrics)
 		_path[c++] = currentPos;
 		currentPos = _grid[currentPos._x][currentPos._y]._parent->_position;
 	}
-
+	metrics.setPathNodes(_path, _nrOfPathNodes, _grid[_goal._x][_goal._y]._gCost);
 	return true;
 }

@@ -245,5 +245,6 @@ bool ThetaStar::findPath(Metrics& metrics)
 		currentPos = _grid[currentPos._x][currentPos._y]._parent->_position;
 	}
 	//	_path[c++] = currentPos;														//Excluding start position since it should already be known
+	metrics.setPathNodes(_path, _nrOfPathNodes, _grid[_goal._x][_goal._y]._gCost);
 	return true;
 }
