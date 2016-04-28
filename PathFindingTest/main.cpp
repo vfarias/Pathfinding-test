@@ -14,9 +14,6 @@
 int tileWidth = 10;
 int tileHeight = 10;
 
-//const int NR_OF_ALGORITHMS = 4;
-//const int NR_OF_HEURISTICS = 4;
-
 string* GenerateMap(int width, int height, float obstacleDensity, MapReader &mr);
 void SaveDataToFile(Metrics &metrics, int chooseAlgorithm, int chooseHeuristic);
 void CalculateAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* &pathTiles, sf::RectangleShape* &openedTiles, sf::RectangleShape* &expandedTiles, int width, int height, Vec2D startPos, Vec2D goalPos, AStarNode** grid, Vec2D* &path, int &pathLength);
@@ -39,17 +36,6 @@ int main()
 
 	Vec2D startPos = {0,0};
 	Vec2D goalPos = {1,1};
-
-	//Vec2D startPos[NR_OF_ALGORITHMS];
-	//Vec2D goalPos[NR_OF_ALGORITHMS];
-	//startPos[0] = {0, 0};
-	//startPos[1] = {0, 2};
-	//startPos[2] = {2, 0};
-	//startPos[3] = {2, 2};
-	//goalPos[0]  = {4, 0};
-	//goalPos[1]  = {4, 2};
-	//goalPos[2]  = {6, 0};
-	//goalPos[3]  = {6, 2};
 	Vec2D* path = nullptr;
 
 	//Map data
@@ -163,9 +149,6 @@ int main()
 	*/
 	/*****************************************************************************/
 
-
-
-
 	Metrics metrics;
 	
 	sf::CircleShape startNode = sf::CircleShape(0.4f*tileHeight);
@@ -215,7 +198,7 @@ int main()
 		}
 
 		ImGuiIO &io = ImGui::GetIO();
-		ImGui::ShowTestWindow();
+		//ImGui::ShowTestWindow();
 		window.clear();
 
 		/**************************************/
@@ -223,11 +206,9 @@ int main()
 		/**************************************/
 		if (ImGui::BeginMenu("Choose pathfinding"))
 		{
-			//TODO: Add interaction with the file system
-
-			ImGui::RadioButton("A*", &choosePathfinding, 0);	ImGui::SameLine();
-			ImGui::RadioButton("Theta*", &choosePathfinding, 1);ImGui::SameLine();
-			ImGui::RadioButton("HPA*", &choosePathfinding, 2);	ImGui::SameLine();
+			ImGui::RadioButton("A*", &choosePathfinding, 0);		ImGui::SameLine();
+			ImGui::RadioButton("Theta*", &choosePathfinding, 1);	ImGui::SameLine();
+			ImGui::RadioButton("HPA*", &choosePathfinding, 2);		ImGui::SameLine();
 			ImGui::RadioButton("IDA*", &choosePathfinding, 3);
 
 			ImGui::RadioButton("Manhattan", &chooseHeuristic, 0);	ImGui::SameLine();
@@ -256,16 +237,6 @@ int main()
 		{
 			ImGui::RadioButton("Set start position", &startOrGoal, 0); ImGui::SameLine();
 			ImGui::RadioButton("Set goal position", &startOrGoal, 1);
-
-			ImGui::RadioButton("A*", &SetPosition, 0);			ImGui::SameLine();
-			ImGui::RadioButton("Theta*", &SetPosition, 1);		ImGui::SameLine();
-			ImGui::RadioButton("HPA*", &SetPosition, 2);		ImGui::SameLine();
-			ImGui::RadioButton("IDA*", &SetPosition, 3);
-
-			ImGui::RadioButton("Manhattan", &SetGoal, 0);		ImGui::SameLine();
-			ImGui::RadioButton("Chebyshev", &SetGoal, 1);		ImGui::SameLine();
-			ImGui::RadioButton("Octile", &SetGoal, 2);			ImGui::SameLine();
-			ImGui::RadioButton("Euclidean", &SetGoal, 3);
 
 			//Set xPos and yPos
 			ImGui::InputText("Y position", xBuffer, IM_ARRAYSIZE(xBuffer));
@@ -301,6 +272,7 @@ int main()
 
 			//TODO gör så den här fungerar
 			ImGui::SliderInt("Change map scale", &tileWidth, 1, 10);
+			int a = tileWidth;
 			ImGui::EndMenu();
 		}
 		ImGui::MenuItem("Calculate paths", NULL, &calculatePaths);
