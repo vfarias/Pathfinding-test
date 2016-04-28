@@ -29,4 +29,5 @@ public:
 	void addOpenedNode(const Vec2D node);
 	void addExpandedNode(const Vec2D node);
 	void addGraphNode(const Vec2D node);
+	void clean();
 };

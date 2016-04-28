@@ -1,4 +1,4 @@
 Algorithm used: A Star. 
-Heuristic used: Manhattan. 
-Number of opened nodes: 16
-Number of expanded nodes: 8
+Heuristic used: Chebyshev. 
+Number of opened nodes: 13
+Number of expanded nodes: 6

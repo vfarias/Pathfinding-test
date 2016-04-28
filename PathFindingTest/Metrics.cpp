@@ -94,3 +94,9 @@ void Metrics::addGraphNode(const Vec2D node)
 	}
 	_graphNodes[_nrOfGraphNodes++] = node;
 }
+void Metrics::clean()
+{
+	_nrOfExpandedNodes = 0;
+	_nrOfGraphNodes = 0;
+	_nrOfOpenedNodes = 0;
+}
