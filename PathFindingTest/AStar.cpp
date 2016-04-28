@@ -46,46 +46,18 @@ void AStar::calculateGCost(Vec2D parentPos, Vec2D currentPos)
 }
 
 AStar::AStar()
+	:Pathfinding()
 {
-	_nrOfPathNodes = 0;
-	_path = nullptr;
-	_width = 0;
-	_height = 0;
-	_start = {0,0};
-	_goal = {0,0};
-	_position = {0,0};
-	_heuristicType = MANHATTAN;
 	_openQueue = Heap<AStarNode*>();
-	_grid = nullptr;
 }
 
 /*
 Sets grid size, start- and goal positions and heuristic used for the pathfinding algorithm
 */
 AStar::AStar(int width, int height, Vec2D position,Vec2D start, Vec2D goal, AStarNode** grid, Heuristic heuristic)
+	:Pathfinding(width, height, grid, start, goal, position, heuristic)
 {
-	_nrOfPathNodes = 0;
-	_path = nullptr;
-	_width = width;
-	_height = height;
-	_position = position;
-	_start = start;
-	_goal = goal;
-	_heuristicType = heuristic;
 	_openQueue = Heap<AStarNode*>();
-	_grid = grid;
-
-	//Used for HPA* to loop through the cluster sizes
-	for (__int16 i = _position._x; i < _position._x + _width; i++)
-	{
-		for (__int16 j = _position._y; j < _position._y + _height; j++)
-		{
-			_grid[i][j]._open = 0;
-			_grid[i][j]._gCost = 0.0f;
-			_grid[i][j]._hCost = 0.0f;
-			_grid[i][j]._parent = nullptr;
-		}
-	}
 }
 
 
@@ -93,29 +65,9 @@ AStar::AStar(int width, int height, Vec2D position,Vec2D start, Vec2D goal, ASta
 Sets grid size and heuristic used for the pathfinding algorithm
 */
 AStar::AStar(int width, int height, Vec2D position, AStarNode** grid, Heuristic heuristic)
+	:Pathfinding(width, height, grid, position, heuristic)
 {
-	_nrOfPathNodes = 0;
-	_path = nullptr;
-	_width = width;
-	_height = height;
-	_position = position;
-	_start = {0,0};
-	_goal = {0,0};
-	_heuristicType = heuristic;
 	_openQueue = Heap<AStarNode*>();
-	_grid = grid;
-
-	//Used for HPA* to loop through the cluster sizes
-	for (__int16 i = _position._x; i < _position._x + _width; i++)
-	{
-		for (__int16 j = _position._y; j < _position._y + _height; j++)
-		{
-			_grid[i][j]._open = 0;
-			_grid[i][j]._gCost = 0.0f;
-			_grid[i][j]._hCost = 0.0f;
-			_grid[i][j]._parent = nullptr;
-		}
-	}
 }
 
 AStar::~AStar()

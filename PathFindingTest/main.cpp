@@ -69,6 +69,7 @@ int main()
 			grid = new AStarNode*[width];
 
 			//Initiate the grid** with walkable or non-walkable tiles
+			int wallCounter = 0;
 			for (int i = 0; i < width; i++)
 			{
 				grid[i] = new AStarNode[height];
@@ -76,27 +77,18 @@ int main()
 				{
 					grid[i][j] = AStarNode(i, j);
 
-					if (map[i*width + j] != "@")
+					if (map[j*width + i] != "@")
 					{
 						grid[i][j]._traversable = true;
 					}
 					else
 					{
 						grid[i][j]._traversable = false;
+						walls[wallCounter] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
+						walls[wallCounter].setFillColor(sf::Color::White);
+						walls[wallCounter].setPosition(sf::Vector2f(10.0f + (float)(tileWidth * i), 10.0f + (float)(tileHeight * j)));
+						wallCounter++;
 					}
-				}
-			}
-
-			//Place the walls in an array of its own (easier to traverse through)
-			int counter = 0;
-			for (int i = 0; i < width * height; i++)
-			{
-				if (!grid[(i / width)][(i % width)]._traversable)
-				{
-					walls[counter] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
-					walls[counter].setFillColor(sf::Color::White);
-					walls[counter].setPosition(sf::Vector2f(10.0f + (float)tileWidth * (i%width), 10.0f + (float)tileHeight * (i / width)));
-					counter++;
 				}
 			}
 		}
@@ -191,11 +183,11 @@ int main()
 	pathTiles2[pathLength2] = sf::Vector2f(10.0f + (float)tileWidth * (startPos._x + 0.5f), 10.0f + (float)tileHeight * (startPos._y + 0.5f));
 	*/
 
-	bool algorithmCombinations[NR_OF_ALGORITHMS * NR_OF_HEURISTICS];
-	for (int i = 0; i < NR_OF_ALGORITHMS * NR_OF_HEURISTICS; i++)
-	{
-		algorithmCombinations[i] = false;
-	}
+	//bool algorithmCombinations[NR_OF_ALGORITHMS * NR_OF_HEURISTICS];
+	//for (int i = 0; i < NR_OF_ALGORITHMS * NR_OF_HEURISTICS; i++)
+	//{
+	//	algorithmCombinations[i] = false;
+	//}
 	/**************************************
 	--Order of the algorithms:
 	AStarManhattan
@@ -294,55 +286,25 @@ int main()
 		/**************************************/
 		/*          Start of GUI code         */
 		/**************************************/
-
 		if (ImGui::BeginMenu("Choose pathfinding"))
 		{
 			//TODO: Add interaction with the file system
-			if (ImGui::BeginMenu("A*", true))
+			if (ImGui::BeginMenu("Algorithm", true))
 			{
-				ImGui::MenuItem("Manhattan", NULL, &algorithmCombinations[0]);
-				ImGui::MenuItem("Chebyshev", NULL, &algorithmCombinations[1]);
-				ImGui::MenuItem("Octile", NULL, &algorithmCombinations[2]);
-				ImGui::MenuItem("Euclidean", NULL, &algorithmCombinations[3]);
+				ImGui::MenuItem("A*", NULL, &algorithmUsed[0]);
+				ImGui::MenuItem("Theta*", NULL, &algorithmUsed[1]);
+				ImGui::MenuItem("HPA*", NULL, &algorithmUsed[2]);
+				ImGui::MenuItem("IDA*", NULL, &algorithmUsed[3]);
 				ImGui::EndMenu();
 			}
-			if (ImGui::BeginMenu("Theta*", true))
+			if (ImGui::BeginMenu("Heuristic", true))
 			{
-				ImGui::MenuItem("Manhattan", NULL, &algorithmCombinations[4]);
-				ImGui::MenuItem("Chebyshev", NULL, &algorithmCombinations[5]);
-				ImGui::MenuItem("Octile", NULL, &algorithmCombinations[6]);
-				ImGui::MenuItem("Euclidean", NULL, &algorithmCombinations[7]);
+				ImGui::MenuItem("Manhattan", NULL, &heuristicUsed[0]);
+				ImGui::MenuItem("Chebyshev", NULL, &heuristicUsed[1]);
+				ImGui::MenuItem("Octile", NULL, &heuristicUsed[2]);
+				ImGui::MenuItem("Euclidean", NULL, &heuristicUsed[3]);
 				ImGui::EndMenu();
 			}
-			if (ImGui::BeginMenu("HPA*", true))
-			{
-				ImGui::MenuItem("Manhattan", NULL, &algorithmCombinations[8]);
-				ImGui::MenuItem("Chebyshev", NULL, &algorithmCombinations[9]);
-				ImGui::MenuItem("Octile", NULL, &algorithmCombinations[10]);
-				ImGui::MenuItem("Euclidean", NULL, &algorithmCombinations[11]);
-				ImGui::EndMenu();
-			}
-			if (ImGui::BeginMenu("IDA*", true))
-			{
-				ImGui::MenuItem("Manhattan", NULL, &algorithmCombinations[12]);
-				ImGui::MenuItem("Chebyshev", NULL, &algorithmCombinations[13]);
-				ImGui::MenuItem("Octile", NULL, &algorithmCombinations[14]);
-				ImGui::MenuItem("Euclidean", NULL, &algorithmCombinations[15]);
-				ImGui::EndMenu();
-			}
-
-			for (int i = 0; i < NR_OF_ALGORITHMS; i++)
-			{
-				for (int j = 0; j < NR_OF_HEURISTICS; j++)
-				{
-					if (algorithmCombinations[i*NR_OF_ALGORITHMS + j])
-					{
-						algorithmUsed[i] = true;
-						heuristicUsed[j] = true;
-					}
-				}
-			}
-
 			ImGui::EndMenu();
 		}
 		if (calculatePaths && algorithmUsed[0])  //A*
@@ -428,6 +390,10 @@ int main()
 			}
 
 			SaveDataToFile(metrics, algorithmUsed, heuristicUsed);
+		}
+		if (calculatePaths)
+		{
+			calculatePaths = false;
 		}
 		if (calculatePaths)
 		{
@@ -548,13 +514,9 @@ int main()
 			{
 				algorithmUsed[i] = false;
 			}
-			for (int j = 0; j < NR_OF_HEURISTICS; j++)
+			for (int i = 0; i < NR_OF_HEURISTICS; i++)
 			{
-				heuristicUsed[j] = false;
-			}
-			for (int i = 0; i < NR_OF_ALGORITHMS * NR_OF_HEURISTICS; i++)
-			{
-				algorithmCombinations[i] = false;
+				heuristicUsed[i] = false;
 			}
 
 			removePathFinding = false;

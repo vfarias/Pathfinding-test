@@ -21,60 +21,13 @@ void IDAStar::calculateGCost(Vec2D parentPos, Vec2D currentPos)
 
 IDAStar::IDAStar() :
 	Pathfinding()
-{
-	_nrOfPathNodes = 0;
-	_path = nullptr;
-	_width = 0;
-	_height = 0;
-	_start = {0,0};
-	_goal = {0,0};
-	_heuristicType = MANHATTAN;
-	_grid = nullptr;
-}
+{}
 IDAStar::IDAStar(int width, int height, AStarNode** grid, Heuristic heuristicType) :
-	Pathfinding(width, height, {0,0}, heuristicType)
-{
-	_nrOfPathNodes = 0;
-	_path = nullptr;
-	_width = width;
-	_height = height;
-	_start = { 0, 0 };
-	_goal = { 0, 0 };
-	_heuristicType = heuristicType;
-	_grid = grid;
-	for (__int16 i = _position._x; i < _position._x + _width; i++)
-	{
-		for (__int16 j = _position._y; j < _position._y + _height; j++)
-		{
-			_grid[i][j]._open = 0;
-			_grid[i][j]._gCost = 0;
-			_grid[i][j]._hCost = 0;
-			_grid[i][j]._parent = nullptr;
-		}
-	}
-}
+	Pathfinding(width, height, grid, {0,0}, heuristicType)
+{}
 IDAStar::IDAStar(int width, int height, Vec2D start, Vec2D goal, AStarNode** grid, Heuristic heuristicType) :
-	Pathfinding(width, height, start, goal, {0,0}, heuristicType)
-{
-	_nrOfPathNodes = 0;
-	_path = nullptr;
-	_width = width;
-	_height = height;
-	_start = start;
-	_goal = goal;
-	_heuristicType = heuristicType;
-	_grid = grid;
-	for (__int16 i = _position._x; i < _position._x + _width; i++)
-	{
-		for (__int16 j = _position._y; j < _position._y + _height; j++)
-		{
-			_grid[i][j]._open = 0;
-			_grid[i][j]._gCost = 0;
-			_grid[i][j]._hCost = 0;
-			_grid[i][j]._parent = nullptr;
-		}
-	}
-}
+	Pathfinding(width, height, grid, start, goal, {0,0}, heuristicType)
+{}
 
 IDAStar::~IDAStar()
 {

@@ -145,70 +145,24 @@ bool ThetaStar::lineOfSightRay(Vec2D parentPos, Vec2D currentPos)
 }
 
 ThetaStar::ThetaStar()
+	:AStar()
 {
-	_nrOfPathNodes = 0;
-	_path = nullptr;
-	_width = 0;
-	_height = 0;
-	_start = {0,0};
-	_goal = {0,0};
-	_heuristicType = MANHATTAN;
-	_openQueue = Heap<AStarNode*>();
-	_grid = nullptr;
 }
 
 /*
 Sets grid size, start- and goal positions and heuristic used for the pathfinding algorithm
 */
-ThetaStar::ThetaStar(int width, int height, Vec2D start, Vec2D goal, Heuristic heuristic)
-{
-	_nrOfPathNodes = 0;
-	_path = nullptr;
-	_width = width;
-	_height = height;
-	_start = start;
-	_goal = goal;
-	_heuristicType = heuristic;
-	_openQueue = Heap<AStarNode*>();
-	_grid = new AStarNode*[_width];
-	for (__int16 i = 0; i < _width; i++)
-	{
-		_grid[i] = new AStarNode[_height];
-		for (__int16 j = 0; j < _height; j++)
-		{
-			_grid[i][j] = AStarNode(i, j);
-			_grid[i][j]._open = 0;
-			//calculateHCost({i,j});
-		}
-	}
-}
+ThetaStar::ThetaStar(int width, int height, AStarNode** grid, Vec2D start, Vec2D goal, Heuristic heuristic)
+	:AStar(width, height, {0,0}, start, goal, grid, heuristic)
+{}
 
 
 /*
 Sets grid size and heuristic used for the pathfinding algorithm
 */
-ThetaStar::ThetaStar(int width, int height, Heuristic heuristic)
-{
-	_nrOfPathNodes = 0;
-	_path = nullptr;
-	_width = width;
-	_height = height;
-	_start = {0,0};
-	_goal = {0,0};
-	_heuristicType = heuristic;
-	_openQueue = Heap<AStarNode*>();
-	_grid = new AStarNode*[_width];
-	for (__int16 i = 0; i < _width; i++)
-	{
-		_grid[i] = new AStarNode[_height];
-		for (__int16 j = 0; j < _height; j++)
-		{
-			_grid[i][j] = AStarNode(i, j);
-			_grid[i][j]._open = 0;
-			//calculateHCost({i,j});
-		}
-	}
-}
+ThetaStar::ThetaStar(int width, int height, AStarNode** grid, Heuristic heuristic)
+	:AStar(width, height, {0,0}, grid, heuristic)
+{}
 
 ThetaStar::~ThetaStar()
 {}

@@ -15,12 +15,13 @@ Pathfinding::Pathfinding()
 	_goal = {0,0};
 	_heuristicType = MANHATTAN;
 	_position = {0,0};
+	_grid = nullptr;
 }
 
 /*
 Sets grid size, start- and goal positions and heuristic used for the pathfinding algorithm
 */
-Pathfinding::Pathfinding(int width, int height, Vec2D start, Vec2D goal, Vec2D position, Heuristic heuristic)
+Pathfinding::Pathfinding(int width, int height, AStarNode** grid, Vec2D start, Vec2D goal, Vec2D position, Heuristic heuristic)
 {
 	_nrOfPathNodes = 0;
 	_path = nullptr;
@@ -30,13 +31,24 @@ Pathfinding::Pathfinding(int width, int height, Vec2D start, Vec2D goal, Vec2D p
 	_goal = goal;
 	_heuristicType = heuristic;
 	_position = position;
+	_grid = grid;
+	for (__int16 i = _position._x; i < _position._x + _width; i++)
+	{
+		for (__int16 j = _position._y; j < _position._y + _height; j++)
+		{
+			_grid[i][j]._open = 0;
+			_grid[i][j]._gCost = 0.0f;
+			_grid[i][j]._hCost = 0.0f;
+			_grid[i][j]._parent = nullptr;
+		}
+	}
 }
 
 
 /*
 Sets grid size and heuristic used for the pathfinding algorithm
 */
-Pathfinding::Pathfinding(int width, int height, Vec2D position, Heuristic heuristic)
+Pathfinding::Pathfinding(int width, int height, AStarNode** grid, Vec2D position, Heuristic heuristic)
 {
 	_nrOfPathNodes = 0;
 	_path = nullptr;

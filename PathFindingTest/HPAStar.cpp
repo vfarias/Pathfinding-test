@@ -218,8 +218,8 @@ HPAStar::HPAStar()
 {
 }
 
-HPAStar::HPAStar(int width, int height, int clusterSize, Heuristic heuristic)
-	:Pathfinding(width, height, {0,0}, heuristic)
+HPAStar::HPAStar(int width, int height, int clusterSize, AStarNode** grid, Heuristic heuristic)
+	:Pathfinding(width, height, grid, {0,0}, heuristic)
 {
 	_openQueue = Heap<HPANode*>();
 	_clusterSize = clusterSize;

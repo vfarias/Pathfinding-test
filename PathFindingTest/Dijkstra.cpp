@@ -33,51 +33,21 @@ void Dijkstra::calculateGCost(Vec2D parentPos, Vec2D currentPos)
 }
 
 Dijkstra::Dijkstra()
+	:Pathfinding()
 {
-	_nrOfPathNodes = 0;
-	_path = nullptr;
-	_width = 0;
-	_height = 0;
-	_start = {0,0};
-	_goal = {0,0};
-	_position = {0,0};
-	_heuristicType = MANHATTAN;
 	_openQueue = Heap<AStarNode*>();
-	_grid = nullptr;
 }
 
 Dijkstra::Dijkstra(int width, int height, Vec2D start, Vec2D goal, AStarNode ** grid, Heuristic heuristic)
-	:Pathfinding(width, height, start, goal)
+	:Pathfinding(width, height, grid, start, goal)
 {
 	_openQueue = Heap<AStarNode*>();
-	_grid = grid;
-	for (__int16 i = _position._x; i < _position._x + _width; i++)
-	{
-		for (__int16 j = _position._y; j < _position._y + _height; j++)
-		{
-			_grid[i][j]._open = 0;
-			_grid[i][j]._gCost = 0.0f;
-			_grid[i][j]._hCost = 0.0f;
-			_grid[i][j]._parent = nullptr;
-		}
-	}
 }
 
 Dijkstra::Dijkstra(int width, int height, AStarNode ** grid, Heuristic heuristic)
-	:Pathfinding(width, height)
+	: Pathfinding(width, height, grid, {0,0}, heuristic)
 {
 	_openQueue = Heap<AStarNode*>();
-	_grid = grid;
-	for (__int16 i = _position._x; i < _position._x + _width; i++)
-	{
-		for (__int16 j = _position._y; j < _position._y + _height; j++)
-		{
-			_grid[i][j]._open = 0;
-			_grid[i][j]._gCost = 0.0f;
-			_grid[i][j]._hCost = 0.0f;
-			_grid[i][j]._parent = nullptr;
-		}
-	}
 }
 
 Dijkstra::~Dijkstra()
