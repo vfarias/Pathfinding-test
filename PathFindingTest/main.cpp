@@ -18,10 +18,11 @@ const int NR_OF_ALGORITHMS = 4;
 const int NR_OF_HEURISTICS = 4;
 
 string* GenerateMap(int width, int height, float obstacleDensity, MapReader &mr);
-bool CalculateAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* &pathTiles, sf::RectangleShape* &openedTiles, sf::RectangleShape* &expandedTiles, int width, int height, Vec2D startPos, Vec2D goalPos, AStarNode** grid, Vec2D* &path, int &pathLength);
-bool CalculateThetaStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, int width, int height);
-bool CalculateHPAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, int width, int height);
-bool CalculateIDAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, int width, int height);
+void SaveDataToFile(Metrics metrics, bool algorithmUsed[NR_OF_ALGORITHMS], bool heuristicUsed[NR_OF_HEURISTICS]);
+void CalculateAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* &pathTiles, sf::RectangleShape* &openedTiles, sf::RectangleShape* &expandedTiles, int width, int height, Vec2D startPos, Vec2D goalPos, AStarNode** grid, Vec2D* &path, int &pathLength);
+void CalculateThetaStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, int width, int height);
+void CalculateHPAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, int width, int height);
+void CalculateIDAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, int width, int height);
 
 int main()
 {
@@ -191,7 +192,6 @@ int main()
 	*/
 
 	bool algorithmCombinations[NR_OF_ALGORITHMS * NR_OF_HEURISTICS];
-
 	for (int i = 0; i < NR_OF_ALGORITHMS * NR_OF_HEURISTICS; i++)
 	{
 		algorithmCombinations[i] = false;
@@ -229,21 +229,9 @@ int main()
 	{
 		heuristicUsed[i] = false;
 	}
-	/*
-	Order of the algorithms: AStar, Theta*, HPA*, IDA*
-	*/
-	Metrics metrics[NR_OF_ALGORITHMS];
-	for (int i = 0; i < NR_OF_ALGORITHMS; i++)
-	{
-		metrics[i] = Metrics();
-	}
 
-
-	//TODO ändra så bara en metrics finns, spara ned data från varje gång en combo körs och återanvänd samma metrics
-
-
-
-
+	Metrics metrics;
+	
 	sf::CircleShape startNodes[NR_OF_ALGORITHMS];
 	for (int i = 0; i < NR_OF_ALGORITHMS; i++)
 	{
@@ -263,11 +251,9 @@ int main()
 		goalNodes[i].setFillColor(sf::Color::Yellow);
 	}
 
-
 	//Other variables
 	bool removePathFinding = false;
 	bool calculatePaths = false;
-	bool saveDataToFile = false;
 
 	//Randomize map variables
 	bool randomizeMap = false;
@@ -302,62 +288,13 @@ int main()
 		}
 
 		ImGuiIO &io = ImGui::GetIO();
-		//ImGui::ShowTestWindow();
+		ImGui::ShowTestWindow();
 		window.clear();
 
 		/**************************************/
 		/*          Start of GUI code         */
 		/**************************************/
 
-		if (calculatePaths)
-		{
-			calculatePaths = false;
-		}
-		if (saveDataToFile)
-		{
-			ofstream saveFile;
-			saveFile.open("Metrics/metrics000.txt");
-			
-			saveFile << "Algorithm used: ";
-			if (algorithmUsed[0])
-			{
-				saveFile << "A Star. ";
-			}
-			if (algorithmUsed[1])
-			{
-				saveFile << "Theta Star. ";
-			}
-			if (algorithmUsed[2])
-			{
-				saveFile << "HPA Star. ";
-			}
-			if (algorithmUsed[3])
-			{
-				saveFile << "IDA Star. ";
-			}
-			saveFile << "\nHeuristic used: ";
-			if (heuristicUsed[0])
-			{
-				saveFile << "Manhattan. ";
-			}
-			if (heuristicUsed[1])
-			{
-				saveFile << "Chebyshev. ";
-			}
-			if (heuristicUsed[2])
-			{
-				saveFile << "Octile. ";
-			}
-			if (heuristicUsed[3])
-			{
-				saveFile << "Euclidean. ";
-			}
-
-
-
-
-			saveDataToFile = false;
-		}
 		if (ImGui::BeginMenu("Choose pathfinding"))
 		{
 			//TODO: Add interaction with the file system
@@ -412,77 +349,89 @@ int main()
 		{
 			if (heuristicUsed[0])
 			{
-				CalculateAStar(metrics[0], Pathfinding::MANHATTAN, AStar_pathTiles, AStar_openedTiles, AStar_expandedTiles, width, height, startPos[0], goalPos[0], grid, path, AStar_pathLength);
+				CalculateAStar(metrics, Pathfinding::MANHATTAN, AStar_pathTiles, AStar_openedTiles, AStar_expandedTiles, width, height, startPos[0], goalPos[0], grid, path, AStar_pathLength);
 			}
 			else if (heuristicUsed[1])
 			{
-				CalculateAStar(metrics[0], Pathfinding::CHEBYSHEV, AStar_pathTiles, AStar_openedTiles, AStar_expandedTiles, width, height, startPos[0], goalPos[0], grid, path, AStar_pathLength);
+				CalculateAStar(metrics, Pathfinding::CHEBYSHEV, AStar_pathTiles, AStar_openedTiles, AStar_expandedTiles, width, height, startPos[0], goalPos[0], grid, path, AStar_pathLength);
 			}
 			else if (heuristicUsed[2])
 			{
-				CalculateAStar(metrics[0], Pathfinding::OCTILE, AStar_pathTiles, AStar_openedTiles, AStar_expandedTiles, width, height, startPos[0], goalPos[0], grid, path, AStar_pathLength);
+				CalculateAStar(metrics, Pathfinding::OCTILE, AStar_pathTiles, AStar_openedTiles, AStar_expandedTiles, width, height, startPos[0], goalPos[0], grid, path, AStar_pathLength);
 			}
 			else if (heuristicUsed[3])
 			{
-				CalculateAStar(metrics[0], Pathfinding::EUCLIDEAN, AStar_pathTiles, AStar_openedTiles, AStar_expandedTiles, width, height, startPos[0], goalPos[0], grid, path, AStar_pathLength);
+				CalculateAStar(metrics, Pathfinding::EUCLIDEAN, AStar_pathTiles, AStar_openedTiles, AStar_expandedTiles, width, height, startPos[0], goalPos[0], grid, path, AStar_pathLength);
 			}
+
+			SaveDataToFile(metrics, algorithmUsed, heuristicUsed);
 		}
 		if (calculatePaths && algorithmUsed[1])  //Theta*
 		{
 			if (heuristicUsed[0])
 			{
-				CalculateThetaStar(metrics[1], Pathfinding::MANHATTAN, ThetaStar_pathTiles, ThetaStar_openedTiles, ThetaStar_expandedTiles, width, height);
+				CalculateThetaStar(metrics, Pathfinding::MANHATTAN, ThetaStar_pathTiles, ThetaStar_openedTiles, ThetaStar_expandedTiles, width, height);
 			}
 			else if (heuristicUsed[1])
 			{
-				CalculateThetaStar(metrics[1], Pathfinding::CHEBYSHEV, ThetaStar_pathTiles, ThetaStar_openedTiles, ThetaStar_expandedTiles, width, height);
+				CalculateThetaStar(metrics, Pathfinding::CHEBYSHEV, ThetaStar_pathTiles, ThetaStar_openedTiles, ThetaStar_expandedTiles, width, height);
 			}
 			else if (heuristicUsed[2])
 			{
-				CalculateThetaStar(metrics[1], Pathfinding::OCTILE, ThetaStar_pathTiles, ThetaStar_openedTiles, ThetaStar_expandedTiles, width, height);
+				CalculateThetaStar(metrics, Pathfinding::OCTILE, ThetaStar_pathTiles, ThetaStar_openedTiles, ThetaStar_expandedTiles, width, height);
 			}
 			else if (heuristicUsed[3])
 			{
-				CalculateThetaStar(metrics[1], Pathfinding::EUCLIDEAN, ThetaStar_pathTiles, ThetaStar_openedTiles, ThetaStar_expandedTiles, width, height);
+				CalculateThetaStar(metrics, Pathfinding::EUCLIDEAN, ThetaStar_pathTiles, ThetaStar_openedTiles, ThetaStar_expandedTiles, width, height);
 			}
+
+			SaveDataToFile(metrics, algorithmUsed, heuristicUsed);
 		}
 		if (calculatePaths && algorithmUsed[2])  //HPA*
 		{
 			//if (heuristicUsed[0])
 			//{
-			//	CalculateHPAStar(metrics[2], Pathfinding::MANHATTAN, HPAabstractGraph, HPAopenedGraph, HPAexpandedGraph, width, height);
+			//	CalculateHPAStar(metrics, Pathfinding::MANHATTAN, HPAabstractGraph, HPAopenedGraph, HPAexpandedGraph, width, height);
 			//}
 			//else if (heuristicUsed[1])
 			//{
-			//	CalculateHPAStar(metrics[2], Pathfinding::CHEBYSHEV, HPAabstractGraph, HPAopenedGraph, HPAexpandedGraph, width, height);
+			//	CalculateHPAStar(metrics, Pathfinding::CHEBYSHEV, HPAabstractGraph, HPAopenedGraph, HPAexpandedGraph, width, height);
 			//}
 			//else if (heuristicUsed[2])
 			//{
-			//	CalculateHPAStar(metrics[2], Pathfinding::OCTILE, HPAabstractGraph, HPAopenedGraph, HPAexpandedGraph, width, height);
+			//	CalculateHPAStar(metrics, Pathfinding::OCTILE, HPAabstractGraph, HPAopenedGraph, HPAexpandedGraph, width, height);
 			//}
 			//else if (heuristicUsed[3])
 			//{
-			//	CalculateHPAStar(metrics[2], Pathfinding::EUCLIDEAN, HPAabstractGraph, HPAopenedGraph, HPAexpandedGraph, width, height);
+			//	CalculateHPAStar(metrics, Pathfinding::EUCLIDEAN, HPAabstractGraph, HPAopenedGraph, HPAexpandedGraph, width, height);
 			//}
+			//
+			//SaveDataToFile(metrics, algorithmUsed, heuristicUsed);
 		}
 		if (calculatePaths && algorithmUsed[3])  //IDA*
 		{
 			if (heuristicUsed[0])
 			{
-				CalculateIDAStar(metrics[3], Pathfinding::MANHATTAN, IDAStar_pathTiles, IDAStar_openedTiles, IDAStar_expandedTiles, width, height);
+				CalculateIDAStar(metrics, Pathfinding::MANHATTAN, IDAStar_pathTiles, IDAStar_openedTiles, IDAStar_expandedTiles, width, height);
 			}
 			else if (heuristicUsed[1])
 			{
-				CalculateIDAStar(metrics[3], Pathfinding::CHEBYSHEV, IDAStar_pathTiles, IDAStar_openedTiles, IDAStar_expandedTiles, width, height);
+				CalculateIDAStar(metrics, Pathfinding::CHEBYSHEV, IDAStar_pathTiles, IDAStar_openedTiles, IDAStar_expandedTiles, width, height);
 			}
 			else if (heuristicUsed[2])
 			{
-				CalculateIDAStar(metrics[3], Pathfinding::OCTILE, IDAStar_pathTiles, IDAStar_openedTiles, IDAStar_expandedTiles, width, height);
+				CalculateIDAStar(metrics, Pathfinding::OCTILE, IDAStar_pathTiles, IDAStar_openedTiles, IDAStar_expandedTiles, width, height);
 			}
 			else if (heuristicUsed[3])
 			{
-				CalculateIDAStar(metrics[3], Pathfinding::EUCLIDEAN, IDAStar_pathTiles, IDAStar_openedTiles, IDAStar_expandedTiles, width, height);
+				CalculateIDAStar(metrics, Pathfinding::EUCLIDEAN, IDAStar_pathTiles, IDAStar_openedTiles, IDAStar_expandedTiles, width, height);
 			}
+
+			SaveDataToFile(metrics, algorithmUsed, heuristicUsed);
+		}
+		if (calculatePaths)
+		{
+			calculatePaths = false;
 		}
 		ImGui::MenuItem("Remove all pathfinding", NULL, &removePathFinding);
 		if (ImGui::BeginMenu("Randomize a map"))
@@ -582,12 +531,28 @@ int main()
 
 			ImGui::EndMenu();
 		}
-		ImGui::MenuItem("Save data to file", NULL, &saveDataToFile);
+		if (ImGui::BeginMenu("Scale map"))
+		{
+
+			//TODO gör så den här fungerar
+
+
+			ImGui::SliderInt("Change map scale", &tileWidth, 1, 10);
+			ImGui::EndMenu();
+		}
 		ImGui::MenuItem("Calculate paths", NULL, &calculatePaths);
 		
 		if (removePathFinding)
 		{
-			for (int i = 0; i < NR_OF_ALGORITHMS*NR_OF_HEURISTICS; i++)
+			for (int i = 0; i < NR_OF_ALGORITHMS; i++)
+			{
+				algorithmUsed[i] = false;
+			}
+			for (int j = 0; j < NR_OF_HEURISTICS; j++)
+			{
+				heuristicUsed[j] = false;
+			}
+			for (int i = 0; i < NR_OF_ALGORITHMS * NR_OF_HEURISTICS; i++)
 			{
 				algorithmCombinations[i] = false;
 			}
@@ -608,14 +573,14 @@ int main()
 
 			if (showOpenedNodes)
 			{
-				for (int i = 0; i < metrics[0].getNrOfOpenedNodes(); i++)
+				for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
 				{
 					window.draw(AStar_openedTiles[i]);
 				}
 			}
 			if (showExpandedNodes)
 			{
-				for (int i = 0; i < metrics[0].getNrOfExpandedNodes(); i++)
+				for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
 				{
 					window.draw(AStar_expandedTiles[i]);
 				}
@@ -629,7 +594,7 @@ int main()
 
 			if (showOpenedNodes)
 			{
-				for (int i = 0; i < metrics[1].getNrOfOpenedNodes(); i++)
+				for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
 				{
 					window.draw(ThetaStar_openedTiles[i]);
 				}
@@ -637,7 +602,7 @@ int main()
 
 			if (showExpandedNodes)
 			{
-				for (int i = 0; i < metrics[1].getNrOfExpandedNodes(); i++)
+				for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
 				{
 					window.draw(ThetaStar_expandedTiles[i]);
 				}
@@ -651,7 +616,7 @@ int main()
 
 			if (showOpenedNodes)
 			{
-				for (int i = 0; i < metrics[2].getNrOfOpenedNodes(); i++)
+				for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
 				{
 					//window.draw(HPAopenedGraph[i]);
 				}
@@ -659,7 +624,7 @@ int main()
 
 			if (showExpandedNodes)
 			{
-				for (int i = 0; i < metrics[2].getNrOfExpandedNodes(); i++)
+				for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
 				{
 					//window.draw(HPAexpandedGraph[i]);
 				}
@@ -673,7 +638,7 @@ int main()
 
 			if (showOpenedNodes)
 			{
-				for (int i = 0; i < metrics[3].getNrOfOpenedNodes(); i++)
+				for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
 				{
 					window.draw(IDAStar_openedTiles[i]);
 				}
@@ -681,7 +646,7 @@ int main()
 
 			if (showExpandedNodes)
 			{
-				for (int i = 0; i < metrics[3].getNrOfExpandedNodes(); i++)
+				for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
 				{
 					window.draw(IDAStar_expandedTiles[i]);
 				}
@@ -733,6 +698,55 @@ int main()
 	return 0;
 }
 
+void SaveDataToFile(Metrics metrics, bool algorithmUsed[NR_OF_ALGORITHMS], bool heuristicUsed[NR_OF_HEURISTICS])
+{
+	ofstream saveFile;
+	saveFile.open("Metrics/metrics000.txt");
+
+	//Which algorithm is used
+	saveFile << "Algorithm used: ";
+	if (algorithmUsed[0])
+	{
+		saveFile << "A Star. ";
+	}
+	if (algorithmUsed[1])
+	{
+		saveFile << "Theta Star. ";
+	}
+	if (algorithmUsed[2])
+	{
+		saveFile << "HPA Star. ";
+	}
+	if (algorithmUsed[3])
+	{
+		saveFile << "IDA Star. ";
+	}
+
+	//In combination with which heuristic is being used
+	saveFile << "\nHeuristic used: ";
+	if (heuristicUsed[0])
+	{
+		saveFile << "Manhattan. ";
+	}
+	if (heuristicUsed[1])
+	{
+		saveFile << "Chebyshev. ";
+	}
+	if (heuristicUsed[2])
+	{
+		saveFile << "Octile. ";
+	}
+	if (heuristicUsed[3])
+	{
+		saveFile << "Euclidean. ";
+	}
+
+	//The number of opened nodes by the algorithm
+	saveFile << "\nNumber of opened nodes: " << metrics.getNrOfOpenedNodes();
+	saveFile << "\nNumber of expanded nodes: " << metrics.getNrOfExpandedNodes();
+
+	//TODO Lägg till grejer här som metrics kan mäta
+}
 string* GenerateMap(int width, int height, float obstacleDensity, MapReader &mr)
 {
 	string* map = nullptr;
@@ -745,7 +759,7 @@ string* GenerateMap(int width, int height, float obstacleDensity, MapReader &mr)
 
 	return map;
 }
-bool CalculateAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* &pathTiles, sf::RectangleShape* &openedTiles, sf::RectangleShape* &expandedTiles, int width, int height, Vec2D startPos, Vec2D goalPos, AStarNode** grid, Vec2D* &path, int &pathLength)
+void CalculateAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* &pathTiles, sf::RectangleShape* &openedTiles, sf::RectangleShape* &expandedTiles, int width, int height, Vec2D startPos, Vec2D goalPos, AStarNode** grid, Vec2D* &path, int &pathLength)
 {
 	AStar pathFinding(width, height, { 0, 0 }, startPos, goalPos, grid, heuristic);
 	pathFinding.init(startPos, goalPos);
@@ -783,10 +797,8 @@ bool CalculateAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vert
 	}
 
 	pathTiles[pathLength] = sf::Vector2f(10.0f + (float)tileWidth * (startPos._x + 0.5f), 10.0f + (float)tileHeight * (startPos._y + 0.5f));
-	
-	return false;
 }
-bool CalculateThetaStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, int width, int height)
+void CalculateThetaStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, int width, int height)
 {
 	//TODO loopa över hela mapen och sätt traversable
 	//pathFinding.setTraversable({ (i % width), (i / width) }, true);
@@ -822,10 +834,8 @@ bool CalculateThetaStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::
 	//	pathTiles[i].color = sf::Color(200, 200, 0, 255);
 	//}
 	//pathTiles[pathLength] = sf::Vector2f(10.0f + (float)tileWidth * (startPos._x + 0.5f), 10.0f + (float)tileHeight * (startPos._y + 0.5f));
-
-	return false;
 }
-bool CalculateHPAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, int width, int height)
+void CalculateHPAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, int width, int height)
 {
 	//TODO loopa över hela mapen och sätt traversable
 	//pathFinding.setTraversable({ (i % width), (i / width) }, true);
@@ -833,13 +843,11 @@ bool CalculateHPAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Ve
 	//pathFinding3.init(startPos, goalPos);
 
 	//
-	return false;
 }
-bool CalculateIDAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, int width, int height)
+void CalculateIDAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, sf::Vertex* pathTiles, sf::RectangleShape* openedTiles, sf::RectangleShape* expandedTiles, int width, int height)
 {
 	//TODO loopa över hela mapen och sätt traversable
 	//pathFinding.setTraversable({ (i % width), (i / width) }, true);
 
 	/**/
-	return false;
 }
