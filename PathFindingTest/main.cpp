@@ -183,35 +183,6 @@ int main()
 	pathTiles2[pathLength2] = sf::Vector2f(10.0f + (float)tileWidth * (startPos._x + 0.5f), 10.0f + (float)tileHeight * (startPos._y + 0.5f));
 	*/
 
-	//bool algorithmCombinations[NR_OF_ALGORITHMS * NR_OF_HEURISTICS];
-	//for (int i = 0; i < NR_OF_ALGORITHMS * NR_OF_HEURISTICS; i++)
-	//{
-	//	algorithmCombinations[i] = false;
-	//}
-	/**************************************
-	--Order of the algorithms:
-	AStarManhattan
-	AStarChebyshev
-	AStarOctile
-	AStarEuclidean
-
-	ThetaStarManhattan
-	ThetaStarChebyshev
-	ThetaStarOctile
-	ThetaStarEuclidean
-
-	IDAStarManhattan
-	IDAStarChebyshev
-	IDAStarOctile
-	IDAStarEuclidean
-
-	HPAStarManhattan
-	HPAStarChebyshev
-	HPAStarOctile
-	HPAStarEuclidean
-	**************************************/
-
-
 	Metrics metrics;
 	
 	sf::CircleShape startNodes[NR_OF_ALGORITHMS];
@@ -272,7 +243,7 @@ int main()
 		}
 
 		ImGuiIO &io = ImGui::GetIO();
-		ImGui::ShowTestWindow();
+		//ImGui::ShowTestWindow();
 		window.clear();
 
 		/**************************************/
@@ -280,11 +251,9 @@ int main()
 		/**************************************/
 		if (ImGui::BeginMenu("Choose pathfinding"))
 		{
-			//TODO: Add interaction with the file system
-
-			ImGui::RadioButton("A*", &choosePathfinding, 0);	ImGui::SameLine();
-			ImGui::RadioButton("Theta*", &choosePathfinding, 1);ImGui::SameLine();
-			ImGui::RadioButton("HPA*", &choosePathfinding, 2);	ImGui::SameLine();
+			ImGui::RadioButton("A*", &choosePathfinding, 0);		ImGui::SameLine();
+			ImGui::RadioButton("Theta*", &choosePathfinding, 1);	ImGui::SameLine();
+			ImGui::RadioButton("HPA*", &choosePathfinding, 2);		ImGui::SameLine();
 			ImGui::RadioButton("IDA*", &choosePathfinding, 3);
 
 			ImGui::RadioButton("Manhattan", &chooseHeuristic, 0);	ImGui::SameLine();
@@ -314,16 +283,6 @@ int main()
 			ImGui::RadioButton("Set start position", &startOrGoal, 0); ImGui::SameLine();
 			ImGui::RadioButton("Set goal position", &startOrGoal, 1);
 
-			ImGui::RadioButton("A*", &SetPosition, 0);			ImGui::SameLine();
-			ImGui::RadioButton("Theta*", &SetPosition, 1);		ImGui::SameLine();
-			ImGui::RadioButton("HPA*", &SetPosition, 2);		ImGui::SameLine();
-			ImGui::RadioButton("IDA*", &SetPosition, 3);
-
-			ImGui::RadioButton("Manhattan", &SetGoal, 0);		ImGui::SameLine();
-			ImGui::RadioButton("Chebyshev", &SetGoal, 1);		ImGui::SameLine();
-			ImGui::RadioButton("Octile", &SetGoal, 2);			ImGui::SameLine();
-			ImGui::RadioButton("Euclidean", &SetGoal, 3);
-
 			//Set xPos and yPos
 			ImGui::InputText("Y position", xBuffer, IM_ARRAYSIZE(xBuffer));
 			ImGui::InputText("X position", yBuffer, IM_ARRAYSIZE(yBuffer));
@@ -334,51 +293,13 @@ int main()
 			{
 				if (startOrGoal == 0)  //Start pos
 				{
-					//TODO ändra om så rätt algoritm ändrar sina start/goal nodes
-
-					if (SetPosition == 0)
-					{
-						startPos[0] = pos;
-						startNodes[0].setPosition(sf::Vector2f(10.0f + startPos[0]._x * (float)tileWidth, 10.0f + startPos[0]._y * (float)tileHeight));
-					}
-					if (SetPosition == 1)
-					{
-						startPos[1] = pos;
-						startNodes[1].setPosition(sf::Vector2f(10.0f + startPos[1]._x * (float)tileWidth, 10.0f + startPos[1]._y * (float)tileHeight));
-					}
-					if (SetPosition == 2)
-					{
-						startPos[2] = pos;
-						startNodes[2].setPosition(sf::Vector2f(10.0f + startPos[2]._x * (float)tileWidth, 10.0f + startPos[2]._y * (float)tileHeight));
-					}
-					if (SetPosition == 3)
-					{
-						startPos[3] = pos;
-						startNodes[3].setPosition(sf::Vector2f(10.0f + startPos[3]._x * (float)tileWidth, 10.0f + startPos[3]._y * (float)tileHeight));
-					}
+					startPos[SetPosition] = pos;
+					startNodes[SetPosition].setPosition(sf::Vector2f(10.0f + startPos[SetPosition]._x * (float)tileWidth, 10.0f + startPos[SetPosition]._y * (float)tileHeight));
 				}
 				else if (startOrGoal == 1)  //Goal pos
 				{
-					if (SetGoal == 0)
-					{
-						goalPos[0] = pos;
-						goalNodes[0].setPosition(sf::Vector2f(10.0f + goalPos[0]._x * (float)tileWidth, 10.0f + goalPos[0]._y * (float)tileHeight));
-					}
-					if (SetGoal == 1)
-					{
-						goalPos[1] = pos;
-						goalNodes[1].setPosition(sf::Vector2f(10.0f + goalPos[1]._x * (float)tileWidth, 10.0f + goalPos[1]._y * (float)tileHeight));
-					}
-					if (SetGoal == 2)
-					{
-						goalPos[2] = pos;
-						goalNodes[2].setPosition(sf::Vector2f(10.0f + goalPos[2]._x * (float)tileWidth, 10.0f + goalPos[2]._y * (float)tileHeight));
-					}
-					if (SetGoal == 3)
-					{
-						goalPos[3] = pos;
-						goalNodes[3].setPosition(sf::Vector2f(10.0f + goalPos[3]._x * (float)tileWidth, 10.0f + goalPos[3]._y * (float)tileHeight));
-					}
+					goalPos[SetGoal] = pos;
+					goalNodes[SetGoal].setPosition(sf::Vector2f(10.0f + goalPos[SetGoal]._x * (float)tileWidth, 10.0f + goalPos[SetGoal]._y * (float)tileHeight));
 				}
 			}
 
@@ -399,6 +320,7 @@ int main()
 
 
 			ImGui::SliderInt("Change map scale", &tileWidth, 1, 10);
+			int a = tileWidth;
 			ImGui::EndMenu();
 		}
 		ImGui::MenuItem("Calculate paths", NULL, &calculatePaths);
