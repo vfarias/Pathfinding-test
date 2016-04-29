@@ -45,11 +45,10 @@ Vec2D IDAStar::evaluateNode(Vec2D pos, float g, float threshold)
 	for (int i = 0; i < 8 && (_heuristicType != MANHATTAN || i < 4); i++)		//Manhattan skips diagonals 
 	{
 		Vec2D checkedPos = pos + NEIGHBOUR_OFFSETS[i];
-		Vec2D foundPos = {-1,-1};
 		if ((_grid[pos._x][pos._y]._parent == nullptr || checkedPos != _grid[pos._x][pos._y]._parent->_position)
 			&& isPositionValid(checkedPos) && _grid[checkedPos._x][checkedPos._y]._traversable)
 		{
-
+			Vec2D foundPos = {-1, -1};
 			float tileDist = 1;
 			if (i >= 4)
 			{

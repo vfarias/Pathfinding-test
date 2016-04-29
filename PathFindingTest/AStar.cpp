@@ -89,8 +89,70 @@ void AStar::cleanMap()
 			_grid[i][j]._parent = nullptr;
 		}
 	}
-	_openQueue.empty();
-	_openQueue = Heap<AStarNode*>();
+	if (_openQueue.size()>0)
+	{
+		_openQueue.empty();
+		_openQueue = Heap<AStarNode*>();
+	}
+}
+
+bool AStar::findPath()
+{
+	if (_goal == _start)
+	{
+		return false;
+	}
+	_nrOfPathNodes = 0;																//It's 1 because there's an offset in the loop later.
+	Vec2D currentPos = _start;
+	_grid[_start._x][_start._y]._open = 2;
+
+	while (currentPos != _goal)														//loops until a path has been found
+	{
+		for (int i = 0; i < 8 && (_heuristicType != MANHATTAN || i < 4); i++)		//Manhattan skips diagonals 
+		{
+			Vec2D checkedPos = currentPos + NEIGHBOUR_OFFSETS[i];
+			if (isPositionValid(checkedPos) && _grid[checkedPos._x][checkedPos._y]._open != 2 && _grid[checkedPos._x][checkedPos._y]._traversable /*&&	 //checks for borders and already visited																																		  _grid[checkedPos._x][currentPos._y]._traversable && _grid[currentPos._x][checkedPos._y]._traversable*/)							//checks for corners
+			{
+				bool openedBefore = true;
+				if (_grid[checkedPos._x][checkedPos._y]._open == 0)			//check that node is not already in open list
+				{
+					calculateHCost(checkedPos);						//As the program works now, h must be calculated before g.
+					openedBefore = false;
+				}
+				calculateGCost(currentPos, checkedPos);
+			}
+		}
+		if (_openQueue.size() <= 0)
+		{
+			return false;
+		} else
+		{
+			currentPos = _openQueue.removeMin()->_position;
+			while (_grid[currentPos._x][currentPos._y]._open == 2)
+			{
+				if (_openQueue.size() <= 0)
+				{
+					return false;
+				}
+				currentPos = _openQueue.removeMin()->_position;
+			}
+			_grid[currentPos._x][currentPos._y]._open = 2;
+		}
+	}
+	while (currentPos != _start)													//traces the route back to start
+	{
+		_nrOfPathNodes++;
+		currentPos = _grid[currentPos._x][currentPos._y]._parent->_position;
+	}
+	_path = new Vec2D[_nrOfPathNodes];
+	int c = 0;
+	currentPos = _goal;
+	while (currentPos != _start)													//traces the route back to start
+	{
+		_path[c++] = currentPos;
+		currentPos = _grid[currentPos._x][currentPos._y]._parent->_position;
+	}
+	return true;
 }
 
 bool AStar::findPath(Metrics& metrics)

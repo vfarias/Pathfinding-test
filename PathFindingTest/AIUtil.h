@@ -13,8 +13,8 @@ struct Vec2D
 		_x = x;
 		_y = y;
 	}
-	~Vec2D()
-	{}
+	//~Vec2D()
+	//{}
 	bool operator==(const Vec2D& comp) const
 	{
 		return _x == comp._x && _y == comp._y;
