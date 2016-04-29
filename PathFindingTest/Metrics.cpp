@@ -19,15 +19,15 @@ Metrics::Metrics()
 {
 	_pathLength = 0.0f;
 	_nrOfPathNodes = 0;
-	_pathNodesCapacity = 16;
+	_pathNodesCapacity = 1000;
 	_pathNodes = new Vec2D[_pathNodesCapacity];
-	_openedNodesCapacity = 64;
+	_openedNodesCapacity = 1000;
 	_nrOfOpenedNodes = 0;
 	_openedNodes = new Vec2D[_openedNodesCapacity];
-	_expandedNodesCapacity = 64;
+	_expandedNodesCapacity = 1000;
 	_nrOfExpandedNodes = 0;
 	_expandedNodes = new Vec2D[_expandedNodesCapacity];
-	_graphNodesCapacity = 64;
+	_graphNodesCapacity = 1000;
 	_nrOfGraphNodes = 0;
 	_graphNodes = new Vec2D[_graphNodesCapacity];
 }

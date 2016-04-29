@@ -2,7 +2,7 @@
 #include <imgui-events-SFML.h>
 #include <imgui-rendering-SFML.h>
 #include <SFML/Graphics.hpp>
-#include "AStar.h"
+#include "Dijkstra.h"
 #include "ThetaStar.h"
 #include "HPAStar.h"
 #include "IDAStar.h"
@@ -23,6 +23,7 @@ void CalculateAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, int widt
 void CalculateThetaStar(Metrics &metrics, Pathfinding::Heuristic heuristic, int width, int height, Vec2D startPos, Vec2D goalPos, AStarNode** grid);
 void CalculateHPAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, int width, int height, Vec2D startPos, Vec2D goalPos, AStarNode** grid, int clusterSize);
 void CalculateIDAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, int width, int height, Vec2D startPos, Vec2D goalPos, AStarNode** grid);
+void CalculateDijkstra(Metrics &metrics, Pathfinding::Heuristic heuristic, int width, int height, Vec2D startPos, Vec2D goalPos, AStarNode** grid);
 
 int main()
 {
@@ -34,8 +35,8 @@ int main()
 	//Map data
 	string* map = nullptr;
 	//map = mr.ReadMap("Maps/Randomized128x128-29-0.map");
-	map = mr.ReadMap("Maps/maze512-1-1.map");
-	//map = mr.ReadMap("Maps/adaptive-depth-1.map");
+	//map = mr.ReadMap("Maps/maze512-1-1.map");
+	map = mr.ReadMap("Maps/adaptive-depth-1.map");
 	//map = mr.ReadMap("Maps/32room_008.map");
 	//map = GenerateMap(10, 10, 1.0f, mr);
 	int width = mr.GetWidth();
@@ -161,7 +162,8 @@ int main()
 			ImGui::RadioButton("A*", &choosePathfinding, 0);		ImGui::SameLine();
 			ImGui::RadioButton("Theta*", &choosePathfinding, 1);	ImGui::SameLine();
 			ImGui::RadioButton("HPA*", &choosePathfinding, 2);		ImGui::SameLine();
-			ImGui::RadioButton("IDA*", &choosePathfinding, 3);
+			ImGui::RadioButton("IDA*", &choosePathfinding, 3);		ImGui::SameLine();
+			ImGui::RadioButton("Dijkstra", &choosePathfinding, 4);
 
 			ImGui::RadioButton("Manhattan", &chooseHeuristic, 0);	ImGui::SameLine();
 			ImGui::RadioButton("Chebyshev", &chooseHeuristic, 1);	ImGui::SameLine();
@@ -267,6 +269,8 @@ int main()
 			case 3:		//IDA*
 				CalculateIDAStar(metrics, (Pathfinding::Heuristic)chooseHeuristic, width, height, startPos, goalPos, grid);
 				break;
+			case 4:
+				CalculateDijkstra(metrics, (Pathfinding::Heuristic)chooseHeuristic, width, height, startPos, goalPos, grid);
 			default:
 				break;
 			}
@@ -488,6 +492,13 @@ void CalculateHPAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, int wi
 void CalculateIDAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, int width, int height, Vec2D startPos, Vec2D goalPos, AStarNode** grid)
 {
 	IDAStar pathFinding(width, height, grid, heuristic);
+	pathFinding.init(startPos, goalPos);
+	if (pathFinding.findPath(metrics))
+	{}
+}
+void CalculateDijkstra(Metrics &metrics, Pathfinding::Heuristic heuristic, int width, int height, Vec2D startPos, Vec2D goalPos, AStarNode** grid)
+{
+	Dijkstra pathFinding(width, height, grid, heuristic);
 	pathFinding.init(startPos, goalPos);
 	if (pathFinding.findPath(metrics))
 	{}

@@ -1,4 +1,4 @@
-Algorithm used: A Star. 
-Heuristic used: Manhattan. 
-Number of opened nodes: 87029
-Number of expanded nodes: 86951
+Algorithm used: Does not exist
+Heuristic used: Octile. 
+Number of opened nodes: 8419
+Number of expanded nodes: 8419

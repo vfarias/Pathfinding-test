@@ -749,3 +749,5 @@ SFML-2.3.2/examples/window/Window.cpp
 SFML-2.3.2/examples/voip/Client.cpp
 SFML-2.3.2/examples/voip/Server.cpp
 SFML-2.3.2/examples/voip/VoIP.cpp
+PathFindingTest/Metrics/metrics000.txt
+PathFindingTest/imgui.ini
