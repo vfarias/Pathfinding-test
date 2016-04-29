@@ -176,16 +176,11 @@ void HPAStar::findInternalPaths(Cluster* cluster, Metrics& metrics)
 			if (possiblePath)
 			{
 				aStar->init(cluster->_internalNodes[i]->_position, cluster->_internalNodes[j]->_position);
-				if (aStar->findPath())
-				{
-					if (cluster->_internalPathLengths[i][j] < 0 || aStar->getPathLength() < cluster->_internalPathLengths[i][j])
-					{
-						cluster->_internalPathLengths[i][j] = aStar->getPathLength();
-						cluster->_internalPathLengths[j][i] = aStar->getPathLength();
-						metrics.addGraphNode(cluster->_internalNodes[i]->_position);
-						metrics.addGraphNode(cluster->_internalNodes[j]->_position);
-					}
-				}
+				float length = aStar->findPathLength();
+				cluster->_internalPathLengths[i][j] = length;
+				cluster->_internalPathLengths[j][i] = length;
+				metrics.addGraphNode(cluster->_internalNodes[i]->_position);
+				metrics.addGraphNode(cluster->_internalNodes[j]->_position);
 			}
 		}
 	}
@@ -208,15 +203,9 @@ float* HPAStar::attachNodeToGraph(HPANode* node, Metrics& metrics)
 	for (int i = 0; i < cluster->_nrOfInternalNodes; i++)					//Get path lengths from start to cluster edges
 	{
 		aStar->init(node->_position, cluster->_internalNodes[i]->_position);
-		if (aStar->findPath())
-		{
-			nodeToEdgePathLengths[i] = aStar->getPathLength();
-			metrics.addGraphNode(cluster->_internalNodes[i]->_position);
-			metrics.addGraphNode(node->_position);
-		} else
-		{
-			nodeToEdgePathLengths[i] = -1.0f;
-		}
+		nodeToEdgePathLengths[i] = aStar->findPathLength();
+		metrics.addGraphNode(cluster->_internalNodes[i]->_position);
+		metrics.addGraphNode(node->_position);
 	}
 	delete aStar;
 	return nodeToEdgePathLengths;
@@ -411,7 +400,7 @@ bool HPAStar::findPath(Metrics& metrics)
 			//		aStar->setTraversable(Vec2D(j, i), _grid[currentCluster->_position._x + j][currentCluster->_position._y + i]._traversable);
 			//	}
 			//}
-			if (aStar->findPath())
+			if (aStar->findPath(metrics))
 			{
 				Vec2D* tempPath = aStar->getPath();
 				for (int i = aStar->getNrOfPathNodes(); i > 0; i--)					//TODO: See if the copying can be changed to just pointing towards the general grid

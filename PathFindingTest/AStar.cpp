@@ -79,9 +79,11 @@ void AStar::cleanMap()
 	delete[] _path;
 	_path = nullptr;
 	_nrOfPathNodes = 0;
-	for (__int16 i = _position._x; i < _position._x + _width; i++)
+	int xMax = _position._x + _width;
+	int yMax = _position._y + _height;
+	for (__int16 i = _position._x; i < xMax; i++)
 	{
-		for (__int16 j = _position._y; j < _position._y + _height; j++)
+		for (__int16 j = _position._y; j < yMax; j++)
 		{
 			_grid[i][j]._open = 0;
 			_grid[i][j]._gCost = 0.0f;
@@ -92,15 +94,15 @@ void AStar::cleanMap()
 	if (_openQueue.size()>0)
 	{
 		_openQueue.empty();
-		_openQueue = Heap<AStarNode*>();
+		//_openQueue = Heap<AStarNode*>();
 	}
 }
 
-bool AStar::findPath()
+float AStar::findPathLength()
 {
 	if (_goal == _start)
 	{
-		return false;
+		return -1.0f;
 	}
 	_nrOfPathNodes = 0;																//It's 1 because there's an offset in the loop later.
 	Vec2D currentPos = _start;
@@ -124,35 +126,23 @@ bool AStar::findPath()
 		}
 		if (_openQueue.size() <= 0)
 		{
-			return false;
+			return -1.0f;
 		} else
 		{
 			currentPos = _openQueue.removeMin()->_position;
-			while (_grid[currentPos._x][currentPos._y]._open == 2)
-			{
-				if (_openQueue.size() <= 0)
-				{
-					return false;
-				}
-				currentPos = _openQueue.removeMin()->_position;
-			}
+			//while (_grid[currentPos._x][currentPos._y]._open == 2)
+			//{
+			//	if (_openQueue.size() <= 0)
+			//	{
+			//		return false;
+			//	}
+			//	currentPos = _openQueue.removeMin()->_position;
+			//}
 			_grid[currentPos._x][currentPos._y]._open = 2;
 		}
 	}
-	while (currentPos != _start)													//traces the route back to start
-	{
-		_nrOfPathNodes++;
-		currentPos = _grid[currentPos._x][currentPos._y]._parent->_position;
-	}
-	_path = new Vec2D[_nrOfPathNodes];
-	int c = 0;
-	currentPos = _goal;
-	while (currentPos != _start)													//traces the route back to start
-	{
-		_path[c++] = currentPos;
-		currentPos = _grid[currentPos._x][currentPos._y]._parent->_position;
-	}
-	return true;
+	return _grid[_goal._x][_goal._y]._gCost;
+	//return true;
 }
 
 bool AStar::findPath(Metrics& metrics)

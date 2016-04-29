@@ -35,16 +35,16 @@ int main()
 	//Map data
 	string* map = nullptr;
 	//map = mr.ReadMap("Maps/Randomized128x128-29-0.map");
-	//map = mr.ReadMap("Maps/maze512-1-1.map");
-	map = mr.ReadMap("Maps/adaptive-depth-1.map");
+	map = mr.ReadMap("Maps/maze512-1-1.map");
+	//map = mr.ReadMap("Maps/adaptive-depth-1.map");
 	//map = mr.ReadMap("Maps/32room_008.map");
 	//map = GenerateMap(10, 10, 1.0f, mr);
 	int width = mr.GetWidth();
 	int height = mr.GetHeight();
 	int nrOfWalls = mr.GetNrOfWalls(map);
 	Vec2D startPos = {1, 1};
-	Vec2D goalPos = {width-2, height-2};
-	int clusterSize = 32;
+	Vec2D goalPos = {width-1, height-1};
+	int clusterSize = 16;
 	Vec2D* wallPos = new Vec2D[nrOfWalls];
 	sf::RectangleShape* walls = new sf::RectangleShape[nrOfWalls];
 	AStarNode** grid = nullptr;
