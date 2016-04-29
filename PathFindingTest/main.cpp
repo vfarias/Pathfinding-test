@@ -12,8 +12,8 @@
 #define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
 
 //Visual size of tiles
-int tileWidth = 10;
-int tileHeight = 10;
+int tileWidth = 3;
+int tileHeight = 3;
 
 string* GenerateMap(int width, int height, float obstacleDensity, MapReader &mr);
 void SaveDataToFile(Metrics &metrics, int chooseAlgorithm, int chooseHeuristic);
@@ -149,7 +149,7 @@ int main()
 		/**************************************/
 		/*          Start of GUI code         */
 		/**************************************/
-		if (ImGui::BeginMenu("Choose pathfinding"))
+		if (ImGui::CollapsingHeader("Choose pathfinding"))
 		{
 			ImGui::RadioButton("A*", &choosePathfinding, 0);		ImGui::SameLine();
 			ImGui::RadioButton("Theta*", &choosePathfinding, 1);	ImGui::SameLine();
@@ -160,11 +160,9 @@ int main()
 			ImGui::RadioButton("Chebyshev", &chooseHeuristic, 1);	ImGui::SameLine();
 			ImGui::RadioButton("Octile", &chooseHeuristic, 2);		ImGui::SameLine();
 			ImGui::RadioButton("Euclidean", &chooseHeuristic, 3);
-
-			ImGui::EndMenu();
 		}
-		ImGui::MenuItem("Remove all pathfinding", NULL, &removePathFinding);
-		if (ImGui::BeginMenu("Randomize a map"))
+		//ImGui::MenuItem("Remove all pathfinding", NULL, &removePathFinding);
+		if (ImGui::CollapsingHeader("Randomize a map"))
 		{
 			//Set width, height and obstacle density
 			ImGui::InputText("Width", widthBuffer, IM_ARRAYSIZE(widthBuffer));
@@ -175,14 +173,12 @@ int main()
 			{
 				mr.GenerateRandomMap(stoi(string(widthBuffer)), stoi(string(heightBuffer)), 0.01f*stof(string(densityBuffer)));
 			}
-
-			ImGui::EndMenu();
 		}
-		if (ImGui::BeginMenu("Set start position"))
+		if (ImGui::CollapsingHeader("Set start/goal"))
 		{
 			ImGui::RadioButton("Set start position", &startOrGoal, 0); ImGui::SameLine();
 			ImGui::RadioButton("Set goal position", &startOrGoal, 1);
-
+			
 			//Set xPos and yPos
 			ImGui::InputText("Y position", xBuffer, IM_ARRAYSIZE(xBuffer));
 			ImGui::InputText("X position", yBuffer, IM_ARRAYSIZE(yBuffer));
@@ -201,25 +197,24 @@ int main()
 					goalNode.setPosition(sf::Vector2f(10.0f + goalPos._x * (float)tileWidth, 10.0f + goalPos._y * (float)tileHeight));
 				}
 			}
-			ImGui::EndMenu();
 		}
-		if (ImGui::BeginMenu("Choose what will be drawn"))
+		if (ImGui::CollapsingHeader("Choose what will be drawn"))
 		{
-			ImGui::MenuItem("Walls", NULL, &showWalls);
-			ImGui::MenuItem("Opened nodes", NULL, &showOpenedNodes);
-			ImGui::MenuItem("Expanded nodes", NULL, &showExpandedNodes);
-
-			ImGui::EndMenu();
+			ImGui::Checkbox("Walls", &showWalls);
+			ImGui::Checkbox("Opened nodes", &showOpenedNodes);
+			ImGui::Checkbox("Expanded nodes", &showExpandedNodes);
 		}
-		if (ImGui::BeginMenu("Scale map"))
+		if (ImGui::CollapsingHeader("Scale map"))
 		{
 
 			//TODO gör så den här fungerar
 			ImGui::SliderInt("Change map scale", &tileWidth, 1, 10);
 			int a = tileWidth;
-			ImGui::EndMenu();
 		}
-		ImGui::MenuItem("Calculate paths", NULL, &calculatePaths);
+		if (ImGui::SmallButton("Calculate paths"))
+		{
+			calculatePaths = !calculatePaths;
+		}
 
 		/**************************************/
 		/*            End of GUI code         */
