@@ -33,16 +33,15 @@ int main()
 
 	//Map data
 	string* map = nullptr;
-	//map = mr.ReadMap("Maps/Randomized10x10-10-0.map");
-	map = mr.ReadMap("Maps/adaptive-depth-1.map");
-	//map = mr.ReadMap("Maps/maze512-1-1.map");
-	map = mr.ReadMap("Maps/adaptive-depth-1.map");
+	//map = mr.ReadMap("Maps/Randomized128x128-29-0.map");
+	map = mr.ReadMap("Maps/maze512-1-1.map");
+	//map = mr.ReadMap("Maps/adaptive-depth-1.map");
 	//map = GenerateMap(10, 10, 1.0f, mr);
 	int width = mr.GetWidth();
 	int height = mr.GetHeight();
 	int nrOfWalls = mr.GetNrOfWalls(map);
-	Vec2D startPos = {0,0};
-	Vec2D goalPos = {width-1,height-1};
+	Vec2D startPos = {1, 1};
+	Vec2D goalPos = {width-1, height-2};
 	int clusterSize = 5;
 	Vec2D* wallPos = new Vec2D[nrOfWalls];
 	sf::RectangleShape* walls = new sf::RectangleShape[nrOfWalls];
@@ -95,7 +94,8 @@ int main()
 	sf::RectangleShape* openedTiles = nullptr;
 	sf::RectangleShape* expandedTiles = nullptr;
 	sf::Vertex* pathTiles = nullptr;
-	//mainly for the highlevel graph of HPA*
+	
+	//Mainly for the highlevel graph of HPA*
 	sf::Vertex* abstractGraph = nullptr;
 	sf::Vertex* openedGraph = nullptr;
 	sf::Vertex* expandedGraph = nullptr;
@@ -270,28 +270,38 @@ int main()
 				break;
 			}
 
-			if (openedTiles != nullptr)
+			if (showOpenedNodes)
 			{
-				delete[] openedTiles;
-			}
-			openedTiles = new sf::RectangleShape[metrics.getNrOfOpenedNodes()];
-			for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
-			{
-				openedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
-				openedTiles[i].setFillColor(sf::Color(0, 200, 200, 120));
-				openedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getOpenedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getOpenedNodes()[i]._y));
+				if (openedTiles != nullptr)
+				{
+					delete[] openedTiles;
+				}
+				openedTiles = new sf::RectangleShape[metrics.getNrOfOpenedNodes()];
+
+				for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
+				{
+					openedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
+					openedTiles[i].setFillColor(sf::Color(0, 200, 200, 120));
+					openedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getOpenedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getOpenedNodes()[i]._y));
+					window.draw(openedTiles[i]);
+				}
 			}
 
-			if (expandedTiles != nullptr)
+			if (showExpandedNodes)
 			{
-				delete[] expandedTiles;
-			}
-			expandedTiles = new sf::RectangleShape[metrics.getNrOfExpandedNodes()];
-			for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
-			{
-				expandedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
-				expandedTiles[i].setFillColor(sf::Color(200, 0, 0, 120));
-				expandedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getExpandedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getExpandedNodes()[i]._y));
+				if (expandedTiles != nullptr)
+				{
+					delete[] expandedTiles;
+				}
+				expandedTiles = new sf::RectangleShape[metrics.getNrOfExpandedNodes()];
+
+				for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
+				{
+					expandedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
+					expandedTiles[i].setFillColor(sf::Color(200, 0, 0, 120));
+					expandedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getExpandedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getExpandedNodes()[i]._y));
+					window.draw(expandedTiles[i]);
+				}
 			}
 
 			if (pathTiles != nullptr)
@@ -332,17 +342,23 @@ int main()
 		{
 			if (showOpenedNodes)
 			{
-				for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
+				if (openedTiles != nullptr)
 				{
-					window.draw(openedTiles[i]);
+					for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
+					{
+						window.draw(openedTiles[i]);
+					}
 				}
 			}
 
 			if (showExpandedNodes)
 			{
-				for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
+				if (expandedTiles != nullptr)
 				{
-					window.draw(expandedTiles[i]);
+					for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
+					{
+						window.draw(expandedTiles[i]);
+					}
 				}
 			}
 		}
