@@ -117,7 +117,7 @@ int main()
 	int chooseHeuristic = 0;
 
 	//Movement variable
-	int delta = 10;
+	int delta = width * 0.05f;
 	float blockSize = 32.0f;
 
 	//Randomize map variables
@@ -240,11 +240,11 @@ int main()
 		}
 
 		//Zooming with the camera
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::PageUp))  //Zoom out
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::PageUp) && blockSize <= 32.0f)  //Zoom out
 		{
 			view.setSize(sf::Vector2f(width * tileWidth * blockSize++ * 0.05f, height * tileHeight * blockSize++ * 0.0375f));
 		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::PageDown))  //Zoom in
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::PageDown) && blockSize >= 1.0f)  //Zoom in
 		{
 			view.setSize(sf::Vector2f(width * tileWidth * blockSize-- * 0.05f, height * tileHeight * blockSize-- * 0.0375f));
 		}
@@ -252,7 +252,7 @@ int main()
 
 
 		//Calculate pathfinding
-		if (calculatePaths) 
+		if (calculatePaths)
 		{
 			metrics.clean();
 			switch (choosePathfinding)
@@ -345,25 +345,19 @@ int main()
 		}
 		else
 		{
-			if (showOpenedNodes)
+			if (showOpenedNodes && openedTiles != nullptr)
 			{
-				if (openedTiles != nullptr)
+				for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
 				{
-					for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
-					{
-						window.draw(openedTiles[i]);
-					}
+					window.draw(openedTiles[i]);
 				}
 			}
 
 			if (showExpandedNodes)
 			{
-				if (expandedTiles != nullptr)
+				for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
 				{
-					for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
-					{
-						window.draw(expandedTiles[i]);
-					}
+					window.draw(expandedTiles[i]);
 				}
 			}
 		}
