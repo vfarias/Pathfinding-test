@@ -1,6 +1,6 @@
 #include "Pathfinding.h"
 
-bool Pathfinding::isPositionValid(Vec2D pos)
+bool Pathfinding::isPositionValid(const Vec2D& pos)
 {
 	return pos._x >= _position._x && pos._x < _position._x + _width && pos._y >= _position._y && pos._y < _position._y + _height;
 }

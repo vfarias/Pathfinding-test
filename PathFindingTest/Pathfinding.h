@@ -33,7 +33,7 @@ protected:
 	Heuristic _heuristicType;
 //	Metrics _metrics;										//TODO: Use instead of parameters for already implemented algorithms.
 
-	bool isPositionValid(Vec2D pos);						//Checks if position is within the grid
+	bool isPositionValid(const Vec2D& pos);						//Checks if position is within the grid
 	//virtual void calculateHCost(Vec2D pos) = 0;							//Sets the approximate distance to the goal node according to the chosen heuristic
 	//virtual void calculateGCost(Vec2D parentPos, Vec2D currentPos) = 0; //Sets cost from the start node
 public:
