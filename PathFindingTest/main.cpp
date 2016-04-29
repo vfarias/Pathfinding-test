@@ -12,8 +12,10 @@
 #define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
 
 //Visual size of tiles
-int tileWidth = 3;
-int tileHeight = 3;
+int tileWidth = 40;
+int tileHeight = 40;
+int windowWidth = 800;
+int windowHeight = 600;
 
 string* GenerateMap(int width, int height, float obstacleDensity, MapReader &mr);
 void SaveDataToFile(Metrics &metrics, int chooseAlgorithm, int chooseHeuristic);
@@ -31,16 +33,16 @@ int main()
 
 	//Map data
 	string* map = nullptr;
-	//map = mr.ReadMap("Maps/Randomized10x10-10-0.map");
+	//map = mr.ReadMap("Maps/Randomized128x128-29-0.map");
+	map = mr.ReadMap("Maps/maze512-1-1.map");
 	//map = mr.ReadMap("Maps/adaptive-depth-1.map");
-	//map = mr.ReadMap("Maps/maze512-1-1.map");
-	map = mr.ReadMap("Maps/32room_008.map");
-	//map = GenerateMap(10, 10, 0.0f, mr);
+	//map = mr.ReadMap("Maps/32room_008.map");
+	//map = GenerateMap(10, 10, 1.0f, mr);
 	int width = mr.GetWidth();
 	int height = mr.GetHeight();
 	int nrOfWalls = mr.GetNrOfWalls(map);
-	Vec2D startPos = {1,1};
-	Vec2D goalPos = {width-1,height-1};
+	Vec2D startPos = {1, 1};
+	Vec2D goalPos = {width-2, height-2};
 	int clusterSize = 32;
 	Vec2D* wallPos = new Vec2D[nrOfWalls];
 	sf::RectangleShape* walls = new sf::RectangleShape[nrOfWalls];
@@ -78,8 +80,12 @@ int main()
 		}
 	}
 
-	sf::RenderWindow window(sf::VideoMode(800, 600), "AI test");
+	sf::View view;
+	view.setCenter(0.5f * width * tileWidth, 0.5f * height * tileHeight);
+	view.setSize(1.6f * width * tileWidth, 1.2f * height * tileHeight);
+	sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "AI test");
 	window.setFramerateLimit(60);
+	window.setView(view);
 
 	ImGui::SFML::SetRenderTarget(window);
 	ImGui::SFML::InitImGuiRendering();
@@ -89,12 +95,11 @@ int main()
 	sf::RectangleShape* openedTiles = nullptr;
 	sf::RectangleShape* expandedTiles = nullptr;
 	sf::Vertex* pathTiles = nullptr;
-
-	//mainly for the highlevel graph of HPA*
+	
+	//Mainly for the highlevel graph of HPA*
 	sf::Vertex* abstractGraph = nullptr;
 	sf::Vertex* openedGraph = nullptr;
 	sf::Vertex* expandedGraph = nullptr;
-
 	Metrics metrics;
 	
 	sf::CircleShape startNode = sf::CircleShape(0.4f*tileHeight);
@@ -106,10 +111,13 @@ int main()
 	goalNode.setFillColor(sf::Color::Yellow);
 
 	//Other variables
-	bool removePathFinding = false;
 	bool calculatePaths = false;
 	int choosePathfinding = 0;
 	int chooseHeuristic = 0;
+
+	//Movement variable
+	int delta = 10;
+	float blockSize = 32.0f;
 
 	//Randomize map variables
 	bool randomizeMap = false;
@@ -119,8 +127,6 @@ int main()
 
 	//Set start/goal position variables
 	int startOrGoal = 0;   //0 == start pos, 1 == goal pos
-	int SetPosition = 0;   //0 == A*, 1 == Theta*, 2 == HPA*, 3 == IDA*
-	int SetGoal = 0;       //0 == A*, 1 == Theta*, 2 == HPA*, 3 == IDA*
 	char xBuffer[4] = "0";
 	char yBuffer[4] = "0";
 
@@ -162,7 +168,6 @@ int main()
 			ImGui::RadioButton("Octile", &chooseHeuristic, 2);		ImGui::SameLine();
 			ImGui::RadioButton("Euclidean", &chooseHeuristic, 3);
 		}
-		//ImGui::MenuItem("Remove all pathfinding", NULL, &removePathFinding);
 		if (ImGui::CollapsingHeader("Randomize a map"))
 		{
 			//Set width, height and obstacle density
@@ -181,8 +186,8 @@ int main()
 			ImGui::RadioButton("Set goal position", &startOrGoal, 1);
 			
 			//Set xPos and yPos
-			ImGui::InputText("Y position", xBuffer, IM_ARRAYSIZE(xBuffer));
-			ImGui::InputText("X position", yBuffer, IM_ARRAYSIZE(yBuffer));
+			ImGui::InputText("X position", xBuffer, IM_ARRAYSIZE(xBuffer));
+			ImGui::InputText("Y position", yBuffer, IM_ARRAYSIZE(yBuffer));
 
 			if (ImGui::SmallButton("Set position"))
 			{
@@ -205,13 +210,6 @@ int main()
 			ImGui::Checkbox("Opened nodes", &showOpenedNodes);
 			ImGui::Checkbox("Expanded nodes", &showExpandedNodes);
 		}
-		if (ImGui::CollapsingHeader("Scale map"))
-		{
-
-			//TODO gör så den här fungerar
-			ImGui::SliderInt("Change map scale", &tileWidth, 1, 10);
-			int a = tileWidth;
-		}
 		if (ImGui::SmallButton("Calculate paths"))
 		{
 			calculatePaths = !calculatePaths;
@@ -220,6 +218,36 @@ int main()
 		/**************************************/
 		/*            End of GUI code         */
 		/**************************************/
+
+		//Moving of the camera
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))  //Move camera west
+		{
+			view.setCenter(view.getCenter().x, view.getCenter().y - delta);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))  //Move camera east
+		{
+			view.setCenter(view.getCenter().x - delta, view.getCenter().y);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))  //Move camera south
+		{
+			view.setCenter(view.getCenter().x, view.getCenter().y + delta);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))  //Move camera north
+		{
+			view.setCenter(view.getCenter().x + delta, view.getCenter().y);
+		}
+
+		//Zooming with the camera
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::PageUp))  //Zoom out
+		{
+			view.setSize(sf::Vector2f(width * tileWidth * blockSize++ * 0.05f, height * tileHeight * blockSize++ * 0.0375f));
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::PageDown))  //Zoom in
+		{
+			view.setSize(sf::Vector2f(width * tileWidth * blockSize-- * 0.05f, height * tileHeight * blockSize-- * 0.0375f));
+		}
+		window.setView(view);
+
 
 		//Calculate pathfinding
 		if (calculatePaths) 
@@ -243,28 +271,38 @@ int main()
 				break;
 			}
 
-			if (openedTiles != nullptr)
+			if (showOpenedNodes)
 			{
-				delete[] openedTiles;
-			}
-			openedTiles = new sf::RectangleShape[metrics.getNrOfOpenedNodes()];
-			for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
-			{
-				openedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
-				openedTiles[i].setFillColor(sf::Color(0, 200, 200, 120));
-				openedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getOpenedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getOpenedNodes()[i]._y));
+				if (openedTiles != nullptr)
+				{
+					delete[] openedTiles;
+				}
+				openedTiles = new sf::RectangleShape[metrics.getNrOfOpenedNodes()];
+
+				for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
+				{
+					openedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
+					openedTiles[i].setFillColor(sf::Color(0, 200, 200, 120));
+					openedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getOpenedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getOpenedNodes()[i]._y));
+					window.draw(openedTiles[i]);
+				}
 			}
 
-			if (expandedTiles != nullptr)
+			if (showExpandedNodes)
 			{
-				delete[] expandedTiles;
-			}
-			expandedTiles = new sf::RectangleShape[metrics.getNrOfExpandedNodes()];
-			for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
-			{
-				expandedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
-				expandedTiles[i].setFillColor(sf::Color(200, 0, 0, 120));
-				expandedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getExpandedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getExpandedNodes()[i]._y));
+				if (expandedTiles != nullptr)
+				{
+					delete[] expandedTiles;
+				}
+				expandedTiles = new sf::RectangleShape[metrics.getNrOfExpandedNodes()];
+
+				for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
+				{
+					expandedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
+					expandedTiles[i].setFillColor(sf::Color(200, 0, 0, 120));
+					expandedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getExpandedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getExpandedNodes()[i]._y));
+					window.draw(expandedTiles[i]);
+				}
 			}
 
 			if (pathTiles != nullptr)
@@ -305,17 +343,23 @@ int main()
 		{
 			if (showOpenedNodes)
 			{
-				for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
+				if (openedTiles != nullptr)
 				{
-					window.draw(openedTiles[i]);
+					for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
+					{
+						window.draw(openedTiles[i]);
+					}
 				}
 			}
 
 			if (showExpandedNodes)
 			{
-				for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
+				if (expandedTiles != nullptr)
 				{
-					window.draw(expandedTiles[i]);
+					for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
+					{
+						window.draw(expandedTiles[i]);
+					}
 				}
 			}
 		}
