@@ -17,25 +17,46 @@ Vec2D* Metrics::_expandNodeCap(Vec2D* arr, int & currentCap)
 
 Metrics::Metrics()
 {
-	_openedNodesCapacity = 4800;
+	_pathLength = 0.0f;
+	_nrOfPathNodes = 0;
+	_pathNodesCapacity = 16;
+	_pathNodes = new Vec2D[_pathNodesCapacity];
+	_openedNodesCapacity = 64;
 	_nrOfOpenedNodes = 0;
 	_openedNodes = new Vec2D[_openedNodesCapacity];
-	_expandedNodesCapacity = 4800;
+	_expandedNodesCapacity = 64;
 	_nrOfExpandedNodes = 0;
 	_expandedNodes = new Vec2D[_expandedNodesCapacity];
-	_graphNodesCapacity = 4800;
+	_graphNodesCapacity = 64;
 	_nrOfGraphNodes = 0;
 	_graphNodes = new Vec2D[_graphNodesCapacity];
 }
 
 Metrics::~Metrics()
 {
+	delete[] _pathNodes;
+	_pathNodes = nullptr;
 	delete[] _openedNodes;
 	_openedNodes = nullptr;
 	delete[] _expandedNodes;
 	_expandedNodes = nullptr;
 	delete[] _graphNodes;
 	_graphNodes = nullptr;
+}
+
+float Metrics::getPathLength() const
+{
+	return _pathLength;
+}
+
+int Metrics::getNrOfPathNodes() const
+{
+	return _nrOfPathNodes;
+}
+
+Vec2D * Metrics::getPathNodes() const
+{
+	return _pathNodes;
 }
 
 int Metrics::getNrOfOpenedNodes() const
@@ -68,6 +89,10 @@ Vec2D * Metrics::getGraphNodes() const
 	return _graphNodes;
 }
 
+void Metrics::addPathNode(const Vec2D node)
+{
+}
+
 void Metrics::addOpenedNode(const Vec2D node)
 {
 	if (_nrOfOpenedNodes >= _openedNodesCapacity)
@@ -94,9 +119,45 @@ void Metrics::addGraphNode(const Vec2D node)
 	}
 	_graphNodes[_nrOfGraphNodes++] = node;
 }
+
+void Metrics::setPathNodes(Vec2D * path, int nrOfNodes)
+{
+	if (_pathNodes != nullptr)
+	{
+		delete[] _pathNodes;
+	}
+	_pathNodes = path;
+	_pathNodesCapacity = nrOfNodes;
+	_nrOfPathNodes = nrOfNodes;
+	_pathLength = 0.0f;
+	for (int i = 1; i < _nrOfPathNodes; i++)
+	{
+		float x = (float)(_pathNodes[i]._x - _pathNodes[i - 1]._x);
+		float y = (float)(_pathNodes[i]._y - _pathNodes[i - 1]._y);
+		_pathLength += std::sqrt(y * y + x * x);
+	}
+}
+
+void Metrics::setPathNodes(Vec2D * path, int nrOfNodes, float pathLength)
+{
+	if (_pathNodes != nullptr)
+	{
+		delete[] _pathNodes;
+	}
+	_pathNodesCapacity = nrOfNodes;
+	_nrOfPathNodes = nrOfNodes;
+	_pathLength = pathLength;
+	_pathNodes = new Vec2D[_pathNodesCapacity];
+	for (int i = 0; i < _nrOfPathNodes; i++)
+	{
+		_pathNodes[i] = path[i];
+	}
+}
+
 void Metrics::clean()
 {
 	_nrOfExpandedNodes = 0;
 	_nrOfGraphNodes = 0;
 	_nrOfOpenedNodes = 0;
+	_nrOfPathNodes = 0;
 }
