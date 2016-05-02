@@ -35,7 +35,7 @@ int main()
 	//Map data
 	string* map = nullptr;
 	//map = mr.ReadMap("Maps/Randomized128x128-29-0.map");
-	map = mr.ReadMap("Maps/maze512-1-1.map");
+	//map = mr.ReadMap("Maps/maze512-1-1.map");
 	//map = mr.ReadMap("Maps/adaptive-depth-1.map");
 	//map = mr.ReadMap("Maps/32room_008.map");
 	map = mr.ReadMap("Maps/random512-35-3.map");
@@ -240,13 +240,19 @@ int main()
 				Vec2D pos = {stoi(string(xBuffer)), stoi(string(yBuffer))};
 				if (startOrGoal == 0)  //Start pos
 				{
-					startPos = pos;
-					startNode.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
+					if ((pos._x > 0 && pos._x < width) && (pos._y > 0 && pos._y < height))
+					{
+						startPos = pos;
+						startNode.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
+					}
 				}
 				else if (startOrGoal == 1)  //Goal pos
 				{
-					goalPos = pos;
-					goalNode.setPosition(sf::Vector2f(10.0f + goalPos._x * (float)tileWidth, 10.0f + goalPos._y * (float)tileHeight));
+					if ((pos._x > 0 && pos._x < width) && (pos._y > 0 && pos._y < height))
+					{
+						goalPos = pos;
+						goalNode.setPosition(sf::Vector2f(10.0f + goalPos._x * (float)tileWidth, 10.0f + goalPos._y * (float)tileHeight));
+					}
 				}
 			}
 		}
