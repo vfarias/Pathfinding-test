@@ -34,12 +34,16 @@ int main()
 
 	//Map data
 	string* map = nullptr;
-	//map = mr.ReadMap("Maps/Randomized128x128-29-0.map");
-	//map = mr.ReadMap("Maps/maze512-1-1.map");
-	//map = mr.ReadMap("Maps/adaptive-depth-1.map");
 	//map = mr.ReadMap("Maps/32room_008.map");
-	map = mr.ReadMap("Maps/random512-35-3.map");
-	//map = GenerateMap(10, 10, 1.0f, mr);
+	//map = mr.ReadMap("Maps/AR0307SR.map");
+	//map = mr.ReadMap("Maps/AR0700SR.map");
+	//map = mr.ReadMap("Maps/FloodedPlains.map");
+	map = mr.ReadMap("Maps/maze512-1-1.map");
+	//map = mr.ReadMap("Maps/Randomized32x32-20-0.map");
+	//map = mr.ReadMap("Maps/Randomized100x100-10-0.map");
+	//map = mr.ReadMap("Maps/Randomized128x128-30-0.map");
+	//map = mr.ReadMap("Maps/Randomized480x480-10-0.map");
+	//map = mr.ReadMap("Maps/Turbo.map");
 	int width = mr.GetWidth();
 	int height = mr.GetHeight();
 	int nrOfWalls = mr.GetNrOfWalls(map);
