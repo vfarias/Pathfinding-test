@@ -179,18 +179,19 @@ bool ThetaStar::findPath(Metrics& metrics)
 
 	while (currentPos != _goal)														//loops until a path has been found
 	{
-		metrics.addExpandedNode(currentPos);
+		//metrics.addExpandedNode(currentPos);
+		metrics.countExpansion();
 		for (int i = 0; i < 8 && (_heuristicType != MANHATTAN || i < 4); i++)		//Manhattan skips diagonals 
 		{
 			Vec2D checkedPos = currentPos + NEIGHBOUR_OFFSETS[i];
-			if (isPositionValid(checkedPos) && _grid[checkedPos._x][checkedPos._y]._open != 2 && _grid[checkedPos._x][checkedPos._y]._traversable &&	 //checks for borders and already visited
-				(_grid[checkedPos._x][currentPos._y]._traversable || _grid[currentPos._x][checkedPos._y]._traversable))								//checks for corners
+			if (isPositionValid(checkedPos) && _grid[checkedPos._x][checkedPos._y]._open != 2 && _grid[checkedPos._x][checkedPos._y]._traversable/* &&	 //checks for borders and already visited
+				(_grid[checkedPos._x][currentPos._y]._traversable || _grid[currentPos._x][checkedPos._y]._traversable)*/)								//checks for corners
 			{
-				bool openedBefore = true;
+				//bool openedBefore = true;
 				if (_grid[checkedPos._x][checkedPos._y]._open == 0)			//check that node is not already in open list
 				{
 					calculateHCost(checkedPos);						//As the program works now, h must be calculated before g.
-					openedBefore = false;
+				//	openedBefore = false;
 				}
 				if (_grid[currentPos._x][currentPos._y]._parent != nullptr)
 				{
@@ -208,10 +209,10 @@ bool ThetaStar::findPath(Metrics& metrics)
 					calculateGCost(currentPos, checkedPos);
 				}
 
-				if (!openedBefore && _grid[checkedPos._x][checkedPos._y]._open == 1)	//Check that node was added to open list
-				{
-					metrics.addOpenedNode(checkedPos);
-				}
+				//if (!openedBefore && _grid[checkedPos._x][checkedPos._y]._open == 1)	//Check that node was added to open list
+				//{
+				//	metrics.addOpenedNode(checkedPos);
+				//}
 			}
 		}
 		if (_openQueue.size() <= 0)

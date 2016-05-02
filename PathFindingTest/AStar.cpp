@@ -98,7 +98,7 @@ void AStar::cleanMap()
 	}
 }
 
-float AStar::findPathLength()
+float AStar::findPathLength(Metrics& metrics)
 {
 	if (_goal == _start)
 	{
@@ -110,6 +110,7 @@ float AStar::findPathLength()
 
 	while (currentPos != _goal)														//loops until a path has been found
 	{
+		metrics.countExpansion();
 		for (int i = 0; i < 8 && (_heuristicType != MANHATTAN || i < 4); i++)		//Manhattan skips diagonals 
 		{
 			Vec2D checkedPos = currentPos + NEIGHBOUR_OFFSETS[i];
@@ -130,14 +131,6 @@ float AStar::findPathLength()
 		} else
 		{
 			currentPos = _openQueue.removeMin()->_position;
-			//while (_grid[currentPos._x][currentPos._y]._open == 2)
-			//{
-			//	if (_openQueue.size() <= 0)
-			//	{
-			//		return false;
-			//	}
-			//	currentPos = _openQueue.removeMin()->_position;
-			//}
 			_grid[currentPos._x][currentPos._y]._open = 2;
 		}
 	}
@@ -158,6 +151,7 @@ bool AStar::findPath(Metrics& metrics)
 	while (currentPos != _goal)														//loops until a path has been found
 	{
 	//	metrics.addExpandedNode(currentPos);
+		metrics.countExpansion();
 		for (int i = 0; i < 8 && (_heuristicType != MANHATTAN || i < 4); i++)		//Manhattan skips diagonals 
 		{
 			Vec2D checkedPos = currentPos + NEIGHBOUR_OFFSETS[i];

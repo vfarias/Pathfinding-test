@@ -176,7 +176,7 @@ void HPAStar::findInternalPaths(Cluster* cluster, Metrics& metrics)
 			if (possiblePath)
 			{
 				aStar->init(cluster->_internalNodes[i]->_position, cluster->_internalNodes[j]->_position);
-				float length = aStar->findPathLength();
+				float length = aStar->findPathLength(metrics);
 				cluster->_internalPathLengths[i][j] = length;
 				cluster->_internalPathLengths[j][i] = length;
 	//			metrics.addGraphNode(cluster->_internalNodes[i]->_position);
@@ -203,7 +203,7 @@ float* HPAStar::attachNodeToGraph(HPANode* node, Metrics& metrics)
 	for (int i = 0; i < cluster->_nrOfInternalNodes; i++)					//Get path lengths from start to cluster edges
 	{
 		aStar->init(node->_position, cluster->_internalNodes[i]->_position);
-		nodeToEdgePathLengths[i] = aStar->findPathLength();
+		nodeToEdgePathLengths[i] = aStar->findPathLength(metrics);
 	//	metrics.addGraphNode(cluster->_internalNodes[i]->_position);
 	//	metrics.addGraphNode(node->_position);
 	}
@@ -308,9 +308,11 @@ bool HPAStar::findPath(Metrics& metrics)
 	currentNode->_open = 2;
 //	metrics.addExpandedNode(currentNode->_parent->_position);
 //	metrics.addExpandedNode(currentNode->_position);
+	metrics.countExpansion();
 	while (currentNode->_position != _goal)														//loops until a path has been found
 	{
 		//metrics.addExpandedNode(currentNode->_position);
+		metrics.countExpansion();
 
 		if (currentCluster == findCluster(_goal) && goalToEdgePathLengths[currentNode->_clusterIndex] > 0)							//Check if the current node is linked to the goal
 		{
@@ -361,8 +363,8 @@ bool HPAStar::findPath(Metrics& metrics)
 		}
 		if (_openQueue.size() <= 0)
 		{
-			//return false;
-			_goal = currentNode->_position;
+			return false;
+			//_goal = currentNode->_position;
 		}
 		else
 		{
@@ -382,7 +384,9 @@ bool HPAStar::findPath(Metrics& metrics)
 		}
 	}
 	AStar* aStar = new AStar(_clusterSize, _clusterSize, currentCluster->_position, _grid, OCTILE);
-	_path = new Vec2D[currentNode->_gCost];
+	float g = currentNode->_gCost;
+	_path = new Vec2D[(int)g];
+
 	while (currentNode->_position != _start)							//Count the path length to allocate enough memory for path
 	{
 		if (currentNode->_edge != nullptr && currentNode->_edge->_position == currentNode->_parent->_position)
@@ -412,7 +416,7 @@ bool HPAStar::findPath(Metrics& metrics)
 		currentNode = currentNode->_parent;
 		currentCluster = findCluster(currentNode->_position);
 	}
-	metrics.setPathNodes(_path, _nrOfPathNodes, _grid[_goal._x][_goal._y]._gCost);
+	metrics.setPathNodes(_path, _nrOfPathNodes,g);
 	delete aStar;
 	delete startToEdgePathLengths;
 	delete goalToEdgePathLengths;
