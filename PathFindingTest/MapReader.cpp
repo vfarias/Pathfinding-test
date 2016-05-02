@@ -89,6 +89,8 @@ int MapReader::GetHeight() const
 }
 int MapReader::GetNrOfWalls(string* map)
 {
+	_nrOfWalls = 0;
+
 	if (map != nullptr)
 	{
 		for (int i = 0; i < _width * _height; i++)
@@ -154,7 +156,7 @@ string* MapReader::ReadMap(string fileName)
 
 	return map;
 }
-void MapReader::GenerateRandomMap(int width, int height, float densityOfObstacles)
+string* MapReader::GenerateRandomMap(int width, int height, float densityOfObstacles)
 {
 	_width = width;
 	_height = height;
@@ -200,7 +202,7 @@ void MapReader::GenerateRandomMap(int width, int height, float densityOfObstacle
 	fileName << "Maps/Randomized" << to_string(_width).c_str() << "x" << to_string(_height).c_str() << "-" << to_string(density).c_str() << "-" << to_string(0) << ".map";
 
 	SaveMapToFile(fileName.str(), map);
-	delete[] map;
+	return map;
 }
 void MapReader::SaveMapToFile(string fileName, string* map)
 {

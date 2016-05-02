@@ -41,6 +41,6 @@ public:
 	int GetNrOfWalls(string* map);
 
 	string* ReadMap(string fileName);
-	void GenerateRandomMap(int width, int height, float densityOfObstacles);
+	string* GenerateRandomMap(int width, int height, float densityOfObstacles);
 	void SaveMapToFile(string fileName, string* map);
 };

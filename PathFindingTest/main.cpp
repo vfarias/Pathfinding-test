@@ -35,9 +35,10 @@ int main()
 	//Map data
 	string* map = nullptr;
 	//map = mr.ReadMap("Maps/Randomized128x128-29-0.map");
-	map = mr.ReadMap("Maps/maze512-1-1.map");
+	//map = mr.ReadMap("Maps/maze512-1-1.map");
 	//map = mr.ReadMap("Maps/adaptive-depth-1.map");
 	//map = mr.ReadMap("Maps/32room_008.map");
+	map = mr.ReadMap("Maps/random512-35-3.map");
 	//map = GenerateMap(10, 10, 1.0f, mr);
 	int width = mr.GetWidth();
 	int height = mr.GetHeight();
@@ -45,7 +46,6 @@ int main()
 	Vec2D startPos = {1, 1};
 	Vec2D goalPos = {width-1, height-1};
 	int clusterSize = 16;
-	Vec2D* wallPos = new Vec2D[nrOfWalls];
 	sf::RectangleShape* walls = new sf::RectangleShape[nrOfWalls];
 	AStarNode** grid = nullptr;
 
@@ -179,7 +179,51 @@ int main()
 
 			if (ImGui::SmallButton("Generate map"))
 			{
-				mr.GenerateRandomMap(stoi(string(widthBuffer)), stoi(string(heightBuffer)), 0.01f*stof(string(densityBuffer)));
+				delete[] map;
+				delete[] walls;
+				metrics.clean();
+				for (int i = 0; i < width; i++)
+				{
+					delete[] grid[i];
+				}
+				delete[] grid;
+
+				map = mr.GenerateRandomMap(stoi(string(widthBuffer)), stoi(string(heightBuffer)), 0.01f*stof(string(densityBuffer)));
+				width = mr.GetWidth();
+				height = mr.GetHeight();
+
+				if (width > 0 && height > 0)
+				{
+					nrOfWalls = mr.GetNrOfWalls(map);
+					goalPos = {width - 1, height - 1};
+					goalNode.setPosition(sf::Vector2f(10.0f + goalPos._x * (float)tileWidth, 10.0f + goalPos._y * (float)tileHeight));
+					walls = new sf::RectangleShape[nrOfWalls];
+					grid = new AStarNode*[width];
+
+					//Initiate the grid** with walkable or non-walkable tiles
+					int wallCounter = 0;
+					for (int i = 0; i < width; i++)
+					{
+						grid[i] = new AStarNode[height];
+						for (int j = 0; j < height; j++)
+						{
+							grid[i][j] = AStarNode(i, j);
+
+							if (map[j*width + i] != "@")
+							{
+								grid[i][j]._traversable = true;
+							}
+							else
+							{
+								grid[i][j]._traversable = false;
+								walls[wallCounter] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
+								walls[wallCounter].setFillColor(sf::Color::White);
+								walls[wallCounter].setPosition(sf::Vector2f(10.0f + (float)(tileWidth * i), 10.0f + (float)(tileHeight * j)));
+								wallCounter++;
+							}
+						}
+					}
+				}
 			}
 		}
 		if (ImGui::CollapsingHeader("Set start/goal"))
@@ -196,13 +240,19 @@ int main()
 				Vec2D pos = {stoi(string(xBuffer)), stoi(string(yBuffer))};
 				if (startOrGoal == 0)  //Start pos
 				{
-					startPos = pos;
-					startNode.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
+					if ((pos._x > 0 && pos._x < width) && (pos._y > 0 && pos._y < height))
+					{
+						startPos = pos;
+						startNode.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
+					}
 				}
 				else if (startOrGoal == 1)  //Goal pos
 				{
-					goalPos = pos;
-					goalNode.setPosition(sf::Vector2f(10.0f + goalPos._x * (float)tileWidth, 10.0f + goalPos._y * (float)tileHeight));
+					if ((pos._x > 0 && pos._x < width) && (pos._y > 0 && pos._y < height))
+					{
+						goalPos = pos;
+						goalNode.setPosition(sf::Vector2f(10.0f + goalPos._x * (float)tileWidth, 10.0f + goalPos._y * (float)tileHeight));
+					}
 				}
 			}
 		}
@@ -353,7 +403,7 @@ int main()
 				}
 			}
 
-			if (showExpandedNodes)
+			if (showExpandedNodes && expandedTiles != nullptr)
 			{
 				for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
 				{
@@ -380,10 +430,12 @@ int main()
 	delete[] pathTiles;
 	delete[] walls;
 	delete[] map;
-	delete[] wallPos;
-	for (__int16 i = 0; i < width; i++)
+	if (grid != nullptr)
 	{
-		delete[] grid[i];
+		for (__int16 i = 0; i < width; i++)
+		{
+			delete[] grid[i];
+		}
 	}
 	delete[] grid;
 	ImGui::SFML::Shutdown();
