@@ -1,4 +1,4 @@
-Algorithm used: Does not exist
+Algorithm used: A Star. 
 Heuristic used: Octile. 
-Number of opened nodes: 8419
-Number of expanded nodes: 8419
+Number of opened nodes: 3204
+Number of expanded nodes: 2525

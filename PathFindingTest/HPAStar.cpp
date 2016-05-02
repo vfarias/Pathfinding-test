@@ -176,7 +176,7 @@ void HPAStar::findInternalPaths(Cluster* cluster, Metrics& metrics)
 			if (possiblePath)
 			{
 				aStar->init(cluster->_internalNodes[i]->_position, cluster->_internalNodes[j]->_position);
-				if (aStar->findPath())
+				if (aStar->findPath(metrics))
 				{
 					if (cluster->_internalPathLengths[i][j] < 0 || aStar->getPathLength() < cluster->_internalPathLengths[i][j])
 					{
@@ -208,7 +208,7 @@ float* HPAStar::attachNodeToGraph(HPANode* node, Metrics& metrics)
 	for (int i = 0; i < cluster->_nrOfInternalNodes; i++)					//Get path lengths from start to cluster edges
 	{
 		aStar->init(node->_position, cluster->_internalNodes[i]->_position);
-		if (aStar->findPath())
+		if (aStar->findPath(metrics))
 		{
 			nodeToEdgePathLengths[i] = aStar->getPathLength();
 			metrics.addGraphNode(cluster->_internalNodes[i]->_position);
@@ -411,7 +411,7 @@ bool HPAStar::findPath(Metrics& metrics)
 			//		aStar->setTraversable(Vec2D(j, i), _grid[currentCluster->_position._x + j][currentCluster->_position._y + i]._traversable);
 			//	}
 			//}
-			if (aStar->findPath())
+			if (aStar->findPath(metrics))
 			{
 				Vec2D* tempPath = aStar->getPath();
 				for (int i = aStar->getNrOfPathNodes(); i > 0; i--)					//TODO: See if the copying can be changed to just pointing towards the general grid
