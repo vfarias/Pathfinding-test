@@ -32,16 +32,16 @@ Pathfinding::Pathfinding(int width, int height, AStarNode** grid, Vec2D start, V
 	_heuristicType = heuristic;
 	_position = position;
 	_grid = grid;
-	for (__int16 i = _position._x; i < _position._x + _width; i++)
-	{
-		for (__int16 j = _position._y; j < _position._y + _height; j++)
-		{
-			_grid[i][j]._open = 0;
-			_grid[i][j]._gCost = 0.0f;
-			_grid[i][j]._hCost = 0.0f;
-			_grid[i][j]._parent = nullptr;
-		}
-	}
+	//for (__int16 i = _position._x; i < _position._x + _width; i++)
+	//{
+	//	for (__int16 j = _position._y; j < _position._y + _height; j++)
+	//	{
+	//		_grid[i][j]._open = 0;
+	//		_grid[i][j]._gCost = 0.0f;
+	//		_grid[i][j]._hCost = 0.0f;
+	//		_grid[i][j]._parent = nullptr;
+	//	}
+	//}
 }
 
 

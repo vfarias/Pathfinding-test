@@ -18,6 +18,7 @@ private:
 	int _graphNodesCapacity;
 	int _nrOfGraphNodes;
 	Vec2D* _graphNodes;
+	int _expansionCounter;					//counts the expanded nodes, but doesn't keep track 
 
 	Vec2D* _expandNodeCap( Vec2D* arr, int& currentCap);
 public:
@@ -38,6 +39,7 @@ public:
 	void addOpenedNode(const Vec2D node);
 	void addExpandedNode(const Vec2D node);
 	void addGraphNode(const Vec2D node);
+	void countExpansion();
 
 	void setPathNodes(Vec2D* path, int nrOfNodes);
 	void setPathNodes(Vec2D* path, int nrOfNodes, float pathLength);

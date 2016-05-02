@@ -30,6 +30,7 @@ Metrics::Metrics()
 	_graphNodesCapacity = 1000;
 	_nrOfGraphNodes = 0;
 	_graphNodes = new Vec2D[_graphNodesCapacity];
+	_expansionCounter = 0;
 }
 
 Metrics::~Metrics()
@@ -120,6 +121,11 @@ void Metrics::addGraphNode(const Vec2D node)
 	_graphNodes[_nrOfGraphNodes++] = node;
 }
 
+void Metrics::countExpansion()
+{
+	_expansionCounter++;
+}
+
 void Metrics::setPathNodes(Vec2D * path, int nrOfNodes)
 {
 	if (_pathNodes != nullptr)
@@ -160,4 +166,5 @@ void Metrics::clean()
 	_nrOfGraphNodes = 0;
 	_nrOfOpenedNodes = 0;
 	_nrOfPathNodes = 0;
+	_expansionCounter = 0;
 }
