@@ -1,4 +1,4 @@
-Algorithm used: A Star. 
-Heuristic used: Manhattan. 
+Algorithm used: IDA Star. 
+Heuristic used: Octile. 
 Number of opened nodes: 0
 Number of expanded nodes: 0

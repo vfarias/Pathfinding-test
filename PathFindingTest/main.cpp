@@ -34,21 +34,52 @@ int main()
 
 	//Map data
 	string* map = nullptr;
-	//map = mr.ReadMap("Maps/32room_008.map");
-	//map = mr.ReadMap("Maps/AR0307SR.map");
-	//map = mr.ReadMap("Maps/AR0700SR.map");
-	//map = mr.ReadMap("Maps/FloodedPlains.map");
-	//map = mr.ReadMap("Maps/maze512-1-1.map");
-	map = mr.ReadMap("Maps/Randomized32x32-20-0.map");
-	//map = mr.ReadMap("Maps/Randomized100x100-10-0.map");
-	//map = mr.ReadMap("Maps/Randomized128x128-30-0.map");
-	//map = mr.ReadMap("Maps/Randomized480x480-10-0.map");
+	/*map = mr.ReadMap("Maps/AR0307SR.map");
+	Vec2D startPos = {350, 54};
+	Vec2D goalPos = {467, 387};*/
+
+	/*map = mr.ReadMap("Maps/AR0700SR.map");
+	Vec2D startPos = {343, 5};
+	Vec2D goalPos = {188, 462};*/
+
+	/*Vec2D startPos = {0, 0};
+	Vec2D goalPos = {767, 759};
+	map = mr.ReadMap("Maps/FloodedPlains.map");*/
+
+	//Vec2D startPos = {534, 125};
+	//Vec2D goalPos = {225, 638};
 	//map = mr.ReadMap("Maps/Turbo.map");
+
+	//Vec2D startPos = {1, 1};
+	//Vec2D goalPos = {511, 511};
+	//map = mr.ReadMap("Maps/32room_008.map");
+	//map = mr.ReadMap("Maps/maze512-1-1.map");
+
+	Vec2D startPos = {0, 0};
+
+	//Vec2D goalPos = {63, 63};
+	//map = mr.ReadMap("Maps/Randomized64x64-10-0.map");
+	//map = mr.ReadMap("Maps/Randomized64x64-20-0.map");
+	//map = mr.ReadMap("Maps/Randomized64x64-30-0.map");
+	//map = mr.ReadMap("Maps/Randomized64x64-40-0.map");
+
+	/*Vec2D goalPos = {31, 31};
+	map = mr.ReadMap("Maps/Randomized32x32-30-0.map");*/
+
+	Vec2D goalPos = {127, 127};
+	map = mr.ReadMap("Maps/Randomized128x128-30-0.map");
+
+	//Vec2D goalPos = {255, 255};
+	//map = mr.ReadMap("Maps/Randomized256x256-30-0.map");
+
+	//Vec2D goalPos = {511, 511};
+	//map = mr.ReadMap("Maps/Randomized512x512-30-0.map");
+
 	int width = mr.GetWidth();
 	int height = mr.GetHeight();
 	int nrOfWalls = mr.GetNrOfWalls(map);
-	Vec2D startPos = {1, 1};
-	Vec2D goalPos = {width-1, height-1};
+	/*Vec2D startPos = {1, 1};
+	Vec2D goalPos = {width-1, height-1};*/
 	int clusterSize = 16;
 	sf::RectangleShape* walls = new sf::RectangleShape[nrOfWalls];
 	AStarNode** grid = nullptr;
