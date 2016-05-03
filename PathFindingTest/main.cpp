@@ -38,8 +38,8 @@ int main()
 	//map = mr.ReadMap("Maps/AR0307SR.map");
 	//map = mr.ReadMap("Maps/AR0700SR.map");
 	//map = mr.ReadMap("Maps/FloodedPlains.map");
-	map = mr.ReadMap("Maps/maze512-1-1.map");
-	//map = mr.ReadMap("Maps/Randomized32x32-20-0.map");
+	//map = mr.ReadMap("Maps/maze512-1-1.map");
+	map = mr.ReadMap("Maps/Randomized32x32-20-0.map");
 	//map = mr.ReadMap("Maps/Randomized100x100-10-0.map");
 	//map = mr.ReadMap("Maps/Randomized128x128-30-0.map");
 	//map = mr.ReadMap("Maps/Randomized480x480-10-0.map");
