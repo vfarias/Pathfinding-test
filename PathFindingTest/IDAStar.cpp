@@ -76,7 +76,7 @@ Vec2D IDAStar::evaluateNode(Vec2D pos, float g, float threshold, Metrics& metric
 			float tileDist = 1;
 			if (i >= 4)
 			{
-				tileDist = SQRT2;
+				tileDist = M_SQRT2;
 			}
 			if (_grid[checkedPos._x][checkedPos._y]._gCost <= 0 || _grid[checkedPos._x][checkedPos._y]._gCost - (g + tileDist) > -0.1f )
 			{

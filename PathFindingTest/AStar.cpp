@@ -28,7 +28,7 @@ void AStar::calculateGCost(Vec2D parentPos, Vec2D currentPos)
 		}
 		else
 		{
-			g = _grid[parentPos._x][parentPos._y]._gCost + SQRT2;
+			g = _grid[parentPos._x][parentPos._y]._gCost + M_SQRT2;
 		}
 		break;
 	default:
@@ -158,11 +158,11 @@ bool AStar::findPath(Metrics& metrics)
 			if (isPositionValid(checkedPos) && _grid[checkedPos._x][checkedPos._y]._open != 2 && _grid[checkedPos._x][checkedPos._y]._traversable /*&&	 //checks for borders and already visited
 				_grid[checkedPos._x][currentPos._y]._traversable && _grid[currentPos._x][checkedPos._y]._traversable*/)							//checks for corners
 			{
-				bool openedBefore = true;
+				//bool openedBefore = true;
 				if (_grid[checkedPos._x][checkedPos._y]._open == 0)			//check that node is not already in open list
 				{
 					calculateHCost(checkedPos);						//As the program works now, h must be calculated before g.
-					openedBefore = false;
+					//openedBefore = false;
 				}												
 				calculateGCost(currentPos, checkedPos);
 				//if (!openedBefore && _grid[checkedPos._x][checkedPos._y]._open == 1)	//Check that node was added to open list

@@ -17,7 +17,7 @@ void Dijkstra::calculateGCost(Vec2D parentPos, Vec2D currentPos)
 			g = _grid[parentPos._x][parentPos._y]._gCost + 1;
 		} else
 		{
-			g = _grid[parentPos._x][parentPos._y]._gCost + SQRT2;
+			g = _grid[parentPos._x][parentPos._y]._gCost + M_SQRT2;
 		}
 		break;
 	default:
