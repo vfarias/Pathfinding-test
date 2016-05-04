@@ -152,7 +152,7 @@ int main()
 	int chooseHeuristic = 0;
 
 	//Movement variable
-	int delta = width * 0.05f;
+	int delta = width * 0.5f;
 	float blockSize = 32.0f;
 
 	//Randomize map variables
