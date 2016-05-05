@@ -38,7 +38,7 @@ Vec2D IDAStar::evaluateNode(Vec2D pos, float g, float threshold, Metrics& metric
 	metrics.countExpansion();
 	_grid[pos._x][pos._y]._gCost = g;
 	float f = g + getHeuristicDistance(pos, _goal);
-	if (pos == _goal || f - threshold > 0.1f )
+	if (pos == _goal || f - threshold > 0.000001f )
 	{
 		return pos;
 	}
@@ -78,7 +78,7 @@ Vec2D IDAStar::evaluateNode(Vec2D pos, float g, float threshold, Metrics& metric
 			{
 				tileDist = M_SQRT2;
 			}
-			if (_grid[checkedPos._x][checkedPos._y]._gCost <= 0 || _grid[checkedPos._x][checkedPos._y]._gCost - (g + tileDist) > -0.1f )
+			if (_grid[checkedPos._x][checkedPos._y]._gCost <= 0 || _grid[checkedPos._x][checkedPos._y]._gCost - (g + tileDist) > -0.000001f )
 			{
 				_grid[checkedPos._x][checkedPos._y]._parent = &_grid[pos._x][pos._y];
 				foundPos = evaluateNode(checkedPos, g + tileDist, threshold, metrics);
@@ -91,7 +91,7 @@ Vec2D IDAStar::evaluateNode(Vec2D pos, float g, float threshold, Metrics& metric
 					return foundPos;
 				}
 				float foundValue = _grid[foundPos._x][foundPos._y]._gCost + getHeuristicDistance(foundPos, _goal);
-				if ((minValue - foundValue > 0.1f || minValue < 0.0f) && foundValue - threshold > 0.1) /*|| (abs(minValue - foundValue) < 0.0001f && _grid[minPos._x][minPos._y]._gCost > _grid[foundPos._x][foundPos._y]._gCost)*/
+				if ((minValue - foundValue > 0.000001f || minValue < 0.0f) && foundValue - threshold > 0.000001f) /*|| (abs(minValue - foundValue) < 0.0001f && _grid[minPos._x][minPos._y]._gCost > _grid[foundPos._x][foundPos._y]._gCost)*/
 				{
 					minValue = foundValue;
 					minPos = foundPos;

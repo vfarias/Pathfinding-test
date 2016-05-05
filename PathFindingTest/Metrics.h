@@ -18,7 +18,7 @@ private:
 	int _graphNodesCapacity;
 	int _nrOfGraphNodes;
 	Vec2D* _graphNodes;
-	int _expansionCounter;					//counts the expanded nodes, but doesn't keep track 
+	long _expansionCounter;					//counts the expanded nodes, but doesn't keep track of positions
 
 	Vec2D* _expandNodeCap( Vec2D* arr, int& currentCap);
 public:

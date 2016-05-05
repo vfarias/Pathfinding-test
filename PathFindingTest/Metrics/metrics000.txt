@@ -1,4 +1,4 @@
-Algorithm used: A Star. 
-Heuristic used: Octile. 
+Algorithm used: HPA Star. 
+Heuristic used: Euclidean. 
 Number of opened nodes: 0
 Number of expanded nodes: 0
