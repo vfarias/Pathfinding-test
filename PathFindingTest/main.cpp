@@ -18,7 +18,6 @@ int windowWidth = 800;
 int windowHeight = 600;
 
 string* GenerateMap(int width, int height, float obstacleDensity, MapReader &mr);
-void SaveDataToFile(Metrics &metrics, int chooseAlgorithm, int chooseHeuristic);
 void CalculateAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, int width, int height, Vec2D startPos, Vec2D goalPos, AStarNode** grid);
 void CalculateThetaStar(Metrics &metrics, Pathfinding::Heuristic heuristic, int width, int height, Vec2D startPos, Vec2D goalPos, AStarNode** grid);
 void CalculateHPAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, int width, int height, Vec2D startPos, Vec2D goalPos, AStarNode** grid, int clusterSize);
@@ -50,18 +49,18 @@ int main()
 	Vec2D goalPos = {225, 638};
 	map = mr.ReadMap("Maps/Turbo.map");*/
 
-	//Vec2D startPos = {1, 1};
-	//Vec2D goalPos = {511, 511};
+	Vec2D startPos = {1, 1};
+	Vec2D goalPos = {511, 511};
 	//map = mr.ReadMap("Maps/32room_008.map");
-	//map = mr.ReadMap("Maps/maze512-1-1.map");
+	map = mr.ReadMap("Maps/maze512-1-1.map");
 
-	Vec2D startPos = {0, 0};
+	//Vec2D startPos = {0, 0};
 
-	Vec2D goalPos = {63, 63};
+	//Vec2D goalPos = {63, 63};
 	//map = mr.ReadMap("Maps/Randomized64x64-10-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-20-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-30-0.map");
-	map = mr.ReadMap("Maps/Randomized64x64-40-0.map");
+	//map = mr.ReadMap("Maps/Randomized64x64-40-0.map");
 
 	//Vec2D goalPos = {31, 31};
 	//map = mr.ReadMap("Maps/Randomized32x32-30-0.map");
@@ -405,8 +404,6 @@ int main()
 				pathTiles[i].color = sf::Color(200, 0, 200, 255);
 			}
 			pathTiles[metrics.getNrOfPathNodes()] = sf::Vector2f(10.0f + (float)tileWidth * (startPos._x + 0.5f), 10.0f + (float)tileHeight * (startPos._y + 0.5f));
-			
-			SaveDataToFile(metrics, choosePathfinding, chooseHeuristic);
 			calculatePaths = false;
 		}
 
@@ -477,65 +474,6 @@ int main()
 	return 0;
 }
 
-void SaveDataToFile(Metrics &metrics, int chooseAlgorithm, int chooseHeuristic)
-{
-	ofstream saveFile;
-	saveFile.open("Metrics/metrics000.txt");
-
-	//Which algorithm is used
-	saveFile << "Algorithm used: ";
-	switch (chooseAlgorithm)
-	{
-	case 0:
-		saveFile << "A Star. ";
-		break;
-
-	case 1:
-		saveFile << "Theta Star. ";
-		break;
-
-	case 2:
-		saveFile << "HPA Star. ";
-		break;
-
-	case 3:
-		saveFile << "IDA Star. ";
-		break;
-	default:
-		saveFile << "Does not exist";
-		break;
-	}
-
-	//In combination with which heuristic is being used
-	saveFile << "\nHeuristic used: ";
-	switch (chooseHeuristic)
-	{
-	case 0:
-		saveFile << "Manhattan. ";
-		break;
-
-	case 1:
-		saveFile << "Chebyshev. ";
-		break;
-
-	case 2:
-		saveFile << "Octile. ";
-		break;
-
-	case 3:
-		saveFile << "Euclidean. ";
-		break;
-	default:
-		saveFile << "Does not exist";
-		break;
-	}
-
-	//The number of opened nodes by the algorithm
-	saveFile << "\nNumber of opened nodes: " << metrics.getNrOfOpenedNodes();
-	saveFile << "\nNumber of expanded nodes: " << metrics.getNrOfExpandedNodes();
-
-	//TODO Lägg till grejer här som metrics kan mäta
-}
 string* GenerateMap(int width, int height, float obstacleDensity, MapReader &mr)
 {
 	string* map = nullptr;
