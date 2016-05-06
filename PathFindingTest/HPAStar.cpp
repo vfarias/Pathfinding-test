@@ -132,8 +132,8 @@ void HPAStar::setEdgePair(Vec2D pos1, Vec2D pos2, Cluster* cluster1, Cluster* cl
 		node1->_edge2 = node2;
 	}
 
-//	metrics.addGraphNode(pos1);
-//	metrics.addGraphNode(pos2);
+	metrics.addGraphNode(pos1);
+	metrics.addGraphNode(pos2);
 }
 
 void HPAStar::findInternalPaths(Cluster* cluster, Metrics& metrics)
@@ -179,8 +179,8 @@ void HPAStar::findInternalPaths(Cluster* cluster, Metrics& metrics)
 				float length = aStar->findPathLength(metrics);
 				cluster->_internalPathLengths[i][j] = length;
 				cluster->_internalPathLengths[j][i] = length;
-	//			metrics.addGraphNode(cluster->_internalNodes[i]->_position);
-	//			metrics.addGraphNode(cluster->_internalNodes[j]->_position);
+				metrics.addGraphNode(cluster->_internalNodes[i]->_position);
+				metrics.addGraphNode(cluster->_internalNodes[j]->_position);
 			}
 		}
 	}
@@ -204,8 +204,8 @@ float* HPAStar::attachNodeToGraph(HPANode* node, Metrics& metrics)
 	{
 		aStar->init(node->_position, cluster->_internalNodes[i]->_position);
 		nodeToEdgePathLengths[i] = aStar->findPathLength(metrics);
-	//	metrics.addGraphNode(cluster->_internalNodes[i]->_position);
-	//	metrics.addGraphNode(node->_position);
+		metrics.addGraphNode(cluster->_internalNodes[i]->_position);
+		metrics.addGraphNode(node->_position);
 	}
 	delete aStar;
 	return nodeToEdgePathLengths;
@@ -319,68 +319,70 @@ bool HPAStar::findPath(Metrics& metrics)
 			goal._gCost = currentNode->_gCost + goalToEdgePathLengths[currentNode->_clusterIndex];
 			goal._parent = currentNode;
 			goal._open = 1;
-			_openQueue.insert(&goal);
-		}
-
-		for (int i = 0; i < currentCluster->_nrOfInternalNodes; i++)
-		{
-			if (currentCluster->_internalPathLengths[currentNode->_clusterIndex][i] > 0)
-			{
-				HPANode* checkedNode = currentCluster->_internalNodes[i];
-			//	metrics.addOpenedNode(checkedNode->_position);
-			//	metrics.addOpenedNode(currentNode->_position);
-				float g = currentNode->_gCost + currentCluster->_internalPathLengths[currentNode->_clusterIndex][i];
-				if (checkedNode->_open == 0 ||(checkedNode->_open == 1 && checkedNode->_gCost > g))					//Add node to open
-				{
-					checkedNode->_hCost = getHeuristicDistance(checkedNode->_position, _goal);
-					checkedNode->_gCost = g;
-					checkedNode->_parent = currentNode;
-					checkedNode->_open = 1;
-					_openQueue.insert(checkedNode);
-					
-				}
-			}
-		}
-		if (currentNode->_edge->_open == 0 || (currentNode->_edge->_open == 1 && currentNode->_edge->_gCost > currentNode->_gCost + 1))
-		{
-			currentNode->_edge->_hCost = getHeuristicDistance(currentNode->_edge->_position, _goal);
-			currentNode->_edge->_gCost = currentNode->_gCost + 1;
-			currentNode->_edge->_parent = currentNode;
-			currentNode->_edge->_open = 1;
-			_openQueue.insert(currentNode->_edge);
-	//		metrics.addOpenedNode(currentNode->_edge->_position);
-	//		metrics.addOpenedNode(currentNode->_position);
-		}
-		if (currentNode->_edge2 != nullptr && (currentNode->_edge2->_open == 0 || (currentNode->_edge2->_open == 1 && currentNode->_edge2->_gCost > currentNode->_gCost + 1)))
-		{
-			currentNode->_edge2->_hCost = getHeuristicDistance(currentNode->_edge2->_position, _goal);
-			currentNode->_edge2->_gCost = currentNode->_gCost + 1;
-			currentNode->_edge2->_parent = currentNode;
-			currentNode->_edge2->_open = 1;
-			_openQueue.insert(currentNode->_edge2);
-	//		metrics.addOpenedNode(currentNode->_edge2->_position);
-	//		metrics.addOpenedNode(currentNode->_position);
-		}
-		if (_openQueue.size() <= 0)
-		{
-			return false;
-			//_goal = currentNode->_position;
+			//_openQueue.insert(&goal);
+			currentNode = &goal;
 		}
 		else
 		{
-			currentNode = _openQueue.removeMin();
-			while (currentNode->_open == 2)
+			for (int i = 0; i < currentCluster->_nrOfInternalNodes; i++)
 			{
-				if (_openQueue.size() <= 0)
+				if (currentCluster->_internalPathLengths[currentNode->_clusterIndex][i] > 0)
 				{
-					return false;
+					HPANode* checkedNode = currentCluster->_internalNodes[i];
+				//	metrics.addOpenedNode(checkedNode->_position);
+				//	metrics.addOpenedNode(currentNode->_position);
+					float g = currentNode->_gCost + currentCluster->_internalPathLengths[currentNode->_clusterIndex][i];
+					if (checkedNode->_open == 0 || (checkedNode->_open == 1 && checkedNode->_gCost > g))					//Add node to open
+					{
+						checkedNode->_hCost = getHeuristicDistance(checkedNode->_position, _goal);
+						checkedNode->_gCost = g;
+						checkedNode->_parent = currentNode;
+						checkedNode->_open = 1;
+						_openQueue.insert(checkedNode);
+
+					}
 				}
-				currentNode = _openQueue.removeMin();
 			}
-		//	metrics.addExpandedNode(currentNode->_parent->_position);
-		//	metrics.addExpandedNode(currentNode->_position);
-			currentNode->_open = 2;
-			currentCluster = findCluster(currentNode->_position);
+			if (currentNode->_edge->_open == 0 || (currentNode->_edge->_open == 1 && currentNode->_edge->_gCost > currentNode->_gCost + 1))
+			{
+				currentNode->_edge->_hCost = getHeuristicDistance(currentNode->_edge->_position, _goal);
+				currentNode->_edge->_gCost = currentNode->_gCost + 1;
+				currentNode->_edge->_parent = currentNode;
+				currentNode->_edge->_open = 1;
+				_openQueue.insert(currentNode->_edge);
+		//		metrics.addOpenedNode(currentNode->_edge->_position);
+		//		metrics.addOpenedNode(currentNode->_position);
+			}
+			if (currentNode->_edge2 != nullptr && (currentNode->_edge2->_open == 0 || (currentNode->_edge2->_open == 1 && currentNode->_edge2->_gCost > currentNode->_gCost + 1)))
+			{
+				currentNode->_edge2->_hCost = getHeuristicDistance(currentNode->_edge2->_position, _goal);
+				currentNode->_edge2->_gCost = currentNode->_gCost + 1;
+				currentNode->_edge2->_parent = currentNode;
+				currentNode->_edge2->_open = 1;
+				_openQueue.insert(currentNode->_edge2);
+		//		metrics.addOpenedNode(currentNode->_edge2->_position);
+		//		metrics.addOpenedNode(currentNode->_position);
+			}
+			if (_openQueue.size() <= 0)
+			{
+				return false;
+				//_goal = currentNode->_position;
+			} else
+			{
+				currentNode = _openQueue.removeMin();
+				while (currentNode->_open == 2)
+				{
+					if (_openQueue.size() <= 0)
+					{
+						return false;
+					}
+					currentNode = _openQueue.removeMin();
+				}
+			//	metrics.addExpandedNode(currentNode->_parent->_position);
+			//	metrics.addExpandedNode(currentNode->_position);
+				currentNode->_open = 2;
+				currentCluster = findCluster(currentNode->_position);
+			}
 		}
 	}
 	AStar* aStar = new AStar(_clusterSize, _clusterSize, currentCluster->_position, _grid, OCTILE);
