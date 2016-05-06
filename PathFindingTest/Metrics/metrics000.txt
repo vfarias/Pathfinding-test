@@ -1,4 +1,0 @@
-Algorithm used: A Star. 
-Heuristic used: Manhattan. 
-Number of opened nodes: 0
-Number of expanded nodes: 0
