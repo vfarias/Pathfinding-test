@@ -33,9 +33,9 @@ int main()
 
 	//Map data
 	string* map = nullptr;
-	/*map = mr.ReadMap("Maps/AR0307SR.map");
-	Vec2D startPos = {350, 54};
-	Vec2D goalPos = {467, 387};*/
+	//map = mr.ReadMap("Maps/AR0307SR.map");
+	//Vec2D startPos = {350, 54};
+	//Vec2D goalPos = {467, 387};
 
 	/*map = mr.ReadMap("Maps/AR0700SR.map");
 	Vec2D startPos = {343, 5};
@@ -49,18 +49,24 @@ int main()
 	Vec2D goalPos = {225, 638};
 	map = mr.ReadMap("Maps/Turbo.map");*/
 
-	Vec2D startPos = {1, 1};
-	Vec2D goalPos = {511, 511};
+	/*Vec2D startPos = {1, 1};
+	Vec2D goalPos = {511, 511};*/
 	//map = mr.ReadMap("Maps/32room_008.map");
-	map = mr.ReadMap("Maps/maze512-1-1.map");
+	//map = mr.ReadMap("Maps/maze512-1-1.map");
 
-	//Vec2D startPos = {0, 0};
+	Vec2D startPos = {0, 0};
 
-	//Vec2D goalPos = {63, 63};
+	Vec2D goalPos = {63, 63};
 	//map = mr.ReadMap("Maps/Randomized64x64-10-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-20-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-30-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-40-0.map");
+
+	//map = mr.ReadMap("Maps/Randomized64x64-15-0.map");
+	//map = mr.ReadMap("Maps/Randomized64x64-25-0.map");
+	//map = mr.ReadMap("Maps/Randomized64x64-35-0.map");
+	map = mr.ReadMap("Maps/Randomized64x64-45-0.map");
+	//map = mr.ReadMap("Maps/Randomized64x64-50-0.map");
 
 	//Vec2D goalPos = {31, 31};
 	//map = mr.ReadMap("Maps/Randomized32x32-30-0.map");
@@ -274,7 +280,7 @@ int main()
 				Vec2D pos = {stoi(string(xBuffer)), stoi(string(yBuffer))};
 				if (startOrGoal == 0)  //Start pos
 				{
-					if ((pos._x > 0 && pos._x < width) && (pos._y > 0 && pos._y < height))
+					if ((pos._x >= 0 && pos._x < width) && (pos._y >= 0 && pos._y < height))
 					{
 						startPos = pos;
 						startNode.setPosition(sf::Vector2f(10.0f + startPos._x * (float)tileWidth, 10.0f + startPos._y * (float)tileHeight));
@@ -282,7 +288,7 @@ int main()
 				}
 				else if (startOrGoal == 1)  //Goal pos
 				{
-					if ((pos._x > 0 && pos._x < width) && (pos._y > 0 && pos._y < height))
+					if ((pos._x >= 0 && pos._x < width) && (pos._y >= 0 && pos._y < height))
 					{
 						goalPos = pos;
 						goalNode.setPosition(sf::Vector2f(10.0f + goalPos._x * (float)tileWidth, 10.0f + goalPos._y * (float)tileHeight));
