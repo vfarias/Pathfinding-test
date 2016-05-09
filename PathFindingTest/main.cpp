@@ -45,13 +45,13 @@ int main()
 	Vec2D goalPos = {767, 759};
 	map = mr.ReadMap("Maps/FloodedPlains.map");*/
 
-	/*Vec2D startPos = {534, 125};
+	Vec2D startPos = {534, 125};
 	Vec2D goalPos = {225, 638};
-	map = mr.ReadMap("Maps/Turbo.map");*/
+	map = mr.ReadMap("Maps/Turbo.map");
 
-	Vec2D startPos = {1, 1};
-	Vec2D goalPos = {511, 511};
-	map = mr.ReadMap("Maps/16room_000.map");
+	//Vec2D startPos = {1, 1};
+	//Vec2D goalPos = {511, 511};
+	//map = mr.ReadMap("Maps/16room_000.map");
 	//map = mr.ReadMap("Maps/maze512-16-0.map");
 
 	//map = mr.ReadMap("Maps/32room_008.map");
