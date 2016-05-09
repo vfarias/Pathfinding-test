@@ -148,13 +148,6 @@ void HPAStar::findInternalPaths(Cluster* cluster, Metrics& metrics)
 		}
 	}
 	AStar* aStar = new AStar(_clusterSize, _clusterSize, cluster->_position, _grid, _heuristicType);
-	//for (int i = 0; i < _clusterSize; i++)
-	//{
-	//	for (int j = 0; j < _clusterSize; j++)
-	//	{
-	//		aStar->setTraversable(Vec2D(j, i), _grid[cluster->_position._x + j][cluster->_position._y + i]._traversable);
-	//	}
-	//}
 	for (int i = 0; i < cluster->_nrOfInternalNodes; i++)
 	{
 		for (int j = i + 1; j < cluster->_nrOfInternalNodes; j++)
@@ -190,14 +183,7 @@ void HPAStar::findInternalPaths(Cluster* cluster, Metrics& metrics)
 float* HPAStar::attachNodeToGraph(HPANode* node, Metrics& metrics)
 {
 	Cluster* cluster = findCluster(node->_position);
-	AStar* aStar = new AStar(_clusterSize, _clusterSize, cluster->_position, _grid, OCTILE);				//Use A* to find path within clusters
-	//for (int i = 0; i < _clusterSize; i++)
-	//{
-	//	for (int j = 0; j < _clusterSize; j++)
-	//	{
-	//		aStar->setTraversable(Vec2D(j, i), _grid[cluster->_position._x + j][cluster->_position._y + i]._traversable);
-	//	}
-	//}
+	AStar* aStar = new AStar(_clusterSize, _clusterSize, cluster->_position, _grid, _heuristicType);				//Use A* to find path within clusters
 	float* nodeToEdgePathLengths = new float[cluster->_nrOfInternalNodes];
 
 	for (int i = 0; i < cluster->_nrOfInternalNodes; i++)					//Get path lengths from start to cluster edges
@@ -385,13 +371,14 @@ bool HPAStar::findPath(Metrics& metrics)
 			}
 		}
 	}
-	AStar* aStar = new AStar(_clusterSize, _clusterSize, currentCluster->_position, _grid, OCTILE);
+	AStar* aStar = new AStar(_clusterSize, _clusterSize, currentCluster->_position, _grid, _heuristicType);
 	float g = currentNode->_gCost;
 	_path = new Vec2D[(int)g];
 
 	while (currentNode->_position != _start)							//Count the path length to allocate enough memory for path
 	{
-		if (currentNode->_edge != nullptr && currentNode->_edge->_position == currentNode->_parent->_position)
+		if ((currentNode->_edge != nullptr && currentNode->_edge->_position == currentNode->_parent->_position) ||
+			(currentNode->_edge2 != nullptr && currentNode->_edge2->_position == currentNode->_parent->_position))
 		{
 			_path[_nrOfPathNodes++] = currentNode->_parent->_position;
 		}
@@ -399,13 +386,6 @@ bool HPAStar::findPath(Metrics& metrics)
 		{
 			aStar->setPosition(currentCluster->_position);
 			aStar->init(currentNode->_position, currentNode->_parent->_position);
-			//for (int i = 0; i < _clusterSize; i++)					//TODO: See if the copying can be changed to just pointing towards the general grid
-			//{
-			//	for (int j = 0; j < _clusterSize; j++)
-			//	{
-			//		aStar->setTraversable(Vec2D(j, i), _grid[currentCluster->_position._x + j][currentCluster->_position._y + i]._traversable);
-			//	}
-			//}
 			if (aStar->findPath(metrics))
 			{
 				Vec2D* tempPath = aStar->getPath();
