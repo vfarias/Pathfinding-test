@@ -58,7 +58,6 @@ int main()
 	map = mr.ReadMap("Maps/maze512-1-1.map");
 
 	//Vec2D startPos = {0, 0};
-
 	//Vec2D goalPos = {63, 63};
 	//map = mr.ReadMap("Maps/Randomized64x64-10-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-20-0.map");
@@ -82,6 +81,10 @@ int main()
 
 	/*Vec2D goalPos = {511, 511};
 	map = mr.ReadMap("Maps/Randomized512x512-30-0.map");*/
+
+	//Vec2D startPos = {9, 0};
+	//Vec2D goalPos = {4, 5};
+	//map = mr.ReadMap("Maps/Lab.map");
 
 	int width = mr.GetWidth();
 	int height = mr.GetHeight();
@@ -160,7 +163,7 @@ int main()
 	int chooseHeuristic = 0;
 
 	//Movement variable
-	int delta = width * 0.5f;
+	int delta = ((int)width * 0.5f);
 	float blockSize = 32.0f;
 
 	//Randomize map variables
@@ -225,12 +228,14 @@ int main()
 				delete[] map;
 				delete[] walls;
 				metrics.clean();
-				for (int i = 0; i < width; i++)
+				if (grid != nullptr)
 				{
-					delete[] grid[i];
+					for (int i = 0; i < width; i++)
+					{
+						delete[] grid[i];
+					}
+					delete[] grid;
 				}
-				delete[] grid;
-
 				map = mr.GenerateRandomMap(stoi(string(widthBuffer)), stoi(string(heightBuffer)), 0.01f*stof(string(densityBuffer)));
 				width = mr.GetWidth();
 				height = mr.GetHeight();
@@ -358,6 +363,11 @@ int main()
 				break;
 			case 2:		//HPA*
 				CalculateHPAStar(metrics, (Pathfinding::Heuristic)chooseHeuristic, width, height, startPos, goalPos, grid, clusterSize);
+				abstractGraph = new sf::Vertex[metrics.getNrOfGraphNodes()];
+				for (int i = 0; i < metrics.getNrOfGraphNodes(); i++)
+				{
+					abstractGraph[i] = sf::Vertex(sf::Vector2f(10.0f + (float)tileWidth * (metrics.getGraphNodes()[i]._x + 0.5f), 10.0f + (float)tileHeight * (metrics.getGraphNodes()[i]._y + 0.5f)), sf::Color::Red);
+				}
 				break;
 			case 3:		//IDA*
 				CalculateIDAStar(metrics, (Pathfinding::Heuristic)chooseHeuristic, width, height, startPos, goalPos, grid);
