@@ -51,11 +51,11 @@ int main()
 
 	Vec2D startPos = {1, 1};
 	Vec2D goalPos = {511, 511};
-	map = mr.ReadMap("Maps/16room_000.map");
+	//map = mr.ReadMap("Maps/16room_000.map");
 	//map = mr.ReadMap("Maps/maze512-16-0.map");
 
 	//map = mr.ReadMap("Maps/32room_008.map");
-	//map = mr.ReadMap("Maps/maze512-1-1.map");
+	map = mr.ReadMap("Maps/maze512-1-1.map");
 
 	//Vec2D startPos = {0, 0};
 
