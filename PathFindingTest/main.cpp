@@ -49,15 +49,15 @@ int main()
 	Vec2D goalPos = {225, 638};
 	map = mr.ReadMap("Maps/Turbo.map");*/
 
-	Vec2D startPos = {1, 1};
-	Vec2D goalPos = {511, 511};
+	//Vec2D startPos = {1, 1};
+	//Vec2D goalPos = {511, 511};
 	//map = mr.ReadMap("Maps/16room_000.map");
 	//map = mr.ReadMap("Maps/maze512-16-0.map");
 
 	//map = mr.ReadMap("Maps/32room_008.map");
-	map = mr.ReadMap("Maps/maze512-1-1.map");
+	//map = mr.ReadMap("Maps/maze512-1-1.map");
 
-	//Vec2D startPos = {0, 0};
+	Vec2D startPos = {0, 0};
 	//Vec2D goalPos = {63, 63};
 	//map = mr.ReadMap("Maps/Randomized64x64-10-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-20-0.map");
@@ -70,11 +70,11 @@ int main()
 	//map = mr.ReadMap("Maps/Randomized64x64-45-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-50-0.map");
 
-	//Vec2D goalPos = {31, 31};
-	//map = mr.ReadMap("Maps/Randomized32x32-30-0.map");
+	/*Vec2D goalPos = {31, 31};
+	map = mr.ReadMap("Maps/Randomized32x32-30-0.map");*/
 
-	/*Vec2D goalPos = {127, 127};
-	map = mr.ReadMap("Maps/Randomized128x128-30-0.map");*/
+	Vec2D goalPos = {127, 127};
+	map = mr.ReadMap("Maps/Randomized128x128-30-0.map");
 
 	/*Vec2D goalPos = {255, 255};
 	map = mr.ReadMap("Maps/Randomized256x256-30-0.map");*/
@@ -363,11 +363,11 @@ int main()
 				break;
 			case 2:		//HPA*
 				CalculateHPAStar(metrics, (Pathfinding::Heuristic)chooseHeuristic, width, height, startPos, goalPos, grid, clusterSize);
-				abstractGraph = new sf::Vertex[metrics.getNrOfGraphNodes()];
-				for (int i = 0; i < metrics.getNrOfGraphNodes(); i++)
-				{
-					abstractGraph[i] = sf::Vertex(sf::Vector2f(10.0f + (float)tileWidth * (metrics.getGraphNodes()[i]._x + 0.5f), 10.0f + (float)tileHeight * (metrics.getGraphNodes()[i]._y + 0.5f)), sf::Color::Red);
-				}
+				//abstractGraph = new sf::Vertex[metrics.getNrOfGraphNodes()];
+				//for (int i = 0; i < metrics.getNrOfGraphNodes(); i++)
+				//{
+				//	abstractGraph[i] = sf::Vertex(sf::Vector2f(10.0f + (float)tileWidth * (metrics.getGraphNodes()[i]._x + 0.5f), 10.0f + (float)tileHeight * (metrics.getGraphNodes()[i]._y + 0.5f)), sf::Color::Red);
+				//}
 				break;
 			case 3:		//IDA*
 				CalculateIDAStar(metrics, (Pathfinding::Heuristic)chooseHeuristic, width, height, startPos, goalPos, grid);
