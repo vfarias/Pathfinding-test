@@ -363,11 +363,11 @@ int main()
 				break;
 			case 2:		//HPA*
 				CalculateHPAStar(metrics, (Pathfinding::Heuristic)chooseHeuristic, width, height, startPos, goalPos, grid, clusterSize);
-				abstractGraph = new sf::Vertex[metrics.getNrOfGraphNodes()];
-				for (int i = 0; i < metrics.getNrOfGraphNodes(); i++)
-				{
-					abstractGraph[i] = sf::Vertex(sf::Vector2f(10.0f + (float)tileWidth * (metrics.getGraphNodes()[i]._x + 0.5f), 10.0f + (float)tileHeight * (metrics.getGraphNodes()[i]._y + 0.5f)), sf::Color::Red);
-				}
+				//abstractGraph = new sf::Vertex[metrics.getNrOfGraphNodes()];
+				//for (int i = 0; i < metrics.getNrOfGraphNodes(); i++)
+				//{
+				//	abstractGraph[i] = sf::Vertex(sf::Vector2f(10.0f + (float)tileWidth * (metrics.getGraphNodes()[i]._x + 0.5f), 10.0f + (float)tileHeight * (metrics.getGraphNodes()[i]._y + 0.5f)), sf::Color::Red);
+				//}
 				break;
 			case 3:		//IDA*
 				CalculateIDAStar(metrics, (Pathfinding::Heuristic)chooseHeuristic, width, height, startPos, goalPos, grid);
