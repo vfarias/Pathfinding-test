@@ -126,7 +126,7 @@ float Pathfinding::getHeuristicDistance(Vec2D start, Vec2D goal) const
 		h = (float)(std::min(x, y) + abs(x - y));
 		break;
 	case Pathfinding::OCTILE:
-		h = M_SQRT2 * std::min(x, y) + abs(x - y);
+		h = (float)(M_SQRT2 * std::min(x, y) + abs(x - y));
 		break;
 	case Pathfinding::EUCLIDEAN:
 		h = (float)(sqrt(x * x + y * y));

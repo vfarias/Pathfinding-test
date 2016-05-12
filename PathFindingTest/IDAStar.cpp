@@ -38,39 +38,22 @@ Vec2D IDAStar::evaluateNode(Vec2D pos, float g, float& f, float threshold, int i
 	metrics.countExpansion();
 	_grid[pos._x][pos._y]._gCost = g;
 	float fTemp= g + getHeuristicDistance(pos, _goal);
-	if (pos == _goal || fTemp > threshold )
+	if (pos == _goal || fTemp - threshold > 0.0001 )
 	{
 		f = fTemp;
 		return pos;
 	}
 	Vec2D minPos = {-1, -1};
 	float minValue = -1.0f;
-	Vec2D parentNeighbour1 = {0, 0};
-	Vec2D parentNeighbour2 = {0, 0};
 	Vec2D parentPos = {0, 0};
 	if (_grid[pos._x][pos._y]._parent != nullptr)
 	{
 		parentPos = _grid[pos._x][pos._y]._parent->_position - _grid[pos._x][pos._y]._position;
-		if (parentPos._x != 0 && parentPos._y != 0)
-		{
-			parentNeighbour1 = {parentPos._x, 0};
-			parentNeighbour2 = {0, parentPos._y};
-		}
-		else if (parentPos._x != 0)
-		{
-			parentNeighbour1 = {parentPos._x, 1};
-			parentNeighbour2 = {parentPos._x, -1};
-		}
-		else
-		{
-			parentNeighbour1 = {-1, parentPos._y};
-			parentNeighbour2 = {1, parentPos._y};
-		}
 	}
 	for (int i = 0; i < 8 && (_heuristicType != MANHATTAN || i < 4); i++)		//Manhattan skips diagonals 
 	{
 		Vec2D checkedPos = pos + NEIGHBOUR_OFFSETS[i];
-		if ((_grid[pos._x][pos._y]._parent == nullptr || (NEIGHBOUR_OFFSETS[i] != parentPos && NEIGHBOUR_OFFSETS[i] != parentNeighbour1 && NEIGHBOUR_OFFSETS[i] != parentNeighbour2))
+		if ((_grid[pos._x][pos._y]._parent == nullptr || (NEIGHBOUR_OFFSETS[i] != parentPos))
 			&& isPositionValid(checkedPos) && _grid[checkedPos._x][checkedPos._y]._traversable)
 		{
 			Vec2D foundPos = {-1, -1};
