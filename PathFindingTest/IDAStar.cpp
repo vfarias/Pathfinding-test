@@ -38,7 +38,7 @@ Vec2D IDAStar::evaluateNode(Vec2D pos, float g, float& f, float threshold, int i
 	metrics.countExpansion();
 	_grid[pos._x][pos._y]._gCost = g;
 	float fTemp= g + getHeuristicDistance(pos, _goal);
-	if (pos == _goal || fTemp - threshold > 0.0001 )
+	if (pos == _goal || fTemp - threshold > 0.001 )
 	{
 		f = fTemp;
 		return pos;

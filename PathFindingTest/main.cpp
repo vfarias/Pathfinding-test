@@ -60,14 +60,14 @@ int main()
 	Vec2D startPos = {0, 0};
 	Vec2D goalPos = {63, 63};
 	//map = mr.ReadMap("Maps/Randomized64x64-10-0.map");
-	//map = mr.ReadMap("Maps/Randomized64x64-20-0.map");
+	map = mr.ReadMap("Maps/Randomized64x64-20-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-30-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-40-0.map");
 
 	//map = mr.ReadMap("Maps/Randomized64x64-15-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-25-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-35-0.map");
-	map = mr.ReadMap("Maps/Randomized64x64-45-0.map");
+	//map = mr.ReadMap("Maps/Randomized64x64-45-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-50-0.map");
 
 	//Vec2D goalPos = {31, 31};
