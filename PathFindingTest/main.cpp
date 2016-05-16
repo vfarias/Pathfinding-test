@@ -58,7 +58,7 @@ int main()
 	//map = mr.ReadMap("Maps/maze512-1-1.map");
 
 	Vec2D startPos = {0, 0};
-	//Vec2D goalPos = {63, 63};
+	Vec2D goalPos = {63, 63};
 	//map = mr.ReadMap("Maps/Randomized64x64-10-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-20-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-30-0.map");
@@ -67,7 +67,7 @@ int main()
 	//map = mr.ReadMap("Maps/Randomized64x64-15-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-25-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-35-0.map");
-	//map = mr.ReadMap("Maps/Randomized64x64-45-0.map");
+	map = mr.ReadMap("Maps/Randomized64x64-45-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-50-0.map");
 
 	//Vec2D goalPos = {31, 31};
@@ -76,8 +76,8 @@ int main()
 	/*Vec2D goalPos = {127, 127};
 	map = mr.ReadMap("Maps/Randomized128x128-30-0.map");*/
 
-	Vec2D goalPos = {255, 255};
-	map = mr.ReadMap("Maps/Randomized256x256-30-0.map");
+	/*Vec2D goalPos = {255, 255};
+	map = mr.ReadMap("Maps/Randomized256x256-30-0.map");*/
 
 	/*Vec2D goalPos = {511, 511};
 	map = mr.ReadMap("Maps/Randomized512x512-30-0.map");*/
