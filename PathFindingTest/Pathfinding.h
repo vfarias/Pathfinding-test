@@ -49,7 +49,7 @@ public:
 	bool isTraversable(Vec2D pos)const;
 	Vec2D* getPath() const;
 	int getNrOfPathNodes() const;
-	float getHeuristicDistance(Vec2D start, Vec2D goal) const;
+	double getHeuristicDistance(Vec2D start, Vec2D goal) const;
 	virtual void cleanMap();
 	virtual void init(Vec2D start, Vec2D goal);
 	virtual bool findPath(Metrics& metrics) = 0;

@@ -18,7 +18,7 @@ public:
 	AStar(int width, int height, Vec2D position, AStarNode** grid, Heuristic heuristic = MANHATTAN);
 	virtual ~AStar();
 	void cleanMap();
-	float findPathLength(Metrics& metrics);
+	double findPathLength(Metrics& metrics);
 	bool findPath(Metrics& metrics);
-	float getPathLength();
+	double getPathLength();
 };

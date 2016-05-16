@@ -2,7 +2,7 @@
 
 void Dijkstra::calculateGCost(Vec2D parentPos, Vec2D currentPos)
 {
-	float g = 0.0f;
+	double g = 0.0f;
 	//Euclidean heuristic is locked to octile movement for now.
 	switch (_heuristicType)
 	{
@@ -137,7 +137,7 @@ bool Dijkstra::findPath(Metrics & metrics)
 	return true;
 }
 
-float Dijkstra::getPathLength()
+double Dijkstra::getPathLength()
 {
-	return 0.0f;
+	return _grid[_goal._x][_goal._y]._gCost;
 }

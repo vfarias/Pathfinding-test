@@ -12,7 +12,7 @@ Calculates g by adding the preceding nodes g-cost to the current tilecost.
 */
 void AStar::calculateGCost(Vec2D parentPos, Vec2D currentPos)
 {
-	float g = 0.0f;
+	double g = 0.0f;
 	//Euclidean heuristic is locked to octile movement for now.
 	switch (_heuristicType)
 	{
@@ -98,7 +98,7 @@ void AStar::cleanMap()
 	}
 }
 
-float AStar::findPathLength(Metrics& metrics)
+double AStar::findPathLength(Metrics& metrics)
 {
 	if (_goal == _start)
 	{
@@ -207,7 +207,7 @@ bool AStar::findPath(Metrics& metrics)
 	return true;
 }
 
-float AStar::getPathLength()
+double AStar::getPathLength()
 {
 	return _grid[_goal._x][_goal._y]._gCost;
 }

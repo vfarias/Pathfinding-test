@@ -112,24 +112,24 @@ int Pathfinding::getNrOfPathNodes() const
 	return _nrOfPathNodes;
 }
 
-float Pathfinding::getHeuristicDistance(Vec2D start, Vec2D goal) const
+double Pathfinding::getHeuristicDistance(Vec2D start, Vec2D goal) const
 {
-	float h = 0;
-	float x = (float)abs(goal._x - start._x);						//horizontal distance to goal
-	float y = (float)abs(goal._y - start._y);						//vertical distance to goal
+	double h = 0;
+	int x = abs(goal._x - start._x);						//horizontal distance to goal
+	int y = abs(goal._y - start._y);						//vertical distance to goal
 	switch (_heuristicType)
 	{
 	case Pathfinding::MANHATTAN:
-		h = (float)(x + y);
+		h = (double)(x + y);
 		break;
 	case Pathfinding::CHEBYSHEV:
-		h = (float)(std::min(x, y) + abs(x - y));
+		h = (double)(std::min(x, y) + abs(x - y));
 		break;
 	case Pathfinding::OCTILE:
-		h = (float)(M_SQRT2 * std::min(x, y) + abs(x - y));
+		h = (M_SQRT2 * std::min(x, y) + abs(x - y));
 		break;
 	case Pathfinding::EUCLIDEAN:
-		h = (float)(sqrt(x * x + y * y));
+		h = sqrt(x * x + y * y);
 		break;
 	default:
 		break;

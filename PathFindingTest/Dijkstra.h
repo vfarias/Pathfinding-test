@@ -17,5 +17,5 @@ public:
 	virtual ~Dijkstra();
 	void cleanMap();
 	bool findPath(Metrics& metrics);
-	float getPathLength();
+	double getPathLength();
 };

@@ -138,10 +138,10 @@ void HPAStar::setEdgePair(Vec2D pos1, Vec2D pos2, Cluster* cluster1, Cluster* cl
 
 void HPAStar::findInternalPaths(Cluster* cluster, Metrics& metrics)
 {
-	cluster->_internalPathLengths = new float*[cluster->_nrOfInternalNodes];
+	cluster->_internalPathLengths = new double*[cluster->_nrOfInternalNodes];
 	for (int i = 0; i <  cluster->_nrOfInternalNodes; i++)
 	{
-		cluster->_internalPathLengths[i] = new float[cluster->_nrOfInternalNodes];
+		cluster->_internalPathLengths[i] = new double[cluster->_nrOfInternalNodes];
 		for (int j = 0; j < cluster->_nrOfInternalNodes; j++)
 		{
 			cluster->_internalPathLengths[i][j] = -1;
@@ -169,7 +169,7 @@ void HPAStar::findInternalPaths(Cluster* cluster, Metrics& metrics)
 			if (possiblePath)
 			{
 				aStar->init(cluster->_internalNodes[i]->_position, cluster->_internalNodes[j]->_position);
-				float length = aStar->findPathLength(metrics);
+				double length = aStar->findPathLength(metrics);
 				cluster->_internalPathLengths[i][j] = length;
 				cluster->_internalPathLengths[j][i] = length;
 				metrics.addGraphNode(cluster->_internalNodes[i]->_position);
@@ -180,11 +180,11 @@ void HPAStar::findInternalPaths(Cluster* cluster, Metrics& metrics)
 	delete aStar;
 }
 
-float* HPAStar::attachNodeToGraph(HPANode* node, Metrics& metrics)
+double* HPAStar::attachNodeToGraph(HPANode* node, Metrics& metrics)
 {
 	Cluster* cluster = findCluster(node->_position);
 	AStar* aStar = new AStar(_clusterSize, _clusterSize, cluster->_position, _grid, _heuristicType);				//Use A* to find path within clusters
-	float* nodeToEdgePathLengths = new float[cluster->_nrOfInternalNodes];
+	double* nodeToEdgePathLengths = new double[cluster->_nrOfInternalNodes];
 
 	for (int i = 0; i < cluster->_nrOfInternalNodes; i++)					//Get path lengths from start to cluster edges
 	{
@@ -259,10 +259,10 @@ bool HPAStar::findPath(Metrics& metrics)
 	}
 	HPANode start = HPANode(_start._x, _start._y);
 	start._gCost = 0;
-	float* startToEdgePathLengths = attachNodeToGraph(&start, metrics);
+	double* startToEdgePathLengths = attachNodeToGraph(&start, metrics);
 	HPANode goal = HPANode(_goal._x, _goal._y);
 	goal._hCost = 0;
-	float* goalToEdgePathLengths = attachNodeToGraph(&goal, metrics);
+	double* goalToEdgePathLengths = attachNodeToGraph(&goal, metrics);
 
 	HPANode* currentNode = &start;
 	Cluster* currentCluster = findCluster(start._position);
@@ -317,7 +317,7 @@ bool HPAStar::findPath(Metrics& metrics)
 					HPANode* checkedNode = currentCluster->_internalNodes[i];
 				//	metrics.addOpenedNode(checkedNode->_position);
 				//	metrics.addOpenedNode(currentNode->_position);
-					float g = currentNode->_gCost + currentCluster->_internalPathLengths[currentNode->_clusterIndex][i];
+					double g = currentNode->_gCost + currentCluster->_internalPathLengths[currentNode->_clusterIndex][i];
 					if (checkedNode->_open == 0 || (checkedNode->_open == 1 && checkedNode->_gCost > g))					//Add node to open
 					{
 						checkedNode->_hCost = getHeuristicDistance(checkedNode->_position, _goal);
@@ -372,7 +372,7 @@ bool HPAStar::findPath(Metrics& metrics)
 		}
 	}
 	AStar* aStar = new AStar(_clusterSize, _clusterSize, currentCluster->_position, _grid, _heuristicType);
-	float g = currentNode->_gCost;
+	double g = currentNode->_gCost;
 	_path = new Vec2D[(int)g];
 
 	while (currentNode->_position != _start)							//Count the path length to allocate enough memory for path

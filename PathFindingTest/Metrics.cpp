@@ -45,7 +45,7 @@ Metrics::~Metrics()
 	_graphNodes = nullptr;
 }
 
-float Metrics::getPathLength() const
+double Metrics::getPathLength() const
 {
 	return _pathLength;
 }
@@ -138,13 +138,13 @@ void Metrics::setPathNodes(Vec2D * path, int nrOfNodes)
 	_pathLength = 0.0f;
 	for (int i = 1; i < _nrOfPathNodes; i++)
 	{
-		float x = (float)(_pathNodes[i]._x - _pathNodes[i - 1]._x);
-		float y = (float)(_pathNodes[i]._y - _pathNodes[i - 1]._y);
+		int x = _pathNodes[i]._x - _pathNodes[i - 1]._x;
+		int y = _pathNodes[i]._y - _pathNodes[i - 1]._y;
 		_pathLength += std::sqrt(y * y + x * x);
 	}
 }
 
-void Metrics::setPathNodes(Vec2D * path, int nrOfNodes, float pathLength)
+void Metrics::setPathNodes(Vec2D * path, int nrOfNodes, double pathLength)
 {
 	if (_pathNodes != nullptr)
 	{

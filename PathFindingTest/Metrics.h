@@ -4,7 +4,7 @@
 class Metrics
 {
 private:
-	float _pathLength;
+	double _pathLength;
 	int _pathNodesCapacity;
 	int _nrOfPathNodes;
 	Vec2D* _pathNodes;
@@ -25,7 +25,7 @@ public:
 	Metrics();
 	~Metrics();
 
-	float getPathLength() const;
+	double getPathLength() const;
 	int getNrOfPathNodes() const;
 	Vec2D* getPathNodes() const;
 	int getNrOfOpenedNodes() const;
@@ -42,6 +42,6 @@ public:
 	void countExpansion();
 
 	void setPathNodes(Vec2D* path, int nrOfNodes);
-	void setPathNodes(Vec2D* path, int nrOfNodes, float pathLength);
+	void setPathNodes(Vec2D* path, int nrOfNodes, double pathLength);
 	void clean();
 };

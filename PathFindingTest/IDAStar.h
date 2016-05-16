@@ -20,6 +20,6 @@ public:
 	IDAStar(int width, int height, AStarNode** grid, Heuristic heuristic = MANHATTAN);
 	IDAStar(int width, int height, Vec2D startPos, Vec2D goalPos, AStarNode** grid, Heuristic heuristic = MANHATTAN);
 	~IDAStar();
-	Vec2D evaluateNode( Vec2D Node, float g, float& f, float threshold, int iteration, Metrics& metrics);
+	Vec2D evaluateNode( Vec2D Node, double g, double& f, double threshold, int iteration, Metrics& metrics);
 	bool findPath(Metrics& metrics);
 };

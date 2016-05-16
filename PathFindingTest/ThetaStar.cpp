@@ -3,7 +3,7 @@
 //calculates g by adding the preceding nodes g-cost to the current tilecost.
 void ThetaStar::calculateGCost(Vec2D parentPos, Vec2D currentPos)
 {
-	float g = _grid[parentPos._x][parentPos._y]._gCost + (float)sqrt(pow(parentPos._x - currentPos._x, 2) + pow(parentPos._y - currentPos._y, 2));
+	double g = _grid[parentPos._x][parentPos._y]._gCost + sqrt(pow(parentPos._x - currentPos._x, 2) + pow(parentPos._y - currentPos._y, 2));
 
 	// tileCost <= 0 means unwalkable. open == 0 means no previous gCost, meaning g is automatically better.
 	if (_grid[currentPos._x][currentPos._y]._traversable && (_grid[currentPos._x][currentPos._y]._open == 0 || _grid[currentPos._x][currentPos._y]._gCost > g))

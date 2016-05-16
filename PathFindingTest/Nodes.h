@@ -8,22 +8,22 @@ struct BaseNode
 };
 struct AStarNode : public BaseNode
 {
-	__int8 _open;										//0 = not checked, 1 = open, 2 = closed
-	float _gCost, _hCost;								//distance from start and heuristic to goal, respectively
+	int _open;										//0 = not checked, 1 = open, 2 = closed
+	double _gCost, _hCost;								//distance from start and heuristic to goal, respectively
 	AStarNode* _parent;									//the path back to the start node 
 	AStarNode()
 	{
 		_position = {0, 0};
-		_hCost = 0.0f;
-		_gCost = 0.0f;
+		_hCost = 0.0;
+		_gCost = 0.0;
 		_open = 0;
 		_parent = nullptr;
 	}
-	AStarNode(__int16 x, __int16 y, float h = -1.0f)  //Remove the weighting
+	AStarNode(__int16 x, __int16 y, double h = -1.0f)  //Remove the weighting
 	{
 		_position = {x, y};
 		_hCost = h;
-		_gCost = 0.0f;
+		_gCost = 0.0;
 		_open = 0;
 		_parent = nullptr;
 	}
@@ -44,7 +44,7 @@ struct AStarNode : public BaseNode
 struct HPANode : public BaseNode
 {
 	__int8 _open;
-	float _gCost, _hCost;					//distance from start and heuristic to goal, respectively
+	double _gCost, _hCost;					//distance from start and heuristic to goal, respectively
 	HPANode* _parent;						//the path back to the start node 
 	HPANode* _edge;							//The correspending node across the cluster border
 	HPANode* _edge2;						//Because fuck corners
@@ -58,7 +58,7 @@ struct HPANode : public BaseNode
 		_open = 0;
 		_clusterIndex = 0;
 	}
-	HPANode(__int16 x, __int16 y, float h = -1.0f)
+	HPANode(__int16 x, __int16 y, double h = -1.0f)
 	{
 		_position = {x, y};
 		_parent = nullptr;

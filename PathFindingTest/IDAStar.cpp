@@ -33,18 +33,18 @@ IDAStar::~IDAStar()
 {
 }
 
-Vec2D IDAStar::evaluateNode(Vec2D pos, float g, float& f, float threshold, int iteration, Metrics& metrics)
+Vec2D IDAStar::evaluateNode(Vec2D pos, double g, double& f, double threshold, int iteration, Metrics& metrics)
 {
 	metrics.countExpansion();
 	_grid[pos._x][pos._y]._gCost = g;
-	float fTemp= g + getHeuristicDistance(pos, _goal);
-	if (pos == _goal || fTemp - threshold > 0.001 )
+	double fTemp= g + getHeuristicDistance(pos, _goal);
+	if (pos == _goal || fTemp - threshold > 0.00000001)
 	{
 		f = fTemp;
 		return pos;
 	}
 	Vec2D minPos = {-1, -1};
-	float minValue = -1.0f;
+	double minValue = -1.0f;
 	Vec2D parentPos = {0, 0};
 	if (_grid[pos._x][pos._y]._parent != nullptr)
 	{
@@ -57,7 +57,7 @@ Vec2D IDAStar::evaluateNode(Vec2D pos, float g, float& f, float threshold, int i
 			&& isPositionValid(checkedPos) && _grid[checkedPos._x][checkedPos._y]._traversable)
 		{
 			Vec2D foundPos = {-1, -1};
-			float tileDist = 1;
+			double tileDist = 1.0;
 			if (i >= 4)
 			{
 				tileDist = M_SQRT2;
@@ -90,15 +90,15 @@ Vec2D IDAStar::evaluateNode(Vec2D pos, float g, float& f, float threshold, int i
 
 bool IDAStar::findPath(Metrics& metrics)
 {
-	float g = 0.0f;
+	double g = 0.0;
 	_nrOfPathNodes = 0;																//It's 1 because there's an offset in the loop later.
 	Vec2D currentPos = _start;
 
-	float threshold = getHeuristicDistance(_start, _goal);
+	double threshold = getHeuristicDistance(_start, _goal);
 	int iteration = 1;
 	while (currentPos != _goal)
 	{
-		float f = threshold;
+		double f = threshold;
 		currentPos = evaluateNode(_start, 0.0f, f, threshold, iteration, metrics);
 		iteration++;
 		if (!isPositionValid(currentPos))
