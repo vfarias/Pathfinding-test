@@ -150,7 +150,7 @@ bool AStar::findPath(Metrics& metrics)
 
 	while (currentPos != _goal)														//loops until a path has been found
 	{
-	//	metrics.addExpandedNode(currentPos);
+		metrics.addExpandedNode(currentPos);
 		metrics.countExpansion();
 		for (int i = 0; i < 8 && (_heuristicType != MANHATTAN || i < 4); i++)		//Manhattan skips diagonals 
 		{

@@ -12,10 +12,10 @@
 #define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
 
 //Visual size of tiles
-int tileWidth = 40;
-int tileHeight = 40;
-int windowWidth = 800;
-int windowHeight = 600;
+int tileWidth = 1;
+int tileHeight = 1;
+int windowWidth = 1024;
+int windowHeight = 768;
 
 string* GenerateMap(int width, int height, float obstacleDensity, MapReader &mr);
 void CalculateAStar(Metrics &metrics, Pathfinding::Heuristic heuristic, int width, int height, Vec2D startPos, Vec2D goalPos, AStarNode** grid);
@@ -49,25 +49,24 @@ int main()
 	Vec2D goalPos = {225, 638};
 	map = mr.ReadMap("Maps/Turbo.map");*/
 
-	//Vec2D startPos = {1, 1};
-	//Vec2D goalPos = {511, 511};
+	Vec2D startPos = {1, 1};
+	Vec2D goalPos = {511, 511};
 	//map = mr.ReadMap("Maps/16room_000.map");
-	//map = mr.ReadMap("Maps/maze512-16-0.map");
-
 	//map = mr.ReadMap("Maps/32room_008.map");
+
+	map = mr.ReadMap("Maps/maze512-16-0.map");
 	//map = mr.ReadMap("Maps/maze512-1-1.map");
 
-	Vec2D startPos = {0, 0};
-	Vec2D goalPos = {63, 63};
+	//Vec2D startPos = {0, 0};
+	//Vec2D goalPos = {63, 63};
 	//map = mr.ReadMap("Maps/Randomized64x64-10-0.map");
-	//map = mr.ReadMap("Maps/Randomized64x64-20-0.map");
-	//map = mr.ReadMap("Maps/Randomized64x64-30-0.map");
-	//map = mr.ReadMap("Maps/Randomized64x64-40-0.map");
-
 	//map = mr.ReadMap("Maps/Randomized64x64-15-0.map");
+	//map = mr.ReadMap("Maps/Randomized64x64-20-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-25-0.map");
+	//map = mr.ReadMap("Maps/Randomized64x64-30-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-35-0.map");
-	map = mr.ReadMap("Maps/Randomized64x64-45-0.map");
+	//map = mr.ReadMap("Maps/Randomized64x64-40-0.map");
+	//map = mr.ReadMap("Maps/Randomized64x64-45-0.map");
 	//map = mr.ReadMap("Maps/Randomized64x64-50-0.map");
 
 	//Vec2D goalPos = {31, 31};
@@ -118,7 +117,7 @@ int main()
 					{
 						grid[i][j]._traversable = false;
 						walls[wallCounter] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
-						walls[wallCounter].setFillColor(sf::Color::White);
+						walls[wallCounter].setFillColor(sf::Color::Black);
 						walls[wallCounter].setPosition(sf::Vector2f(10.0f + (float)(tileWidth * i), 10.0f + (float)(tileHeight * j)));
 						wallCounter++;
 					}
@@ -129,7 +128,7 @@ int main()
 
 	sf::View view;
 	view.setCenter(0.5f * width * tileWidth, 0.5f * height * tileHeight);
-	view.setSize(1.6f * width * tileWidth, 1.2f * height * tileHeight);
+	view.setSize(windowWidth, windowHeight);
 	sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "AI test");
 	window.setFramerateLimit(60);
 	window.setView(view);
@@ -163,7 +162,7 @@ int main()
 	int chooseHeuristic = 0;
 
 	//Movement variable
-	int delta = ((int)width * 0.5f);
+	int delta = ((int)width * 0.05f);
 	float blockSize = 32.0f;
 
 	//Randomize map variables
@@ -198,7 +197,7 @@ int main()
 
 		ImGuiIO &io = ImGui::GetIO();
 		//ImGui::ShowTestWindow();
-		window.clear();
+		window.clear(sf::Color::White);
 
 		/**************************************/
 		/*          Start of GUI code         */
@@ -265,7 +264,7 @@ int main()
 							{
 								grid[i][j]._traversable = false;
 								walls[wallCounter] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
-								walls[wallCounter].setFillColor(sf::Color::White);
+								walls[wallCounter].setFillColor(sf::Color::Black);
 								walls[wallCounter].setPosition(sf::Vector2f(10.0f + (float)(tileWidth * i), 10.0f + (float)(tileHeight * j)));
 								wallCounter++;
 							}
@@ -338,7 +337,7 @@ int main()
 		}
 
 		//Zooming with the camera
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::PageUp) && blockSize <= 32.0f)  //Zoom out
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::PageUp) && blockSize <= 64.0f)  //Zoom out
 		{
 			view.setSize(sf::Vector2f(width * tileWidth * blockSize++ * 0.05f, height * tileHeight * blockSize++ * 0.0375f));
 		}
@@ -363,11 +362,11 @@ int main()
 				break;
 			case 2:		//HPA*
 				CalculateHPAStar(metrics, (Pathfinding::Heuristic)chooseHeuristic, width, height, startPos, goalPos, grid, clusterSize);
-				//abstractGraph = new sf::Vertex[metrics.getNrOfGraphNodes()];
-				//for (int i = 0; i < metrics.getNrOfGraphNodes(); i++)
-				//{
-				//	abstractGraph[i] = sf::Vertex(sf::Vector2f(10.0f + (float)tileWidth * (metrics.getGraphNodes()[i]._x + 0.5f), 10.0f + (float)tileHeight * (metrics.getGraphNodes()[i]._y + 0.5f)), sf::Color::Red);
-				//}
+				abstractGraph = new sf::Vertex[metrics.getNrOfGraphNodes()];
+				for (int i = 0; i < metrics.getNrOfGraphNodes(); i++)
+				{
+					abstractGraph[i] = sf::Vertex(sf::Vector2f(10.0f + (float)tileWidth * (metrics.getGraphNodes()[i]._x + 0.5f), 10.0f + (float)tileHeight * (metrics.getGraphNodes()[i]._y + 0.5f)), sf::Color::Red);
+				}
 				break;
 			case 3:		//IDA*
 				CalculateIDAStar(metrics, (Pathfinding::Heuristic)chooseHeuristic, width, height, startPos, goalPos, grid);
@@ -390,7 +389,7 @@ int main()
 				for (int i = 0; i < metrics.getNrOfOpenedNodes(); i++)
 				{
 					openedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
-					openedTiles[i].setFillColor(sf::Color(0, 200, 200, 120));
+					openedTiles[i].setFillColor(sf::Color(0, 255, 255, 255));
 					openedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getOpenedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getOpenedNodes()[i]._y));
 					window.draw(openedTiles[i]);
 				}
@@ -407,7 +406,7 @@ int main()
 				for (int i = 0; i < metrics.getNrOfExpandedNodes(); i++)
 				{
 					expandedTiles[i] = sf::RectangleShape(sf::Vector2f((float)tileWidth, (float)tileHeight));
-					expandedTiles[i].setFillColor(sf::Color(200, 0, 0, 120));
+					expandedTiles[i].setFillColor(sf::Color(0, 255, 0, 255));
 					expandedTiles[i].setPosition(sf::Vector2f(10.0f + (float)tileWidth * metrics.getExpandedNodes()[i]._x, 10.0f + (float)tileHeight * metrics.getExpandedNodes()[i]._y));
 					window.draw(expandedTiles[i]);
 				}

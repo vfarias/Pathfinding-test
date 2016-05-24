@@ -172,8 +172,11 @@ void HPAStar::findInternalPaths(Cluster* cluster, Metrics& metrics)
 				double length = aStar->findPathLength(metrics);
 				cluster->_internalPathLengths[i][j] = length;
 				cluster->_internalPathLengths[j][i] = length;
-				metrics.addGraphNode(cluster->_internalNodes[i]->_position);
-				metrics.addGraphNode(cluster->_internalNodes[j]->_position);
+				if (length > 0)
+				{
+					metrics.addGraphNode(cluster->_internalNodes[i]->_position);
+					metrics.addGraphNode(cluster->_internalNodes[j]->_position);
+				}
 			}
 		}
 	}
@@ -190,8 +193,12 @@ double* HPAStar::attachNodeToGraph(HPANode* node, Metrics& metrics)
 	{
 		aStar->init(node->_position, cluster->_internalNodes[i]->_position);
 		nodeToEdgePathLengths[i] = aStar->findPathLength(metrics);
-		metrics.addGraphNode(cluster->_internalNodes[i]->_position);
-		metrics.addGraphNode(node->_position);
+		if (nodeToEdgePathLengths[i] > 0)
+		{
+			metrics.addGraphNode(cluster->_internalNodes[i]->_position);
+			metrics.addGraphNode(node->_position);
+		}
+		
 	}
 	delete aStar;
 	return nodeToEdgePathLengths;
