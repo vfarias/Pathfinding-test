@@ -196,7 +196,7 @@ bool ThetaStar::findPath(Metrics& metrics)
 				if (_grid[currentPos._x][currentPos._y]._parent != nullptr)
 				{
 					Vec2D parentPos = _grid[currentPos._x][currentPos._y]._parent->_position;
-					if (lineOfSightRay(parentPos, checkedPos))
+					if (lineOfSightBresenham(parentPos, checkedPos))
 					{
 						calculateGCost(parentPos, checkedPos);
 					} else
